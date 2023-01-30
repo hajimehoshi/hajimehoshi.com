@@ -78,12 +78,12 @@
 @layer border {
     article {
         border-top: 3px solid #333;
-        margin-top: calc(10px + 24px);
-        padding-top: 11px;
+        margin-top: calc(10.5px + 24px);
+        padding-top: 10.5px;
 
         border-bottom: 3px solid #333;
-        margin-bottom: calc(10px + 24px);
-        padding-bottom: 11px;
+        margin-bottom: calc(10.5px + 24px);
+        padding-bottom: calc(10.5px + 24px);
     }
     h2 {
         border-bottom: 1px solid #333;
