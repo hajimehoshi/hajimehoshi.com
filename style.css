@@ -87,7 +87,7 @@
     }
     h2 {
         border-bottom: 1px solid #333;
-        margin-bottom: 11.5px;
+        margin-bottom: calc(11.5px - 24px); /* This negative margin invalidates the gap of the grid of a section. */
         padding-bottom: 11.5px;
     }
     section {
@@ -103,7 +103,7 @@
 }
 
 @layer grid {
-    .grid-container-aside-body {
+    section {
         display: grid;
         grid-template-columns: 168px 1fr;
         grid-gap: 24px;
@@ -124,6 +124,7 @@
     }
 
     h2 {
+        grid-column: span 2;
         padding-left: calc(168px + 24px);
     }
     dl {
@@ -154,19 +155,19 @@
     }
 
     @media only screen and (max-width: calc(4 * 168px + 5 * 24px - 1px)) {
-        .grid-container-aside-body > * {
+        section > * {
             grid-column: span 2;
         }
-        .grid-container-aside-body > aside:has(+ header) {
+        section > aside:has(+ header) {
             grid-column: span 1;
         }
-        .grid-container-aside-body > aside + header {
+        section > aside + header {
             grid-column: span 1;
         }
-        .grid-container-aside-body > *:empty {
+        section > *:empty {
             display: none;
         }
-        .grid-container-aside-body {
+        section {
             grid-template-columns: calc((100% - 2 * 24px) / 3) 1fr;
         }
         .grid-container {
@@ -189,10 +190,10 @@
         }
     }
     @media only screen and (max-width: calc(3 * 168px + 4 * 24px - 1px)) {
-        .grid-container-aside-body > aside:has(+ header) {
+        section > aside:has(+ header) {
             grid-column: span 2;
         }
-        .grid-container-aside-body > aside + header {
+        section > aside + header {
             grid-column: span 2;
         }
         .grid-container {
