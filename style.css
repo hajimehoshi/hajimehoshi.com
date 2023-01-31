@@ -106,12 +106,12 @@
     .grid-container-aside-body {
         display: grid;
         grid-template-columns: 168px 1fr;
-        grid-gap: 24px; 24px;
+        grid-gap: 24px;
     }
     .grid-container {
         display: grid;
         grid-template-columns: repeat(3, calc((100% - 3 * 24px) / 3));
-        grid-gap: 24px; 24px;
+        grid-gap: 24px;
     }
     .grid-item-1 {
         grid-column: span 1;
@@ -128,6 +128,7 @@
     }
     dl {
         width: 100%;
+        grid-column: span 2;
 
         display: flex;
 	flex-wrap: wrap;
