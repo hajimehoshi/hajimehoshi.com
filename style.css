@@ -147,10 +147,10 @@
         section > * {
             grid-column: span 2;
         }
-        section > aside:has(+ header) {
+        section.title > aside {
             grid-column: span 1;
         }
-        section > aside + header {
+        section.title > header {
             grid-column: span 1;
         }
         section > *:empty {
@@ -179,10 +179,10 @@
         }
     }
     @media only screen and (max-width: calc(3 * 168px + 4 * 24px - 1px)) {
-        section > aside:has(+ header) {
+        section.title > aside {
             grid-column: span 2;
         }
-        section > aside + header {
+        section.title > header {
             grid-column: span 2;
         }
         .grid-container {
