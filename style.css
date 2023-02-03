@@ -1,3 +1,5 @@
+@import url(https://fonts.bunny.net/css?family=jetbrains-mono:400,700);
+
 @layer margin {
     * {
         padding: 0;
@@ -16,6 +18,9 @@
     h2, h3, h4, dt {
         font-family: 'HelveticaNowTextBold', 'Helvetica Neue', 'Helvetica', 'Arial', 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', 'BIZ UDPGothic', 'Meiryo', sans-serif;
         font-weight: normal;
+    }
+    code {
+        font-family: 'JetBrains Mono', monospace;
     }
 }
 
