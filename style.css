@@ -98,8 +98,12 @@
 @layer grid {
     section {
         display: grid;
-        grid-template-columns: 168px 1fr;
+        grid-template-columns: 1fr 168px;
         grid-gap: 24px;
+        direction: rtl;
+    }
+    section > * {
+        direction: ltr;
     }
     .grid-container {
         display: grid;
@@ -161,7 +165,7 @@
             display: none;
         }
         section {
-            grid-template-columns: calc((100% - 2 * 24px) / 3) 1fr;
+            grid-template-columns: 1fr calc((100% - 2 * 24px) / 3);
         }
         .grid-container {
             grid-template-columns: repeat(3, calc((100% - 2 * 24px) / 3));
