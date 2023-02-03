@@ -1,5 +1,7 @@
 @import url(https://fonts.bunny.net/css?family=jetbrains-mono:400,700);
 
+@layer margin, font, font-size, color, border, grid, figure;
+
 @layer margin {
     * {
         padding: 0;
@@ -243,5 +245,3 @@
         vertical-align: middle;
     }
 }
-
-@layer margin, font, font-size, color, border, grid, figure;
