@@ -99,18 +99,24 @@
 
 @layer grid {
     section {
-        display: grid;
-        grid-template-columns: 1fr 168px;
-        grid-gap: 24px;
-        direction: rtl;
+        display: flex;
+        flex-flow: row-reverse wrap;
+        gap: 24px;
     }
     section > * {
-        direction: ltr;
+        width: calc((100% - 3 * 24px) / 4 * 3 + 2 * 24px);
     }
+    section > h2, section > dl {
+        width: 100%;
+    }
+    section > aside {
+        width: 168px;
+    }
+
     .grid-container {
         display: grid;
         grid-template-columns: repeat(3, calc((100% - 3 * 24px) / 3));
-        grid-gap: 24px;
+        gap: 24px;
     }
     .grid-item-1 {
         grid-column: span 1;
@@ -123,13 +129,9 @@
     }
 
     h2 {
-        grid-column: span 2;
-        padding-left: calc(168px + 24px);
+        padding-left: calc((100% - 3 * 24px) / 4 + 24px)
     }
     dl {
-        width: 100%;
-        grid-column: span 2;
-
         display: flex;
 	flex-wrap: wrap;
 	align-items: stretch;
@@ -155,13 +157,13 @@
 
     @media only screen and (max-width: calc(4 * 168px + 5 * 24px - 1px)) {
         section > * {
-            grid-column: span 2;
+            width: 100%;
         }
         section.title > aside {
-            grid-column: span 1;
+            width: calc((100% - 2 * 24px) / 3);
         }
         section.title > header {
-            grid-column: span 1;
+            width: calc((100% - 2 * 24px) / 3 * 2 + 24px);
         }
         section > *:empty {
             display: none;
@@ -169,6 +171,7 @@
         section {
             grid-template-columns: 1fr calc((100% - 2 * 24px) / 3);
         }
+
         .grid-container {
             grid-template-columns: repeat(3, calc((100% - 2 * 24px) / 3));
         }
@@ -190,11 +193,12 @@
     }
     @media only screen and (max-width: calc(3 * 168px + 4 * 24px - 1px)) {
         section.title > aside {
-            grid-column: span 2;
+            width: 100%;
         }
         section.title > header {
-            grid-column: span 2;
+            width: 100%;
         }
+
         .grid-container {
             grid-template-columns: repeat(2, calc((100% - 24px) / 2));
         }
