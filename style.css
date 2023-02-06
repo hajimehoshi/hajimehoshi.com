@@ -115,7 +115,7 @@
 
     .grid-container {
         display: grid;
-        grid-template-columns: repeat(3, calc((100% - 3 * 24px) / 3));
+        grid-template-columns: repeat(3, calc((100% - 2 * 24px) / 3));
         gap: 24px;
     }
     .grid-item-1 {
