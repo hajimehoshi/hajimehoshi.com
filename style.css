@@ -30,7 +30,7 @@
   src: url('https://pub-e082e45448304c4586d03e46326f8078.r2.dev/font/SuisseIntlMono-Regular-WebXL.woff2') format('woff2');
 }
 
-@layer margin, font, font-size, color, border, grid, figure;
+@layer margin, font, font-size, text-decoration, color, border, grid, figure;
 
 @layer margin {
     * {
@@ -70,6 +70,13 @@
     h2 {
         font-size: 24px;
         line-height: 24px;
+    }
+}
+
+@layer text-decoration {
+    a {
+        text-decoration-line: underline;
+        text-decoration-thickness: 1px;
     }
 }
 
