@@ -1,33 +1,57 @@
 @font-face {
-  font-family: "SuisseIntl-Regular";
-  font-style: normal;
-  font-stretch: normal;
-  font-display: swap;
-  src: url('https://pub-e082e45448304c4586d03e46326f8078.r2.dev/font/SuisseIntl-Regular-WebXL.woff2') format('woff2');
+    font-family: 'SuisseIntl';
+    font-style: normal;
+    font-weight: 400;
+    font-stretch: normal;
+    font-display: swap;
+    src: url(https://pub-e082e45448304c4586d03e46326f8078.r2.dev/font/SuisseIntl-Regular-WebXL.woff2) format('woff2');
 }
 
 @font-face {
-  font-family: "SuisseIntl-SemiBold";
-  font-style: normal;
-  font-stretch: normal;
-  font-display: swap;
-  src: url('https://pub-e082e45448304c4586d03e46326f8078.r2.dev/font/SuisseIntl-SemiBold-WebXL.woff2') format('woff2');
+    font-family: 'SuisseIntl';
+    font-style: normal;
+    font-weight: 600;
+    font-stretch: normal;
+    font-display: swap;
+    src: url(https://pub-e082e45448304c4586d03e46326f8078.r2.dev/font/SuisseIntl-SemiBold-WebXL.woff2) format('woff2');
 }
 
 @font-face {
-  font-family: "SuisseIntlCond-Bold";
-  font-style: normal;
-  font-stretch: normal;
-  font-display: swap;
-  src: url('https://pub-e082e45448304c4586d03e46326f8078.r2.dev/font/SuisseIntlCond-Bold-WebXL.woff2') format('woff2');
+    font-family: 'SuisseIntlCond';
+    font-style: normal;
+    font-weight: 700;
+    font-stretch: normal;
+    font-display: swap;
+    src: url(https://pub-e082e45448304c4586d03e46326f8078.r2.dev/font/SuisseIntlCond-Bold-WebXL.woff2) format('woff2');
 }
 
 @font-face {
-  font-family: "SuisseIntlMono-Regular";
-  font-style: normal;
-  font-stretch: normal;
-  font-display: swap;
-  src: url('https://pub-e082e45448304c4586d03e46326f8078.r2.dev/font/SuisseIntlMono-Regular-WebXL.woff2') format('woff2');
+    font-family: 'SuisseIntlMono';
+    font-style: normal;
+    font-weight: 400;
+    font-stretch: normal;
+    font-display: swap;
+    src: url(https://pub-e082e45448304c4586d03e46326f8078.r2.dev/font/SuisseIntlMono-Regular-WebXL.woff2) format('woff2');
+}
+
+@font-face {
+    font-family: 'Noto Sans JP';
+    font-style: normal;
+    font-weight: 400;
+    font-stretch: 100%;
+    size-adjust: 95%;
+    font-display: swap;
+    src: url(https://fonts.bunny.net/noto-sans-jp/files/noto-sans-jp-japanese-400-normal.woff2) format('woff2')
+}
+
+@font-face {
+    font-family: 'Noto Sans JP';
+    font-style: normal;
+    font-weight: 700;
+    font-stretch: 100%;
+    size-adjust: 95%;
+    font-display: swap;
+    src: url(https://fonts.bunny.net/noto-sans-jp/files/noto-sans-jp-japanese-700-normal.woff2) format('woff2')
 }
 
 @layer margin, font, font-size, text-decoration, color, border, grid, figure;
@@ -41,19 +65,22 @@
 
 @layer font {
     body {
-        font-family: 'SuisseIntl-Regular', 'Helvetica Neue', 'Helvetica', 'Arial', 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', 'BIZ UDPGothic', 'Meiryo', sans-serif;
+        font-family: 'SuisseIntl', 'Helvetica Neue', 'Helvetica', 'Arial', 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', 'BIZ UDPGothic', 'Meiryo', sans-serif;
     }
     h1 {
-        font-family: 'SuisseIntlCond-Bold', 'HelveticaNeue-CondensedBold', 'Helvetica Neue', 'Arial', 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', 'BIZ UDPGothic', 'Meiryo', sans-serif-condensed, sans-serif;
-        font-weight: normal;
-        letter-spacing: 0;
+        font-family: 'SuisseIntl', 'Helvetica Neue', 'Helvetica', 'Arial', 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', 'BIZ UDPGothic', 'Meiryo', sans-serif-condensed, sans-serif;
+        font-weight: bold;
+    }
+    section.title h1 {
+        font-family: 'SuisseIntlCond', 'HelveticaNeue-CondensedBold', 'Helvetica Neue', 'Helvetica', 'Arial', 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', 'BIZ UDPGothic', 'Meiryo', sans-serif-condensed, sans-serif;
+        font-weight: bold;
     }
     h2, h3, h4, dt {
-        font-family: 'SuisseIntl-SemiBold', 'Helvetica Neue', 'Helvetica', 'Arial', 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', 'BIZ UDPGothic', 'Meiryo', sans-serif;
-        font-weight: normal;
+        font-family: 'SuisseIntl', 'Helvetica Neue', 'Helvetica', 'Arial', 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', 'BIZ UDPGothic', 'Meiryo', sans-serif;
+        font-weight: bold;
     }
     code {
-        font-family: 'SuisseIntlMono-Regular';/*, monospace;*/
+        font-family: 'SuisseIntlMono', monospace;
         letter-spacing: -0.04em;
     }
 }
@@ -64,6 +91,10 @@
         line-height: 24px;
     }
     h1 {
+        font-size: 32px;
+        line-height: 48px;
+    }
+    section.title h1 {
         font-size: 48px;
         line-height: 72px;
     }
