@@ -113,6 +113,10 @@ func TestInsertNodeBetweenWideAndNarrow(t *testing.T) {
 			In:  "<p><b><i>foo</i></b><b>あ</b><b><i>bar</i></b></p>",
 			Out: "<p><b><i>foo<dummy-space></dummy-space></i></b><b>あ<dummy-space></dummy-space></b><b><i>bar</i></b></p>",
 		},
+		{
+			In:  "<ul><li>foo</li><li>あ</li></ul>",
+			Out: "<ul><li>foo</li><li>あ</li></ul>",
+		},
 	}
 	for _, tc := range testCases {
 		nodes, err := html.ParseFragment(bytes.NewBufferString(tc.In), nil)

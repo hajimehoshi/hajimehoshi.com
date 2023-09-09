@@ -302,6 +302,7 @@ func removeInterElementWhitespace(node *html.Node) {
 		if strings.Trim(n.Data, asciiWhitespace) != "" {
 			continue
 		}
+
 		// Replace a whitespace text with one space character.
 		n.Data = " "
 
@@ -309,6 +310,7 @@ func removeInterElementWhitespace(node *html.Node) {
 			continue
 		}
 
+		// If a node is in between phrasing elements, reserve this.
 		if n.PrevSibling != nil && n.PrevSibling.Type == html.ElementNode && isPhrasingElementName(n.PrevSibling.Data) &&
 			n.NextSibling != nil && n.NextSibling.Type == html.ElementNode && isPhrasingElementName(n.NextSibling.Data) {
 			continue
@@ -411,8 +413,8 @@ func nextVisibleNode(node *html.Node) *html.Node {
 	for {
 		// Skip if the element is not visible.
 		if node.Type == html.ElementNode {
-			if isMetadataElementName(node.Data) {
-				return nextVisibleNode(node)
+			if !isPhrasingElementName(node.Data) {
+				return nil
 			}
 		}
 
