@@ -302,7 +302,7 @@ func removeInterElementWhitespace(node *html.Node) {
 		if strings.Trim(n.Data, asciiWhitespace) != "" {
 			continue
 		}
-		// Replace one space character
+		// Replace a whitespace text with one space character.
 		n.Data = " "
 
 		if n.PrevSibling == nil && n.NextSibling == nil {
