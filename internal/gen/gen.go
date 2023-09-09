@@ -15,6 +15,7 @@ import (
 
 	"golang.org/x/net/html"
 	"golang.org/x/text/width"
+	"golang.org/x/sync/errgroup"
 )
 
 // asciiWhitespace is a set of ASCII whitespace characters defined by the HTML spec.
@@ -46,7 +47,8 @@ func Run() error {
 }
 
 func removeHTMLs(outDir string) error {
-	return filepath.Walk(outDir, func(path string, info os.FileInfo, err error) error {
+	var wg errgroup.Group
+	if err := filepath.Walk(outDir, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err
 		}
@@ -56,17 +58,25 @@ func removeHTMLs(outDir string) error {
 		if filepath.Ext(path) != ".html" {
 			return nil
 		}
-		if err := os.Remove(path); err != nil {
-			return err
-		}
+		wg.Go(func() error {
+			return os.Remove(path)
+		})
 		return nil
-	})
+	}); err != nil {
+		return err
+	}
+
+	if err := wg.Wait(); err != nil {
+		return err
+	}
+	return nil
 }
 
 func generateHTMLs(outDir, inDir string) error {
 	datetime := time.Now().UTC().Format("20060102150405")
 
-	return filepath.Walk(inDir, func(path string, info os.FileInfo, err error) error {
+	var wg errgroup.Group
+	if err := filepath.Walk(inDir, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err
 		}
@@ -80,11 +90,19 @@ func generateHTMLs(outDir, inDir string) error {
 		if err != nil {
 			return err
 		}
-		if err := generateHTML(path, outDir, inDir, datetime); err != nil {
-			return err
-		}
+
+		wg.Go(func() error {
+			return generateHTML(path, outDir, inDir, datetime)
+		})
 		return nil
-	})
+	}); err != nil {
+		return err
+	}
+
+	if err := wg.Wait(); err != nil {
+		return err
+	}
+	return nil
 }
 
 func generateHTML(path string, outDir, inDir string, datetime string) error {
