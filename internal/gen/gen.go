@@ -231,6 +231,7 @@ func generateHTML(path string, outDir, inDir string, datetime string) error {
 	head.AppendChild(style)
 
 	removeInterElementWhitespace(node)
+	removeSpaceInTexts(node)
 	insertNodeBetweenWideAndNarrow(node, &html.Node{
 		Type: html.ElementNode,
 		Data: "span",
@@ -317,6 +318,60 @@ func removeInterElementWhitespace(node *html.Node) {
 		}
 
 		n.Parent.RemoveChild(n)
+	}
+}
+
+func removeSpaceInTexts(node *html.Node) {
+	if node.Type == html.ElementNode {
+		if isMetadataElementName(node.Data) {
+			return
+		}
+		if node.Data == "pre" {
+			return
+		}
+	}
+
+	var next *html.Node
+	for n := node.FirstChild; n != nil; n = next {
+		next = n.NextSibling
+
+		if n.Type != html.TextNode {
+			removeSpaceInTexts(n)
+			continue
+		}
+
+		// If the node is only with whitespace, this is special. Keep it as it is.
+		if strings.Trim(n.Data, asciiWhitespace) == "" {
+			continue
+		}
+
+		var data string
+		for _, line := range strings.Split(n.Data, "\n") {
+			line = strings.Trim(line, asciiWhitespace)
+			if line == "" {
+				continue
+			}
+			if len(data) > 0 {
+				r0, _ := utf8.DecodeLastRuneInString(data)
+				r1, _ := utf8.DecodeRuneInString(line)
+				if shouldReserveSpace(r0, r1) {
+					data += " "
+				}
+			}
+			data += line
+		}
+
+		if data == "" {
+			continue
+		}
+
+		r0, _ := utf8.DecodeLastRuneInString(data)
+		r1 := firstRuneAfter(n)
+		if shouldReserveSpace(r0, r1) {
+			data += " "
+		}
+
+		n.Data = data
 	}
 }
 
