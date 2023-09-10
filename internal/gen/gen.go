@@ -10,7 +10,6 @@ import (
 	"path/filepath"
 	"regexp"
 	"strings"
-	"time"
 	"unicode"
 	"unicode/utf8"
 
@@ -108,8 +107,6 @@ func removeHTMLs(outDir string) error {
 }
 
 func generateHTMLs(outDir, inDir string) error {
-	datetime := time.Now().UTC().Format("20060102150405")
-
 	var wg errgroup.Group
 	if err := filepath.Walk(inDir, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
@@ -127,7 +124,7 @@ func generateHTMLs(outDir, inDir string) error {
 		}
 
 		wg.Go(func() error {
-			return generateHTML(path, outDir, inDir, datetime)
+			return generateHTML(path, outDir, inDir)
 		})
 		return nil
 	}); err != nil {
@@ -140,7 +137,7 @@ func generateHTMLs(outDir, inDir string) error {
 	return nil
 }
 
-func generateHTML(path string, outDir, inDir string, datetime string) error {
+func generateHTML(path string, outDir, inDir string) error {
 	inPath := filepath.Join(inDir, path)
 	outPath := filepath.Join(outDir, path)
 
@@ -208,6 +205,10 @@ func generateHTML(path string, outDir, inDir string, datetime string) error {
 			},
 		},
 	})
+	h, err := fileHash(filepath.Join(outDir, "style.css"))
+	if err != nil {
+		return err
+	}
 	head.AppendChild(&html.Node{
 		Type: html.ElementNode,
 		Data: "link",
@@ -218,7 +219,7 @@ func generateHTML(path string, outDir, inDir string, datetime string) error {
 			},
 			{
 				Key: "href",
-				Val: fmt.Sprintf("/style.css?%s", datetime),
+				Val: fmt.Sprintf("/style.css?%s", h),
 			},
 		},
 	})
