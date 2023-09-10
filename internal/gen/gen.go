@@ -40,6 +40,32 @@ func hasASCIIWhitespaceTail(str string) bool {
 	return strings.TrimRight(str, asciiWhitespace) != str
 }
 
+func hasASCIIWhitespaceWithNewLineHead(str string) bool {
+	for _, r := range str {
+		if r == '\n' {
+			return true
+		}
+		if !isASCIIWhitespace(r) {
+			return false
+		}
+	}
+	return false
+}
+
+func hasASCIIWhitespaceWithNewLineTail(str string) bool {
+	for {
+		r, s := utf8.DecodeLastRuneInString(str)
+		if r == '\n' {
+			return true
+		}
+		if !isASCIIWhitespace(r) {
+			return false
+		}
+		str = str[:len(str)-s]
+	}
+	return false
+}
+
 func Run() error {
 	const (
 		outDir = "_site"
@@ -657,10 +683,10 @@ func shouldReserveSpaceBetweenTextNodes(n0, n1 *html.Node) bool {
 
 	d0 := n0.Data
 	d1 := n1.Data
-	if hasNewLineRight(d0) {
+	if hasASCIIWhitespaceWithNewLineTail(d0) {
 		d0 = strings.TrimRight(d0, asciiWhitespace)
 	}
-	if hasNewLineLeft(d1) {
+	if hasASCIIWhitespaceWithNewLineHead(d1) {
 		d1 = strings.TrimLeft(d1, asciiWhitespace)
 	}
 
@@ -701,32 +727,6 @@ func isPhrasingElementName(name string) bool {
 		if name == n {
 			return true
 		}
-	}
-	return false
-}
-
-func hasNewLineLeft(str string) bool {
-	for _, r := range str {
-		if r == '\n' {
-			return true
-		}
-		if !isASCIIWhitespace(r) {
-			return false
-		}
-	}
-	return false
-}
-
-func hasNewLineRight(str string) bool {
-	for {
-		r, s := utf8.DecodeLastRuneInString(str)
-		if r == '\n' {
-			return true
-		}
-		if !isASCIIWhitespace(r) {
-			return false
-		}
-		str = str[:len(str)-s]
 	}
 	return false
 }
