@@ -360,11 +360,10 @@ func processNewLines(node *html.Node) {
 			continue
 		}
 
-		var data string
-
 		prev := prevVisibleTextNode(n)
 		next := nextVisibleTextNode(n)
 
+		var data string
 		if len(n.Data) > 0 {
 			if prev != nil && shouldReserveSpaceBetweenTextNodes(prev, n) {
 				data += " "

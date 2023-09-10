@@ -173,6 +173,22 @@ func TestProcessNewLines(t *testing.T) {
 			In:  "<p>foo \n <b> \n あ \n </b><b> \n い \n </b> \n baz</p>",
 			Out: "<p>foo<b>あ</b><b>い</b>baz</p>",
 		},
+		{
+			In:  "<p>foo <b> \n あ \n </b><b> \n bar \n </b> baz</p>",
+			Out: "<p>foo <b>あ</b><b>bar</b> baz</p>",
+		},
+		{
+			In:  "<p>foo <b> \n bar \n </b><b> \n あ \n </b> baz</p>",
+			Out: "<p>foo <b>bar</b><b>あ</b> baz</p>",
+		},
+		{
+			In:  "<ul><li> foo </li><li> bar </li></ul>",
+			Out: "<ul><li> foo </li><li> bar </li></ul>",
+		},
+		{
+			In:  "<ul><li> あ </li><li> い </li></ul>",
+			Out: "<ul><li> あ </li><li> い </li></ul>",
+		},
 	}
 	for _, tc := range testCases {
 		nodes, err := html.ParseFragment(bytes.NewBufferString(tc.In), nil)
