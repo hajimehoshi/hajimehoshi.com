@@ -364,7 +364,7 @@ func processNewLines(node *html.Node) {
 		next := nextVisibleTextNode(n)
 
 		var data string
-		if len(n.Data) > 0 {
+		if len(n.Data) > 0 && (strings.Trim(n.Data, asciiWhitespace) != "" || !strings.Contains(n.Data, "\n")) {
 			if prev != nil && shouldReserveSpaceBetweenTextNodes(prev, n) {
 				data += " "
 			}
@@ -381,8 +381,8 @@ func processNewLines(node *html.Node) {
 			if next != nil && shouldReserveSpaceBetweenTextNodes(n, next) {
 				data += " "
 			}
-		} else {
-			if prev != nil && next != nil && shouldReserveSpaceBetweenTextNodes(prev, next) {
+		} else if prev != nil && next != nil && (strings.TrimRight(prev.Data, asciiWhitespace) != prev.Data || strings.TrimLeft(next.Data, asciiWhitespace) != next.Data || len(n.Data) > 0) {
+			if shouldReserveSpaceBetweenTextNodes(prev, next) {
 				data += " "
 			}
 		}

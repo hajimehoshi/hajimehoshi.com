@@ -85,6 +85,7 @@ func TestProcessNewLines(t *testing.T) {
 		In  string
 		Out string
 	}{
+		// Simple
 		{
 			In:  "<p>foo</p>",
 			Out: "<p>foo</p>",
@@ -97,6 +98,7 @@ func TestProcessNewLines(t *testing.T) {
 			In:  "<p>foo \n </p>",
 			Out: "<p>foo</p>",
 		},
+		// 1 English node
 		{
 			In:  "<p>foo <b> bar </b> baz</p>",
 			Out: "<p>foo <b> bar </b> baz</p>",
@@ -117,6 +119,11 @@ func TestProcessNewLines(t *testing.T) {
 			In:  "<p>foo \n <b> \n bar \n </b> \n baz</p>",
 			Out: "<p>foo <b>bar</b> baz</p>",
 		},
+		// 2 English nodes
+		{
+			In:  "<p>foo <b> bar </b><b> bar </b> baz</p>",
+			Out: "<p>foo <b> bar </b> <b> bar </b> baz</p>",
+		},
 		{
 			In:  "<p>foo <b> \n bar \n </b><b> \n bar \n </b> baz</p>",
 			Out: "<p>foo <b>bar</b> <b>bar</b> baz</p>",
@@ -126,13 +133,30 @@ func TestProcessNewLines(t *testing.T) {
 			Out: "<p>foo <b>bar</b> <b>bar</b> baz</p>",
 		},
 		{
-			In:  "<p>foo \n <b> bar </b> \n <b> bar </b> \n baz</p>",
+			In:  "<p>foo \n <b> \n bar</b> <b>bar \n </b> \n baz</p>",
+			Out: "<p>foo <b>bar</b> <b>bar</b> baz</p>",
+		},
+		{
+			In:  "<p>foo \n <b> bar </b><b> bar </b> \n baz</p>",
 			Out: "<p>foo <b> bar </b> <b> bar </b> baz</p>",
 		},
 		{
-			In:  "<p>foo \n <b> \n bar \n </b> \n <b> \n bar \n </b> \n baz</p>",
+			In:  "<p>foo \n <b> \n bar \n </b><b> \n bar \n </b> \n baz</p>",
 			Out: "<p>foo <b>bar</b> <b>bar</b> baz</p>",
 		},
+		{
+			In:  "<p>foo \n <b> \n bar</b><b>bar \n </b> \n baz</p>",
+			Out: "<p>foo <b>bar</b><b>bar</b> baz</p>",
+		},
+		{
+			In:  "<p>foo \n <b> \n bar</b> <b>bar \n </b> \n baz</p>",
+			Out: "<p>foo <b>bar</b> <b>bar</b> baz</p>",
+		},
+		{
+			In:  "<p>foo \n <b> \n bar</b> \n <b>bar \n </b> \n baz</p>",
+			Out: "<p>foo <b>bar</b> <b>bar</b> baz</p>",
+		},
+		// 1 Japanese node
 		{
 			In:  "<p>foo <b> あ </b> baz</p>",
 			Out: "<p>foo <b> あ </b> baz</p>",
@@ -153,6 +177,7 @@ func TestProcessNewLines(t *testing.T) {
 			In:  "<p>foo \n <b> \n あ \n </b> \n baz</p>",
 			Out: "<p>foo<b>あ</b>baz</p>",
 		},
+		// 2 Japanese node
 		{
 			In:  "<p>foo <b> あ </b><b> い </b> baz</p>",
 			Out: "<p>foo <b> あ </b> <b> い </b> baz</p>",
@@ -166,6 +191,10 @@ func TestProcessNewLines(t *testing.T) {
 			Out: "<p>foo<b>あ</b><b>い</b>baz</p>",
 		},
 		{
+			In:  "<p>foo \n <b> \n あ</b> <b>い \n </b> \n baz</p>",
+			Out: "<p>foo<b>あ</b> <b>い</b>baz</p>",
+		},
+		{
 			In:  "<p>foo \n <b> あ </b><b> い </b> \n baz</p>",
 			Out: "<p>foo <b> あ </b> <b> い </b> baz</p>",
 		},
@@ -174,20 +203,83 @@ func TestProcessNewLines(t *testing.T) {
 			Out: "<p>foo<b>あ</b><b>い</b>baz</p>",
 		},
 		{
+			In:  "<p>foo \n <b> \n あ</b><b>い \n </b> \n baz</p>",
+			Out: "<p>foo<b>あ</b><b>い</b>baz</p>",
+		},
+		{
+			In:  "<p>foo \n <b> \n あ</b> <b>い \n </b> \n baz</p>",
+			Out: "<p>foo<b>あ</b> <b>い</b>baz</p>",
+		},
+		{
+			In:  "<p>foo \n <b> \n あ</b> \n <b>い \n </b> \n baz</p>",
+			Out: "<p>foo<b>あ</b><b>い</b>baz</p>",
+		},
+		// 1 Japanese and 1 English nodes
+		{
 			In:  "<p>foo <b> \n あ \n </b><b> \n bar \n </b> baz</p>",
 			Out: "<p>foo <b>あ</b><b>bar</b> baz</p>",
 		},
+		{
+			In:  "<p>foo <b> \n あ \n </b> \n <b> \n bar \n </b> baz</p>",
+			Out: "<p>foo <b>あ</b><b>bar</b> baz</p>",
+		},
+		{
+			In:  "<p>foo <b> \n あ</b><b>bar \n </b> baz</p>",
+			Out: "<p>foo <b>あ</b><b>bar</b> baz</p>",
+		},
+		{
+			In:  "<p>foo <b> \n あ</b> <b>bar \n </b> baz</p>",
+			Out: "<p>foo <b>あ</b> <b>bar</b> baz</p>",
+		},
+		{
+			In:  "<p>foo <b> \n あ</b> \n <b>bar \n </b> baz</p>",
+			Out: "<p>foo <b>あ</b><b>bar</b> baz</p>",
+		},
+		// 1 English and 1 Japanese nodes
 		{
 			In:  "<p>foo <b> \n bar \n </b><b> \n あ \n </b> baz</p>",
 			Out: "<p>foo <b>bar</b><b>あ</b> baz</p>",
 		},
 		{
+			In:  "<p>foo <b> \n bar \n </b> \n <b> \n あ \n </b> baz</p>",
+			Out: "<p>foo <b>bar</b><b>あ</b> baz</p>",
+		},
+		{
+			In:  "<p>foo <b> \n bar</b><b>あ \n </b> baz</p>",
+			Out: "<p>foo <b>bar</b><b>あ</b> baz</p>",
+		},
+		{
+			In:  "<p>foo <b> \n bar</b> <b>あ \n </b> baz</p>",
+			Out: "<p>foo <b>bar</b> <b>あ</b> baz</p>",
+		},
+		{
+			In:  "<p>foo <b> \n bar</b> \n <b>あ \n </b> baz</p>",
+			Out: "<p>foo <b>bar</b><b>あ</b> baz</p>",
+		},
+		// List
+		{
 			In:  "<ul><li> foo </li><li> bar </li></ul>",
 			Out: "<ul><li> foo </li><li> bar </li></ul>",
 		},
 		{
+			In:  "<ul><li> foo</li><li>bar </li></ul>",
+			Out: "<ul><li> foo</li><li>bar </li></ul>",
+		},
+		{
 			In:  "<ul><li> あ </li><li> い </li></ul>",
 			Out: "<ul><li> あ </li><li> い </li></ul>",
+		},
+		{
+			In:  "<ul><li> あ</li><li>い </li></ul>",
+			Out: "<ul><li> あ</li><li>い </li></ul>",
+		},
+		{
+			In:  "<ul><li> あ</li> <li>い </li></ul>",
+			Out: "<ul><li> あ</li> <li>い </li></ul>",
+		},
+		{
+			In:  "<ul><li> あ</li> \n <li>い </li></ul>",
+			Out: "<ul><li> あ</li><li>い </li></ul>",
 		},
 	}
 	for _, tc := range testCases {
