@@ -266,6 +266,7 @@ func generateHTML(path string, outDir, inDir string) error {
 	})
 	head.AppendChild(style)
 
+	removeComments(node)
 	removeInterElementWhitespace(node)
 	processNewLines(node)
 	insertNodeBetweenWideAndNarrow(node, &html.Node{
@@ -315,6 +316,29 @@ func getElementByName(node *html.Node, name string) *html.Node {
 	return getElement(node, func(n *html.Node) bool {
 		return n.Data == name
 	})
+}
+
+func removeComments(node *html.Node) {
+	var next *html.Node
+	for n := node.FirstChild; n != nil; n = next {
+		next = n.NextSibling
+
+		if n.Type != html.CommentNode {
+			removeComments(n)
+			continue
+		}
+
+		prev := n.PrevSibling
+		n.Parent.RemoveChild(n)
+
+		// Merge two adjenct text nodes.
+		if prev != nil && prev.Type == html.TextNode && next != nil && next.Type == html.TextNode {
+			prev.Data += next.Data
+			next2 := next.NextSibling
+			next2.Parent.RemoveChild(next2)
+			next = next2
+		}
+	}
 }
 
 func removeInterElementWhitespace(node *html.Node) {
