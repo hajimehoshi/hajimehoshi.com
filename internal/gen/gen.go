@@ -205,6 +205,34 @@ func generateHTML(path string, outDir, inDir string) error {
 			},
 		},
 	})
+	head.AppendChild(&html.Node{
+		Type: html.ElementNode,
+		Data: "link",
+		Attr: []html.Attribute{
+			{
+				Key: "rel",
+				Val: "preconnect",
+			},
+			{
+				Key: "href",
+				Val: "https://fonts.bunny.net",
+			},
+		},
+	})
+	head.AppendChild(&html.Node{
+		Type: html.ElementNode,
+		Data: "link",
+		Attr: []html.Attribute{
+			{
+				Key: "rel",
+				Val: "preconnect",
+			},
+			{
+				Key: "href",
+				Val: "https://pub-e082e45448304c4586d03e46326f8078.r2.dev",
+			},
+		},
+	})
 	h, err := fileHash(filepath.Join(outDir, "style.css"))
 	if err != nil {
 		return err
