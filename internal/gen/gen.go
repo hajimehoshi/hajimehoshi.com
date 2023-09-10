@@ -582,7 +582,6 @@ func nextVisibleNode(node *html.Node) *html.Node {
 
 	// Search the first visible descendant.
 	for {
-		// Skip if the element is not visible.
 		if node.Type == html.ElementNode {
 			if !isPhrasingElementName(node.Data) {
 				return nil
@@ -606,7 +605,6 @@ func prevVisibleNode(node *html.Node) *html.Node {
 
 	// Search the last visible descendant.
 	for {
-		// Skip if the element is not visible.
 		if node.Type == html.ElementNode {
 			if !isPhrasingElementName(node.Data) {
 				return nil
