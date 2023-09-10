@@ -14,8 +14,8 @@ import (
 	"unicode/utf8"
 
 	"golang.org/x/net/html"
-	"golang.org/x/text/width"
 	"golang.org/x/sync/errgroup"
+	"golang.org/x/text/width"
 )
 
 // asciiWhitespace is a set of ASCII whitespace characters defined by the HTML spec.
