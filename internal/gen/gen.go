@@ -611,10 +611,6 @@ func shouldReserveSpaceAtHead(node *html.Node) bool {
 
 	prev := prevN.Data
 	current := node.Data
-	if !isASCIIWhitespace(rune(prev[len(prev)-1])) && !isASCIIWhitespace(rune(current[0])) {
-		return false
-	}
-
 	if hasNewLineRight(prev) {
 		prev = strings.TrimRight(prev, asciiWhitespace)
 	}
@@ -643,10 +639,6 @@ func shouldReserveSpaceAtTail(node *html.Node) bool {
 
 	current := node.Data
 	next := nextN.Data
-	if !isASCIIWhitespace(rune(current[len(current)-1])) && !isASCIIWhitespace(rune(next[0])) {
-		return false
-	}
-
 	if hasNewLineRight(current) {
 		current = strings.TrimRight(current, asciiWhitespace)
 	}
