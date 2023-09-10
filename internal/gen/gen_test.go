@@ -119,6 +119,14 @@ func TestProcessNewLines(t *testing.T) {
 			In:  "<p>foo \n <b> \n bar \n </b> \n baz</p>",
 			Out: "<p>foo <b>bar</b> baz</p>",
 		},
+		{
+			In:  "<p>a<a>a</a>a</p>",
+			Out: "<p>a<a>a</a>a</p>",
+		},
+		{
+			In:  "<p>(<a>a</a>)</p>",
+			Out: "<p>(<a>a</a>)</p>",
+		},
 		// 2 English nodes
 		{
 			In:  "<p>foo <b> bar </b><b> bar </b> baz</p>",

@@ -32,6 +32,14 @@ func isASCIIWhitespace(r rune) bool {
 	return false
 }
 
+func hasASCIIWhitespaceHead(str string) bool {
+	return strings.TrimLeft(str, asciiWhitespace) != str
+}
+
+func hasASCIIWhitespaceTail(str string) bool {
+	return strings.TrimRight(str, asciiWhitespace) != str
+}
+
 func Run() error {
 	const (
 		outDir = "_site"
@@ -365,8 +373,10 @@ func processNewLines(node *html.Node) {
 
 		var data string
 		if len(n.Data) > 0 && (strings.Trim(n.Data, asciiWhitespace) != "" || !strings.Contains(n.Data, "\n")) {
-			if prev != nil && shouldReserveSpaceBetweenTextNodes(prev, n) {
-				data += " "
+			if prev != nil && (hasASCIIWhitespaceTail(prev.Data) || hasASCIIWhitespaceHead(n.Data)) {
+				if shouldReserveSpaceBetweenTextNodes(prev, n) {
+					data += " "
+				}
 			}
 			for _, t := range reNewLineAndSpace.Split(n.Data, -1) {
 				if len(data) > 0 && t != "" {
@@ -378,10 +388,12 @@ func processNewLines(node *html.Node) {
 				}
 				data += t
 			}
-			if next != nil && shouldReserveSpaceBetweenTextNodes(n, next) {
-				data += " "
+			if next != nil && (hasASCIIWhitespaceTail(n.Data) || hasASCIIWhitespaceHead(next.Data)) {
+				if shouldReserveSpaceBetweenTextNodes(n, next) {
+					data += " "
+				}
 			}
-		} else if prev != nil && next != nil && (strings.TrimRight(prev.Data, asciiWhitespace) != prev.Data || strings.TrimLeft(next.Data, asciiWhitespace) != next.Data || len(n.Data) > 0) {
+		} else if prev != nil && next != nil && (hasASCIIWhitespaceTail(prev.Data) || hasASCIIWhitespaceHead(next.Data) || len(n.Data) > 0) {
 			if shouldReserveSpaceBetweenTextNodes(prev, next) {
 				data += " "
 			}
