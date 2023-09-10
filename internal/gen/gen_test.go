@@ -80,6 +80,109 @@ func TestRemoveInterElementWhitespace(t *testing.T) {
 	}
 }
 
+func TestProcessNewLines(t *testing.T) {
+	testCases := []struct {
+		In  string
+		Out string
+	}{
+		{
+			In:  "<p>foo</p>",
+			Out: "<p>foo</p>",
+		},
+		{
+			In:  "<p>foo </p>",
+			Out: "<p>foo </p>",
+		},
+		{
+			In:  "<p>foo \n </p>",
+			Out: "<p>foo</p>",
+		},
+		{
+			In:  "<p>foo <b> bar </b> baz</p>",
+			Out: "<p>foo <b> bar </b> baz</p>",
+		},
+		{
+			In:  "<p>foo <b> \n bar \n </b> baz</p>",
+			Out: "<p>foo <b>bar</b> baz</p>",
+		},
+		{
+			In:  "<p>foo<b> \n bar \n </b>baz</p>",
+			Out: "<p>foo <b>bar</b> baz</p>",
+		},
+		{
+			In:  "<p>foo \n <b> bar </b> \n baz</p>",
+			Out: "<p>foo <b> bar </b> baz</p>",
+		},
+		{
+			In:  "<p>foo \n <b> \n bar \n </b> \n baz</p>",
+			Out: "<p>foo <b>bar</b> baz</p>",
+		},
+		{
+			In:  "<p>foo <b> あ </b> baz</p>",
+			Out: "<p>foo <b> あ </b> baz</p>",
+		},
+		{
+			In:  "<p>foo <b> \n あ \n </b> baz</p>",
+			Out: "<p>foo <b>あ</b> baz</p>",
+		},
+		{
+			In:  "<p>foo<b> \n あ \n </b>baz</p>",
+			Out: "<p>foo<b>あ</b>baz</p>",
+		},
+		{
+			In:  "<p>foo \n <b> あ </b> \n baz</p>",
+			Out: "<p>foo <b> あ </b> baz</p>",
+		},
+		{
+			In:  "<p>foo \n <b> \n あ \n </b> \n baz</p>",
+			Out: "<p>foo<b>あ</b>baz</p>",
+		},
+		{
+			In:  "<p>foo <b> あ </b><b> い </b> baz</p>",
+			Out: "<p>foo <b> あ </b><b> い </b> baz</p>",
+		},
+		{
+			In:  "<p>foo <b> \n あ \n </b><b> \n い \n </b> baz</p>",
+			Out: "<p>foo <b>あ</b><b>い</b> baz</p>",
+		},
+		{
+			In:  "<p>foo<b> \n あ \n </b><b> \n い \n </b>baz</p>",
+			Out: "<p>foo<b>あ</b><b>い</b>baz</p>",
+		},
+		{
+			In:  "<p>foo \n <b> あ </b><b> い </b> \n baz</p>",
+			Out: "<p>foo <b> あ </b><b> い </b> baz</p>",
+		},
+		{
+			In:  "<p>foo \n <b> \n あ \n </b><b> \n い \n </b> \n baz</p>",
+			Out: "<p>foo<b>あ</b><b>い</b>baz</p>",
+		},
+	}
+	for _, tc := range testCases {
+		nodes, err := html.ParseFragment(bytes.NewBufferString(tc.In), nil)
+		if err != nil {
+			t.Error(err)
+			continue
+		}
+
+		node := nodes[0]
+		gen.ProcessNewLines(node)
+
+		var out bytes.Buffer
+		if err := html.Render(&out, node); err != nil {
+			t.Error(err)
+			continue
+		}
+		got := out.String()
+		got = strings.TrimPrefix(got, "<html><head></head><body>")
+		got = strings.TrimSuffix(got, "</body></html>")
+		want := tc.Out
+		if got != want {
+			t.Errorf("got: %s, want: %s", got, want)
+		}
+	}
+}
+
 func TestInsertNodeBetweenWideAndNarrow(t *testing.T) {
 	testCases := []struct {
 		In  string
@@ -103,15 +206,15 @@ func TestInsertNodeBetweenWideAndNarrow(t *testing.T) {
 		},
 		{
 			In:  "<p>foo<b>あ</b>bar</p>",
-			Out: "<p>foo<dummy-space></dummy-space><b>あ<dummy-space></dummy-space></b>bar</p>",
+			Out: "<p>foo<dummy-space></dummy-space><b>あ</b><dummy-space></dummy-space>bar</p>",
 		},
 		{
 			In:  "<p>foo<b>あ</b><b><i>bar</i></b></p>",
-			Out: "<p>foo<dummy-space></dummy-space><b>あ<dummy-space></dummy-space></b><b><i>bar</i></b></p>",
+			Out: "<p>foo<dummy-space></dummy-space><b>あ</b><dummy-space></dummy-space><b><i>bar</i></b></p>",
 		},
 		{
 			In:  "<p><b><i>foo</i></b><b>あ</b><b><i>bar</i></b></p>",
-			Out: "<p><b><i>foo<dummy-space></dummy-space></i></b><b>あ<dummy-space></dummy-space></b><b><i>bar</i></b></p>",
+			Out: "<p><b><i>foo</i></b><dummy-space></dummy-space><b>あ</b><dummy-space></dummy-space><b><i>bar</i></b></p>",
 		},
 		{
 			In:  "<ul><li>foo</li><li>あ</li></ul>",

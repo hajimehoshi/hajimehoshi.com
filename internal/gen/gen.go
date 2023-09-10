@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strings"
 	"time"
 	"unicode"
@@ -231,7 +232,7 @@ func generateHTML(path string, outDir, inDir string, datetime string) error {
 	head.AppendChild(style)
 
 	removeInterElementWhitespace(node)
-	removeSpaceInTexts(node)
+	processNewLines(node)
 	insertNodeBetweenWideAndNarrow(node, &html.Node{
 		Type: html.ElementNode,
 		Data: "span",
@@ -321,7 +322,7 @@ func removeInterElementWhitespace(node *html.Node) {
 	}
 }
 
-func removeSpaceInTexts(node *html.Node) {
+func processNewLines(node *html.Node) {
 	if node.Type == html.ElementNode {
 		if isMetadataElementName(node.Data) {
 			return
@@ -331,47 +332,47 @@ func removeSpaceInTexts(node *html.Node) {
 		}
 	}
 
-	var next *html.Node
-	for n := node.FirstChild; n != nil; n = next {
-		next = n.NextSibling
+	reNewLineAndSpace := regexp.MustCompile(`[\t\n\f\r ]*\n[\t\n\f\r ]*`)
+	reSpace := regexp.MustCompile(`[\t\n\f\r ]+`)
 
+	// Process child text nodes first.
+	for n := node.FirstChild; n != nil; n = n.NextSibling {
 		if n.Type != html.TextNode {
-			removeSpaceInTexts(n)
-			continue
-		}
-
-		// If the node is only with whitespace, this is special. Keep it as it is.
-		if strings.Trim(n.Data, asciiWhitespace) == "" {
 			continue
 		}
 
 		var data string
-		for _, line := range strings.Split(n.Data, "\n") {
-			line = strings.Trim(line, asciiWhitespace)
-			if line == "" {
-				continue
-			}
-			if len(data) > 0 {
-				r0, _ := utf8.DecodeLastRuneInString(data)
-				r1, _ := utf8.DecodeRuneInString(line)
-				if shouldReserveSpace(r0, r1) {
-					data += " "
-				}
-			}
-			data += line
-		}
 
-		if data == "" {
-			continue
-		}
-
-		r0, _ := utf8.DecodeLastRuneInString(data)
-		r1 := firstRuneAfter(n)
-		if shouldReserveSpace(r0, r1) {
+		if shouldReserveSpaceAtHead(n) {
 			data += " "
 		}
 
+		for _, t := range reNewLineAndSpace.Split(n.Data, -1) {
+			if len(data) > 0 && t != "" {
+				r0, _ := utf8.DecodeLastRuneInString(data)
+				r1, _ := utf8.DecodeRuneInString(t)
+				if shouldReserveSpaceBetweenRunes(r0, r1) {
+					data += " "
+				}
+			}
+			data += t
+		}
+
+		if shouldReserveSpaceAtTail(n) {
+			data += " "
+		}
+
+		data = reSpace.ReplaceAllString(data, " ")
+
 		n.Data = data
+	}
+
+	// Process child element nodes next.
+	for n := node.FirstChild; n != nil; n = n.NextSibling {
+		if n.Type == html.TextNode {
+			continue
+		}
+		processNewLines(n)
 	}
 }
 
@@ -385,12 +386,30 @@ func insertNodeBetweenWideAndNarrow(node *html.Node, insertingNode *html.Node) {
 		}
 	}
 
+	// Insert dummy empty text nodes between two elements. This might be replaced with insertingNode later.
 	var next *html.Node
 	for n := node.FirstChild; n != nil; n = next {
 		next = n.NextSibling
 
+		if n.Type != html.ElementNode {
+			continue
+		}
+		if n.NextSibling == nil {
+			continue
+		}
+		if n.NextSibling.Type != html.ElementNode {
+			continue
+		}
+		n.InsertBefore(&html.Node{
+			Type: html.TextNode,
+		}, n.NextSibling)
+	}
+
+	// Process child text nodes first.
+	for n := node.FirstChild; n != nil; n = next {
+		next = n.NextSibling
+
 		if n.Type != html.TextNode {
-			insertNodeBetweenWideAndNarrow(n, insertingNode)
 			continue
 		}
 
@@ -407,6 +426,7 @@ func insertNodeBetweenWideAndNarrow(node *html.Node, insertingNode *html.Node) {
 		}
 		tokens = append(tokens, n.Data[lastI:])
 
+		prevR := lastRuneBefore(n)
 		nextR := firstRuneAfter(n)
 
 		parent := n.Parent
@@ -424,43 +444,101 @@ func insertNodeBetweenWideAndNarrow(node *html.Node, insertingNode *html.Node) {
 			parent.InsertBefore(node, next)
 		}
 
-		for i, t := range tokens {
-			parent.InsertBefore(&html.Node{
-				Type: html.TextNode,
-				Data: t,
-			}, next)
-			if i == len(tokens)-1 {
-				continue
+		if len(tokens) > 0 {
+			if r, _ := utf8.DecodeRuneInString(tokens[0]); shouldHaveThinSpace(prevR, r) {
+				insertSpan()
 			}
-			insertSpan()
+			for i, t := range tokens {
+				parent.InsertBefore(&html.Node{
+					Type: html.TextNode,
+					Data: t,
+				}, next)
+				if i == len(tokens)-1 {
+					continue
+				}
+				insertSpan()
+			}
+			if r, _ := utf8.DecodeLastRuneInString(tokens[len(tokens)-1]); shouldHaveThinSpace(r, nextR) {
+				insertSpan()
+			}
+		} else {
+			if shouldHaveThinSpace(prevR, nextR) {
+				insertSpan()
+			}
 		}
-		if r, _ := utf8.DecodeLastRuneInString(tokens[len(tokens)-1]); shouldHaveThinSpace(r, nextR) {
-			insertSpan()
+	}
+
+	// Process child element nodes next.
+	for n := node.FirstChild; n != nil; n = n.NextSibling {
+		if n.Type == html.TextNode {
+			continue
 		}
+		insertNodeBetweenWideAndNarrow(n, insertingNode)
+	}
+
+	// Remove dummy empty text nodes.
+	for n := node.FirstChild; n != nil; n = next {
+		next = n.NextSibling
+
+		if n.Type != html.TextNode {
+			continue
+		}
+		if len(n.Data) > 0 {
+			continue
+		}
+		n.Parent.RemoveChild(n)
 	}
 }
 
 func firstRuneAfter(node *html.Node) rune {
+	node = nextVisibleTextNode(node)
+	if node == nil {
+		return -1
+	}
+
+	r, _ := utf8.DecodeRuneInString(node.Data)
+	return r
+}
+
+func lastRuneBefore(node *html.Node) rune {
+	node = prevVisibleTextNode(node)
+	if node == nil {
+		return -1
+	}
+
+	r, _ := utf8.DecodeLastRuneInString(node.Data)
+	return r
+}
+
+func nextVisibleTextNode(node *html.Node) *html.Node {
 	for {
 		node = nextVisibleNode(node)
 		if node == nil {
-			return -1
+			return nil
 		}
 
 		if node.Type == html.TextNode && len(node.Data) > 0 {
-			r, _ := utf8.DecodeRuneInString(node.Data)
-			return r
+			return node
+		}
+	}
+}
+
+func prevVisibleTextNode(node *html.Node) *html.Node {
+	for {
+		node = prevVisibleNode(node)
+		if node == nil {
+			return nil
+		}
+
+		if node.Type == html.TextNode && len(node.Data) > 0 {
+			return node
 		}
 	}
 }
 
 func nextVisibleNode(node *html.Node) *html.Node {
 	if node.NextSibling == nil {
-		for node = node.Parent; node != nil && node.NextSibling == nil; node = node.Parent {
-		}
-		if node == nil {
-			return nil
-		}
+		return nil
 	}
 	node = node.NextSibling
 
@@ -482,7 +560,31 @@ func nextVisibleNode(node *html.Node) *html.Node {
 	return node
 }
 
-func shouldReserveSpace(r0, r1 rune) bool {
+func prevVisibleNode(node *html.Node) *html.Node {
+	if node.PrevSibling == nil {
+		return nil
+	}
+	node = node.PrevSibling
+
+	// Search the last visible descendant.
+	for {
+		// Skip if the element is not visible.
+		if node.Type == html.ElementNode {
+			if !isPhrasingElementName(node.Data) {
+				return nil
+			}
+		}
+
+		if node.LastChild == nil {
+			break
+		}
+		node = node.LastChild
+	}
+
+	return node
+}
+
+func shouldReserveSpaceBetweenRunes(r0, r1 rune) bool {
 	if r0 == -1 || r1 == -1 {
 		return false
 	}
@@ -491,6 +593,70 @@ func shouldReserveSpace(r0, r1 rune) bool {
 	w0 := k0 == width.EastAsianWide || k0 == width.EastAsianFullwidth
 	w1 := k1 == width.EastAsianWide || k1 == width.EastAsianFullwidth
 	return !w0 && !w1
+}
+
+func shouldReserveSpaceAtHead(node *html.Node) bool {
+	if node.Type != html.TextNode {
+		panic("gen: node must be a text")
+	}
+
+	if node.Data == "" {
+		return false
+	}
+
+	prevN := prevVisibleTextNode(node)
+	if prevN == nil {
+		return false
+	}
+
+	prev := prevN.Data
+	current := node.Data
+	if !isASCIIWhitespace(rune(prev[len(prev)-1])) && !isASCIIWhitespace(rune(current[0])) {
+		return false
+	}
+
+	if hasNewLineRight(prev) {
+		prev = strings.TrimRight(prev, asciiWhitespace)
+	}
+	if hasNewLineLeft(current) {
+		current = strings.TrimLeft(current, asciiWhitespace)
+	}
+
+	r0, _ := utf8.DecodeLastRuneInString(prev)
+	r1, _ := utf8.DecodeRuneInString(current)
+	return shouldReserveSpaceBetweenRunes(r0, r1)
+}
+
+func shouldReserveSpaceAtTail(node *html.Node) bool {
+	if node.Type != html.TextNode {
+		panic("gen: node must be a text")
+	}
+
+	if node.Data == "" {
+		return false
+	}
+
+	nextN := nextVisibleTextNode(node)
+	if nextN == nil {
+		return false
+	}
+
+	current := node.Data
+	next := nextN.Data
+	if !isASCIIWhitespace(rune(current[len(current)-1])) && !isASCIIWhitespace(rune(next[0])) {
+		return false
+	}
+
+	if hasNewLineRight(current) {
+		current = strings.TrimRight(current, asciiWhitespace)
+	}
+	if hasNewLineLeft(next) {
+		next = strings.TrimLeft(next, asciiWhitespace)
+	}
+
+	r0, _ := utf8.DecodeLastRuneInString(current)
+	r1, _ := utf8.DecodeRuneInString(next)
+	return shouldReserveSpaceBetweenRunes(r0, r1)
 }
 
 func shouldHaveThinSpace(r0, r1 rune) bool {
@@ -525,6 +691,32 @@ func isPhrasingElementName(name string) bool {
 		if name == n {
 			return true
 		}
+	}
+	return false
+}
+
+func hasNewLineLeft(str string) bool {
+	for _, r := range str {
+		if r == '\n' {
+			return true
+		}
+		if !isASCIIWhitespace(r) {
+			return false
+		}
+	}
+	return false
+}
+
+func hasNewLineRight(str string) bool {
+	for {
+		r, s := utf8.DecodeLastRuneInString(str)
+		if r == '\n' {
+			return true
+		}
+		if !isASCIIWhitespace(r) {
+			return false
+		}
+		str = str[:len(str)-s]
 	}
 	return false
 }
