@@ -335,6 +335,25 @@ func processNewLines(node *html.Node) {
 	reNewLineAndSpace := regexp.MustCompile(`[\t\n\f\r ]*\n[\t\n\f\r ]*`)
 	reSpace := regexp.MustCompile(`[\t\n\f\r ]+`)
 
+	// Insert dummy empty text nodes between two elements.
+	var next *html.Node
+	for n := node.FirstChild; n != nil; n = next {
+		next = n.NextSibling
+
+		if n.Type != html.ElementNode {
+			continue
+		}
+		if n.NextSibling == nil {
+			continue
+		}
+		if n.NextSibling.Type != html.ElementNode {
+			continue
+		}
+		n.InsertBefore(&html.Node{
+			Type: html.TextNode,
+		}, n.NextSibling)
+	}
+
 	// Process child text nodes first.
 	for n := node.FirstChild; n != nil; n = n.NextSibling {
 		if n.Type != html.TextNode {
@@ -343,23 +362,30 @@ func processNewLines(node *html.Node) {
 
 		var data string
 
-		if shouldReserveSpaceAtHead(n) {
-			data += " "
-		}
+		prev := prevVisibleTextNode(n)
+		next := nextVisibleTextNode(n)
 
-		for _, t := range reNewLineAndSpace.Split(n.Data, -1) {
-			if len(data) > 0 && t != "" {
-				r0, _ := utf8.DecodeLastRuneInString(data)
-				r1, _ := utf8.DecodeRuneInString(t)
-				if shouldReserveSpaceBetweenRunes(r0, r1) {
-					data += " "
-				}
+		if len(n.Data) > 0 {
+			if prev != nil && shouldReserveSpaceBetweenTextNodes(prev, n) {
+				data += " "
 			}
-			data += t
-		}
-
-		if shouldReserveSpaceAtTail(n) {
-			data += " "
+			for _, t := range reNewLineAndSpace.Split(n.Data, -1) {
+				if len(data) > 0 && t != "" {
+					r0, _ := utf8.DecodeLastRuneInString(data)
+					r1, _ := utf8.DecodeRuneInString(t)
+					if shouldReserveSpaceBetweenRunes(r0, r1) {
+						data += " "
+					}
+				}
+				data += t
+			}
+			if next != nil && shouldReserveSpaceBetweenTextNodes(n, next) {
+				data += " "
+			}
+		} else {
+			if prev != nil && next != nil && shouldReserveSpaceBetweenTextNodes(prev, next) {
+				data += " "
+			}
 		}
 
 		data = reSpace.ReplaceAllString(data, " ")
@@ -373,6 +399,19 @@ func processNewLines(node *html.Node) {
 			continue
 		}
 		processNewLines(n)
+	}
+
+	// Remove dummy empty text nodes.
+	for n := node.FirstChild; n != nil; n = next {
+		next = n.NextSibling
+
+		if n.Type != html.TextNode {
+			continue
+		}
+		if len(n.Data) > 0 {
+			continue
+		}
+		n.Parent.RemoveChild(n)
 	}
 }
 
@@ -595,59 +634,29 @@ func shouldReserveSpaceBetweenRunes(r0, r1 rune) bool {
 	return !w0 && !w1
 }
 
-func shouldReserveSpaceAtHead(node *html.Node) bool {
-	if node.Type != html.TextNode {
+func shouldReserveSpaceBetweenTextNodes(n0, n1 *html.Node) bool {
+	if n0.Type != html.TextNode {
+		panic("gen: node must be a text")
+	}
+	if n1.Type != html.TextNode {
 		panic("gen: node must be a text")
 	}
 
-	if node.Data == "" {
+	if n0.Data == "" && n1.Data == "" {
 		return false
 	}
 
-	prevN := prevVisibleTextNode(node)
-	if prevN == nil {
-		return false
+	d0 := n0.Data
+	d1 := n1.Data
+	if hasNewLineRight(d0) {
+		d0 = strings.TrimRight(d0, asciiWhitespace)
+	}
+	if hasNewLineLeft(d1) {
+		d1 = strings.TrimLeft(d1, asciiWhitespace)
 	}
 
-	prev := prevN.Data
-	current := node.Data
-	if hasNewLineRight(prev) {
-		prev = strings.TrimRight(prev, asciiWhitespace)
-	}
-	if hasNewLineLeft(current) {
-		current = strings.TrimLeft(current, asciiWhitespace)
-	}
-
-	r0, _ := utf8.DecodeLastRuneInString(prev)
-	r1, _ := utf8.DecodeRuneInString(current)
-	return shouldReserveSpaceBetweenRunes(r0, r1)
-}
-
-func shouldReserveSpaceAtTail(node *html.Node) bool {
-	if node.Type != html.TextNode {
-		panic("gen: node must be a text")
-	}
-
-	if node.Data == "" {
-		return false
-	}
-
-	nextN := nextVisibleTextNode(node)
-	if nextN == nil {
-		return false
-	}
-
-	current := node.Data
-	next := nextN.Data
-	if hasNewLineRight(current) {
-		current = strings.TrimRight(current, asciiWhitespace)
-	}
-	if hasNewLineLeft(next) {
-		next = strings.TrimLeft(next, asciiWhitespace)
-	}
-
-	r0, _ := utf8.DecodeLastRuneInString(current)
-	r1, _ := utf8.DecodeRuneInString(next)
+	r0, _ := utf8.DecodeLastRuneInString(d0)
+	r1, _ := utf8.DecodeRuneInString(d1)
 	return shouldReserveSpaceBetweenRunes(r0, r1)
 }
 

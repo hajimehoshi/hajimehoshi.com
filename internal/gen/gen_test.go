@@ -75,7 +75,7 @@ func TestRemoveInterElementWhitespace(t *testing.T) {
 		got = strings.TrimSuffix(got, "</body></html>")
 		want := tc.Out
 		if got != want {
-			t.Errorf("got: %s, want: %s", got, want)
+			t.Errorf("got: %q, want: %q (in: %q)", got, want, tc.In)
 		}
 	}
 }
@@ -118,6 +118,22 @@ func TestProcessNewLines(t *testing.T) {
 			Out: "<p>foo <b>bar</b> baz</p>",
 		},
 		{
+			In:  "<p>foo <b> \n bar \n </b><b> \n bar \n </b> baz</p>",
+			Out: "<p>foo <b>bar</b> <b>bar</b> baz</p>",
+		},
+		{
+			In:  "<p>foo<b> \n bar \n </b><b> \n bar \n </b>baz</p>",
+			Out: "<p>foo <b>bar</b> <b>bar</b> baz</p>",
+		},
+		{
+			In:  "<p>foo \n <b> bar </b> \n <b> bar </b> \n baz</p>",
+			Out: "<p>foo <b> bar </b> <b> bar </b> baz</p>",
+		},
+		{
+			In:  "<p>foo \n <b> \n bar \n </b> \n <b> \n bar \n </b> \n baz</p>",
+			Out: "<p>foo <b>bar</b> <b>bar</b> baz</p>",
+		},
+		{
 			In:  "<p>foo <b> あ </b> baz</p>",
 			Out: "<p>foo <b> あ </b> baz</p>",
 		},
@@ -139,7 +155,7 @@ func TestProcessNewLines(t *testing.T) {
 		},
 		{
 			In:  "<p>foo <b> あ </b><b> い </b> baz</p>",
-			Out: "<p>foo <b> あ </b><b> い </b> baz</p>",
+			Out: "<p>foo <b> あ </b> <b> い </b> baz</p>",
 		},
 		{
 			In:  "<p>foo <b> \n あ \n </b><b> \n い \n </b> baz</p>",
@@ -151,7 +167,7 @@ func TestProcessNewLines(t *testing.T) {
 		},
 		{
 			In:  "<p>foo \n <b> あ </b><b> い </b> \n baz</p>",
-			Out: "<p>foo <b> あ </b><b> い </b> baz</p>",
+			Out: "<p>foo <b> あ </b> <b> い </b> baz</p>",
 		},
 		{
 			In:  "<p>foo \n <b> \n あ \n </b><b> \n い \n </b> \n baz</p>",
@@ -178,7 +194,7 @@ func TestProcessNewLines(t *testing.T) {
 		got = strings.TrimSuffix(got, "</body></html>")
 		want := tc.Out
 		if got != want {
-			t.Errorf("got: %s, want: %s", got, want)
+			t.Errorf("got: %q, want: %q (in: %q)", got, want, tc.In)
 		}
 	}
 }
@@ -244,7 +260,7 @@ func TestInsertNodeBetweenWideAndNarrow(t *testing.T) {
 		got = strings.TrimSuffix(got, "</body></html>")
 		want := tc.Out
 		if got != want {
-			t.Errorf("got: %s, want: %s", got, want)
+			t.Errorf("got: %q, want: %q (in: %q)", got, want, tc.In)
 		}
 	}
 }
