@@ -4,7 +4,7 @@
     font-weight: 400;
     font-stretch: normal;
     font-display: swap;
-    src: url(https://pub-e082e45448304c4586d03e46326f8078.r2.dev/font/SuisseIntl-Regular-WebXL.woff2) format('woff2');
+    src: url(https://res.hajimehoshi.com/fonts/SuisseIntl-Regular-WebXL.woff2) format('woff2');
 }
 
 @font-face {
@@ -13,7 +13,7 @@
     font-weight: 600;
     font-stretch: normal;
     font-display: swap;
-    src: url(https://pub-e082e45448304c4586d03e46326f8078.r2.dev/font/SuisseIntl-SemiBold-WebXL.woff2) format('woff2');
+    src: url(https://res.hajimehoshi.com/fonts/SuisseIntl-SemiBold-WebXL.woff2) format('woff2');
 }
 
 @font-face {
@@ -22,7 +22,7 @@
     font-weight: 700;
     font-stretch: normal;
     font-display: swap;
-    src: url(https://pub-e082e45448304c4586d03e46326f8078.r2.dev/font/SuisseIntlCond-Bold-WebXL.woff2) format('woff2');
+    src: url(https://res.hajimehoshi.com/fonts/SuisseIntlCond-Bold-WebXL.woff2) format('woff2');
 }
 
 @font-face {
@@ -31,7 +31,7 @@
     font-weight: 400;
     font-stretch: normal;
     font-display: swap;
-    src: url(https://pub-e082e45448304c4586d03e46326f8078.r2.dev/font/SuisseIntlMono-Regular-WebXL.woff2) format('woff2');
+    src: url(https://res.hajimehoshi.com/fonts/SuisseIntlMono-Regular-WebXL.woff2) format('woff2');
 }
 
 @font-face {

@@ -229,7 +229,7 @@ func generateHTML(path string, outDir, inDir string) error {
 			},
 			{
 				Key: "href",
-				Val: "https://pub-e082e45448304c4586d03e46326f8078.r2.dev",
+				Val: "https://res.hajimehoshi.com",
 			},
 		},
 	})
