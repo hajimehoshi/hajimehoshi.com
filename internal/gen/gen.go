@@ -261,11 +261,11 @@ func generateHTML(path string, outDir, inDir string) error {
 			},
 			{
 				Key: "href",
-				Val: "/hajimehoshi.png",
+				Val: "/hajimehoshi.webp",
 			},
 			{
 				Key: "type",
-				Val: "image/png",
+				Val: "image/webp",
 			},
 		},
 	})
