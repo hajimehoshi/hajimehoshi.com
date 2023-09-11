@@ -100,6 +100,8 @@ func removeHTMLs(outDir string) error {
 		return err
 	}
 
+	// TODO: Remove empty directories.
+
 	if err := wg.Wait(); err != nil {
 		return err
 	}
@@ -307,6 +309,10 @@ func generateHTML(path string, outDir, inDir string) error {
 			},
 		},
 	})
+
+	if err := os.MkdirAll(filepath.Dir(outPath), 0755); err != nil {
+		return err
+	}
 
 	out, err := os.Create(outPath)
 	if err != nil {
