@@ -155,6 +155,19 @@ func generateHTML(path string, outDir, inDir string) error {
 	}
 
 	htmle := getElementByName(node, "html")
+	if _, ok := getAttribute(htmle, "lang"); !ok {
+		lang := "en"
+		if dir := filepath.Dir(path); dir != "." {
+			if ts := strings.Split(dir, string(filepath.Separator)); len(ts) > 0 {
+				lang = ts[0]
+			}
+		}
+		htmle.Attr = append(htmle.Attr, html.Attribute{
+			Key: "lang",
+			Val: lang,
+		})
+	}
+
 	head := getElementByName(htmle, "head")
 	if getElement(head, func(n *html.Node) bool {
 		if n.Data != "meta" {
@@ -350,6 +363,15 @@ func getElementByName(node *html.Node, name string) *html.Node {
 	return getElement(node, func(n *html.Node) bool {
 		return n.Data == name
 	})
+}
+
+func getAttribute(node *html.Node, key string) (html.Attribute, bool) {
+	for _, a := range node.Attr {
+		if a.Key == key {
+			return a, true
+		}
+	}
+	return html.Attribute{}, false
 }
 
 func removeComments(node *html.Node) {
