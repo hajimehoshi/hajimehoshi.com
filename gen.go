@@ -1,10 +1,12 @@
 // SPDX-License-Identifier: Apache-2.0
 // SPDX-FileCopyrightText: 2023 Hajime Hoshi
 
+//go:build ignore
+
 package main
 
 import (
-	"log"
+	"fmt"
 	"os"
 
 	"github.com/hajimehoshi/hajimehoshi.com/internal/gen"
@@ -12,7 +14,7 @@ import (
 
 func main() {
 	if err := gen.Run(); err != nil {
-		log.Println(err)
+		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
 	}
 }
