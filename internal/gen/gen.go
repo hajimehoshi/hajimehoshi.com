@@ -304,7 +304,7 @@ func generateHTML(path string, outDir, inDir string) error {
 	style.AppendChild(&html.Node{
 		Type: html.TextNode,
 		Data: `.thin-space:after {
-  content: '\2005';
+  content: '\2006';
 }`,
 	})
 	head.AppendChild(style)
