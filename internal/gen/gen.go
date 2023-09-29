@@ -84,6 +84,19 @@ func Run() error {
 	return nil
 }
 
+func isIgnoredFile(path string) bool {
+	if strings.HasPrefix(filepath.Base(path), "#") {
+		return true
+	}
+	if strings.HasPrefix(filepath.Base(path), "_") {
+		return true
+	}
+	if strings.HasSuffix(path, "~") {
+		return true
+	}
+	return false
+}
+
 func copyNonHTMLFiles(outDir, inDir string) error {
 	var wg errgroup.Group
 	if err := filepath.Walk(inDir, func(path string, info os.FileInfo, err error) error {
@@ -96,13 +109,7 @@ func copyNonHTMLFiles(outDir, inDir string) error {
 		if filepath.Ext(path) == ".html" {
 			return nil
 		}
-		if strings.HasPrefix(filepath.Base(path), "#") {
-			return nil
-		}
-		if strings.HasPrefix(filepath.Base(path), "_") {
-			return nil
-		}
-		if strings.HasSuffix(path, "~") {
+		if isIgnoredFile(path) {
 			return nil
 		}
 		wg.Go(func() error {
@@ -152,6 +159,9 @@ func generateHTMLs(outDir, inDir string) error {
 			return nil
 		}
 		if filepath.Ext(path) != ".html" {
+			return nil
+		}
+		if isIgnoredFile(path) {
 			return nil
 		}
 		path, err = filepath.Rel(inDir, path)
