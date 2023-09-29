@@ -6,6 +6,7 @@ package gen
 import (
 	"bufio"
 	"fmt"
+	"io"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -71,7 +72,10 @@ func Run() error {
 		inDir  = "contents"
 	)
 
-	if err := removeHTMLs("_site"); err != nil {
+	if err := os.RemoveAll(outDir); err != nil {
+		return err
+	}
+	if err := copyNonHTMLFiles(outDir, inDir); err != nil {
 		return err
 	}
 	if err := generateHTMLs(outDir, inDir); err != nil {
@@ -80,28 +84,58 @@ func Run() error {
 	return nil
 }
 
-func removeHTMLs(outDir string) error {
+func copyNonHTMLFiles(outDir, inDir string) error {
 	var wg errgroup.Group
-	if err := filepath.Walk(outDir, func(path string, info os.FileInfo, err error) error {
+	if err := filepath.Walk(inDir, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err
 		}
 		if info.IsDir() {
 			return nil
 		}
-		if filepath.Ext(path) != ".html" {
+		if filepath.Ext(path) == ".html" {
+			return nil
+		}
+		if strings.HasPrefix(filepath.Base(path), "#") {
+			return nil
+		}
+		if strings.HasPrefix(filepath.Base(path), "_") {
+			return nil
+		}
+		if strings.HasSuffix(path, "~") {
 			return nil
 		}
 		wg.Go(func() error {
-			return os.Remove(path)
+			inRelPath, err := filepath.Rel(inDir, path)
+			if err != nil {
+				return err
+			}
+			outPath := filepath.Join(outDir, inRelPath)
+			if err := os.MkdirAll(filepath.Dir(outPath), 0755); err != nil {
+				return err
+			}
+
+			out, err := os.Create(outPath)
+			if err != nil {
+				return err
+			}
+			defer out.Close()
+
+			in, err := os.Open(path)
+			if err != nil {
+				return err
+			}
+			defer in.Close()
+
+			if _, err := io.Copy(out, in); err != nil {
+				return err
+			}
+			return nil
 		})
 		return nil
 	}); err != nil {
 		return err
 	}
-
-	// TODO: Remove empty directories.
-
 	if err := wg.Wait(); err != nil {
 		return err
 	}
