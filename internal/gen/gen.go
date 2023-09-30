@@ -824,10 +824,8 @@ func shouldHaveThinSpace(r0, r1 rune) bool {
 	if r0 == -1 || r1 == -1 {
 		return false
 	}
+
 	if unicode.IsSpace(r0) || unicode.IsSpace(r1) {
-		return false
-	}
-	if unicode.IsPunct(r0) || unicode.IsPunct(r1) {
 		return false
 	}
 
@@ -835,7 +833,11 @@ func shouldHaveThinSpace(r0, r1 rune) bool {
 	k1 := width.LookupRune(r1).Kind()
 	w0 := k0 == width.EastAsianWide || k0 == width.EastAsianFullwidth
 	w1 := k1 == width.EastAsianWide || k1 == width.EastAsianFullwidth
-	return w0 != w1
+	if w0 == w1 {
+		return false
+	}
+
+	return (w0 && !unicode.IsPunct(r0)) != (w1 && !unicode.IsPunct(r1))
 }
 
 func isMetadataElementName(name string) bool {

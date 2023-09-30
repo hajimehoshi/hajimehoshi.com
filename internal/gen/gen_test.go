@@ -329,6 +329,26 @@ func TestInsertNodeBetweenWideAndNarrow(t *testing.T) {
 			Out: "<p>foo<dummy-space></dummy-space>あ</p>",
 		},
 		{
+			In:  "<p>foo*</p>",
+			Out: "<p>foo*</p>",
+		},
+		{
+			In:  "<p>あ*</p>",
+			Out: "<p>あ<dummy-space></dummy-space>*</p>",
+		},
+		{
+			In:  "<p>あ。</p>",
+			Out: "<p>あ。</p>",
+		},
+		{
+			In:  "<p>あ&#34;</p>",
+			Out: "<p>あ<dummy-space></dummy-space>&#34;</p>",
+		},
+		{
+			In:  "<p>foo「</p>",
+			Out: "<p>foo「</p>",
+		},
+		{
 			In:  "<p>foo あ</p>",
 			Out: "<p>foo あ</p>",
 		},
