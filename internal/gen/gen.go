@@ -264,38 +264,60 @@ func generateHTML(path string, outDir, inDir string) error {
 			},
 		},
 	})
-	head.AppendChild(&html.Node{
-		Type: html.ElementNode,
-		Data: "link",
-		Attr: []html.Attribute{
-			{
-				Key: "rel",
-				Val: "preconnect",
+	// Preload woff2 files.
+	urls, err := woff2URLsInCSS(outDir)
+	if err != nil {
+		return err
+	}
+	if len(urls) == 0 {
+		return fmt.Errorf("gen: no woff2 files")
+	}
+	for _, url := range urls {
+		head.AppendChild(&html.Node{
+			Type: html.ElementNode,
+			Data: "link",
+			Attr: []html.Attribute{
+				{
+					Key: "rel",
+					Val: "preload",
+				},
+				{
+					Key: "href",
+					Val: url,
+				},
+				{
+					Key: "as",
+					Val: "font",
+				},
+				{
+					Key: "crossorigin",
+					Val: "anonymous",
+				},
 			},
-			{
-				Key: "href",
-				Val: "https://fonts.bunny.net",
-			},
-		},
-	})
-	head.AppendChild(&html.Node{
-		Type: html.ElementNode,
-		Data: "link",
-		Attr: []html.Attribute{
-			{
-				Key: "rel",
-				Val: "preconnect",
-			},
-			{
-				Key: "href",
-				Val: "https://res.hajimehoshi.com",
-			},
-		},
-	})
+		})
+	}
 	h, err := fileHash(filepath.Join(outDir, "style.css"))
 	if err != nil {
 		return err
 	}
+	head.AppendChild(&html.Node{
+		Type: html.ElementNode,
+		Data: "link",
+		Attr: []html.Attribute{
+			{
+				Key: "preload",
+				Val: "stylesheet",
+			},
+			{
+				Key: "href",
+				Val: fmt.Sprintf("/style.css?%s", h),
+			},
+			{
+				Key: "as",
+				Val: "style",
+			},
+		},
+	})
 	head.AppendChild(&html.Node{
 		Type: html.ElementNode,
 		Data: "link",
@@ -856,4 +878,25 @@ func isPhrasingElementName(name string) bool {
 		}
 	}
 	return false
+}
+
+func woff2URLsInCSS(outDir string) ([]string, error) {
+	f, err := os.Open(filepath.Join(outDir, "style.css"))
+	if err != nil {
+		return nil, err
+	}
+	defer f.Close()
+
+	re := regexp.MustCompile(`url\((https://.+?woff2)\)`)
+
+	var urls []string
+	s := bufio.NewScanner(f)
+	for s.Scan() {
+		m := re.FindStringSubmatch(s.Text())
+		if m == nil {
+			continue
+		}
+		urls = append(urls, m[1])
+	}
+	return urls, nil
 }
