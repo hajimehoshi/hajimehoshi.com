@@ -63,7 +63,6 @@ func hasASCIIWhitespaceWithNewLineTail(str string) bool {
 		}
 		str = str[:len(str)-s]
 	}
-	return false
 }
 
 func Run() error {
