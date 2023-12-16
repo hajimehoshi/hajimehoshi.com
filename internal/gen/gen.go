@@ -276,7 +276,7 @@ func generateHTML(path string, outDir, inDir string) error {
 		},
 	})
 	// Preload woff2 files.
-	urls, err := woff2URLsInCSS(outDir)
+	urls, err := woff2URLsInCSS(filepath.Join(outDir, "style.css"))
 	if err != nil {
 		return err
 	}
@@ -895,8 +895,8 @@ func isPhrasingElementName(name string) bool {
 	return false
 }
 
-func woff2URLsInCSS(outDir string) ([]string, error) {
-	f, err := os.Open(filepath.Join(outDir, "style.css"))
+func woff2URLsInCSS(cssFile string) ([]string, error) {
+	f, err := os.Open(cssFile)
 	if err != nil {
 		return nil, err
 	}
