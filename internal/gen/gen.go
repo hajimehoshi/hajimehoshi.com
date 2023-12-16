@@ -5,6 +5,7 @@ package gen
 
 import (
 	"bufio"
+	"bytes"
 	"fmt"
 	"io"
 	"os"
@@ -14,6 +15,7 @@ import (
 	"unicode"
 	"unicode/utf8"
 
+	"github.com/evanw/esbuild/pkg/api"
 	"golang.org/x/net/html"
 	"golang.org/x/sync/errgroup"
 	"golang.org/x/text/width"
@@ -366,11 +368,15 @@ func generateHTML(path string, outDir, inDir string) error {
 		Type: html.ElementNode,
 		Data: "style",
 	}
+	css, err := minifyCSS([]byte(`.thin-space:after {
+	content: '\2006';
+}`))
+	if err != nil {
+		return err
+	}
 	style.AppendChild(&html.Node{
 		Type: html.TextNode,
-		Data: `.thin-space:after {
-  content: '\2006';
-}`,
+		Data: string(css),
 	})
 	head.AppendChild(style)
 
@@ -898,4 +904,21 @@ func woff2URLsInCSS(outDir string) ([]string, error) {
 		urls = append(urls, m[1])
 	}
 	return urls, nil
+}
+
+func minifyCSS(css []byte) ([]byte, error) {
+	r := api.Transform(string(css), api.TransformOptions{
+		Loader:            api.LoaderCSS,
+		MinifyWhitespace:  true,
+		MinifyIdentifiers: true,
+		MinifySyntax:      true,
+	})
+	if len(r.Errors) > 0 {
+		var msgs []string
+		for _, e := range r.Errors {
+			msgs = append(msgs, e.Text)
+		}
+		return nil, fmt.Errorf("gen: minifying CSS failed: %s", strings.Join(msgs, ", "))
+	}
+	return bytes.TrimSpace(r.Code), nil
 }
