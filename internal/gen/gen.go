@@ -135,8 +135,18 @@ func copyNonHTMLFiles(outDir, inDir string) error {
 			}
 			defer in.Close()
 
-			if _, err := io.Copy(out, in); err != nil {
-				return err
+			if filepath.Ext(path) == ".css" {
+				outbuf := bufio.NewWriter(out)
+				if err := minifyCSS(outbuf, bufio.NewReader(in)); err != nil {
+					return err
+				}
+				if err := outbuf.Flush(); err != nil {
+					return err
+				}
+			} else {
+				if _, err := io.Copy(out, in); err != nil {
+					return err
+				}
 			}
 			return nil
 		})
@@ -368,15 +378,15 @@ func generateHTML(path string, outDir, inDir string) error {
 		Type: html.ElementNode,
 		Data: "style",
 	}
-	css, err := minifyCSS([]byte(`.thin-space:after {
+	var cssBuf bytes.Buffer
+	if err := minifyCSS(&cssBuf, bytes.NewReader([]byte(`.thin-space:after {
 	content: '\2006';
-}`))
-	if err != nil {
+}`))); err != nil {
 		return err
 	}
 	style.AppendChild(&html.Node{
 		Type: html.TextNode,
-		Data: string(css),
+		Data: cssBuf.String(),
 	})
 	head.AppendChild(style)
 
@@ -906,7 +916,11 @@ func woff2URLsInCSS(outDir string) ([]string, error) {
 	return urls, nil
 }
 
-func minifyCSS(css []byte) ([]byte, error) {
+func minifyCSS(out io.Writer, in io.Reader) error {
+	css, err := io.ReadAll(in)
+	if err != nil {
+		return err
+	}
 	r := api.Transform(string(css), api.TransformOptions{
 		Loader:            api.LoaderCSS,
 		MinifyWhitespace:  true,
@@ -918,7 +932,10 @@ func minifyCSS(css []byte) ([]byte, error) {
 		for _, e := range r.Errors {
 			msgs = append(msgs, e.Text)
 		}
-		return nil, fmt.Errorf("gen: minifying CSS failed: %s", strings.Join(msgs, ", "))
+		return fmt.Errorf("gen: minifying CSS failed: %s", strings.Join(msgs, ", "))
 	}
-	return bytes.TrimSpace(r.Code), nil
+	if _, err := out.Write(bytes.TrimSpace(r.Code)); err != nil {
+		return err
+	}
+	return nil
 }
