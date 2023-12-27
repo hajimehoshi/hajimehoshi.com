@@ -54,12 +54,22 @@
     src: url(https://fonts.bunny.net/noto-sans-jp/files/noto-sans-jp-japanese-700-normal.woff2) format('woff2')
 }
 
-@layer margin, font, font-size, text-decoration, color, border, grid, figure;
+@layer margin, size, font, font-size, text-decoration, color, border, grid, figure;
+
 
 @layer margin {
     * {
         padding: 0;
         margin: 0;
+    }
+}
+
+@layer size {
+    :root {
+        --unit-size: 24px;
+        --column-size: calc(7 * var(--unit-size));
+        --thick-border-width: 3px;
+        --thin-border-width: 1px;
     }
 }
 
@@ -91,24 +101,24 @@
 
 @layer font-size {
     body {
-        font-size: 16px;
-        line-height: 24px;
+        font-size: calc(var(--unit-size) * 2 / 3);
+        line-height: var(--unit-size);
     }
     h1 {
-        font-size: 32px;
-        line-height: 48px;
+        font-size: calc(2 * var(--unit-size) * 2 / 3);
+        line-height: calc(2 * var(--unit-size));
     }
     section.title h1 {
-        font-size: 48px;
-        line-height: 72px;
+        font-size: calc(3 * var(--unit-size) * 2 / 3);
+        line-height: calc(3 * var(--unit-size));
     }
     h2 {
-        font-size: 24px;
-        line-height: 24px;
+        font-size: var(--unit-size);
+        line-height: var(--unit-size);
     }
     h3 {
-        font-size: 16px;
-        line-height: 24px;
+        font-size: calc(var(--unit-size) * 2 / 3);
+        line-height: var(--unit-size);
     }
 }
 
@@ -120,11 +130,15 @@
 }
 
 @layer color {
+    :root {
+        --background-color: #f8f8f8;
+        --foreground-color: #222222;
+    }
     html {
-        background-color: #f8f8f8;
+        background-color: var(--background-color);
     }
     * {
-        color: #333;
+        color: var(--foreground-color);
     }
 }
 
@@ -143,30 +157,30 @@
         display: flex;
         flex-direction: column;
 
-        width: calc(4 * 168px + 3 * 24px);
-        max-width: calc(100vw - 2 * 24px);
+        width: calc(4 * var(--column-size) + 3 * var(--unit-size));
+        max-width: calc(100vw - 2 * var(--unit-size));
     }
 }
 
 @layer border {
     article {
-        border-top: 3px solid #333;
-        margin-top: calc(10.5px + 24px);
-        padding-top: 10.5px;
+        border-top: var(--thick-border-width) solid var(--foreground-color);
+        margin-top: calc((var(--unit-size) - var(--thick-border-width)) / 2 + var(--unit-size));
+        padding-top: calc((var(--unit-size) - var(--thick-border-width)) / 2);
 
-        border-bottom: 3px solid #333;
-        margin-bottom: calc(10.5px + 24px);
-        padding-bottom: calc(10.5px + 24px);
+        border-bottom: var(--thick-border-width) solid var(--foreground-color);
+        margin-bottom: calc((var(--unit-size) - var(--thick-border-width)) / 2 + var(--unit-size));
+        padding-bottom: calc((var(--unit-size) - var(--thick-border-width)) / 2 + var(--unit-size));
     }
     h2 {
-        border-bottom: 1px solid #333;
-        margin-bottom: calc(11.5px - 24px); /* This negative margin invalidates the gap of the grid of a section. */
-        padding-bottom: 11.5px;
+        border-bottom: var(--thin-border-width) solid var(--foreground-color);
+        margin-bottom: calc((var(--unit-size) - var(--thin-border-width)) / 2 - var(--unit-size)); /* This negative margin invalidates the gap of the grid of a section. */
+        padding-bottom: calc((var(--unit-size) - var(--thin-border-width)) / 2);
     }
     section {
-        border-top: 3px solid #333;
-        margin-top: calc(10.5px + 24px);
-        padding-top: 10.5px;
+        border-top: var(--thick-border-width) solid var(--foreground-color);
+        margin-top: calc((var(--unit-size) - var(--thick-border-width)) / 2 + var(--unit-size));
+        padding-top: calc((var(--unit-size) - var(--thick-border-width)) / 2);
     }
     section:first-of-type {
         border-top-style: none;
@@ -179,22 +193,22 @@
     section {
         display: flex;
         flex-flow: row-reverse wrap;
-        gap: 24px;
+        gap: var(--unit-size);
     }
     section > * {
-        width: calc((100% - 3 * 24px) / 4 * 3 + 2 * 24px);
+        width: calc((100% - 3 * var(--unit-size)) / 4 * 3 + 2 * var(--unit-size));
     }
     section > h2, section > dl {
         width: 100%;
     }
     section > aside {
-        width: 168px;
+        width: var(--column-size);
     }
 
     .grid-container {
         display: grid;
-        grid-template-columns: repeat(3, calc((100% - 2 * 24px) / 3));
-        gap: 24px;
+        grid-template-columns: repeat(3, calc((100% - 2 * var(--unit-size)) / 3));
+        gap: var(--unit-size);
     }
     .grid-item-1 {
         grid-column: span 1;
@@ -207,7 +221,7 @@
     }
 
     h2 {
-        padding-left: calc((100% - 3 * 24px) / 4 + 24px)
+        padding-left: calc((100% - 3 * var(--unit-size)) / 4 + var(--unit-size))
     }
     dl {
         display: flex;
@@ -215,16 +229,16 @@
 	align-items: stretch;
     }
     dt {
-        width: 168px;
-        padding-right: 24px;
+        width: var(--column-size);
+        padding-right: var(--unit-size);
         text-align: right;
     }
     dd {
-        width: calc(100% - 168px - 24px);
+        width: calc(100% - var(--column-size) - var(--unit-size));
     }
     dt, dd {
         padding-top: 3.75px;
-        border-top: 0.5px solid #333;
+        border-top: 0.5px solid var(--foreground-color);
         margin-top: 3.75px;
     }
     dt:first-of-type, dd:first-of-type {
@@ -233,25 +247,26 @@
         margin-top: 0;
     }
 
+    /* Unfortunately, CSS variables are not available at @media queries yet. */
     @media only screen and (max-width: calc(4 * 168px + 5 * 24px - 1px)) {
         section > * {
             width: 100%;
         }
         section.title > aside {
-            width: calc((100% - 2 * 24px) / 3);
+            width: calc((100% - 2 * var(--unit-size)) / 3);
         }
         section.title > header {
-            width: calc((100% - 2 * 24px) / 3 * 2 + 24px);
+            width: calc((100% - 2 * var(--unit-size)) / 3 * 2 + var(--unit-size));
         }
         section > *:empty {
             display: none;
         }
         section {
-            grid-template-columns: 1fr calc((100% - 2 * 24px) / 3);
+            grid-template-columns: 1fr calc((100% - 2 * var(--unit-size)) / 3);
         }
 
         .grid-container {
-            grid-template-columns: repeat(3, calc((100% - 2 * 24px) / 3));
+            grid-template-columns: repeat(3, calc((100% - 2 * var(--unit-size)) / 3));
         }
         .grid-item-2 {
             grid-column: span 3;
@@ -260,13 +275,13 @@
             padding-left: 0;
         }
         dt {
-            width: calc((100% - 2 * 24px) / 3);
+            width: calc((100% - 2 * var(--unit-size)) / 3);
         }
         dd {
-            width: calc((100% - 2 * 24px) / 3 * 2 + 24px);
+            width: calc((100% - 2 * var(--unit-size)) / 3 * 2 + var(--unit-size));
         }
         ul {
-            padding-left: 24px;
+            padding-left: var(--unit-size);
         }
     }
     @media only screen and (max-width: calc(3 * 168px + 4 * 24px - 1px)) {
@@ -278,7 +293,7 @@
         }
 
         .grid-container {
-            grid-template-columns: repeat(2, calc((100% - 24px) / 2));
+            grid-template-columns: repeat(2, calc((100% - var(--unit-size)) / 2));
         }
         .grid-item-2 {
             grid-column: span 2;
