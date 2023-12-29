@@ -131,8 +131,8 @@
 
 @layer color {
     :root {
-        --background-color: #f8f8f8;
-        --foreground-color: #222222;
+        --background-color: #ffffff;
+        --foreground-color: #101010;
     }
     html {
         background-color: var(--background-color);
