@@ -7,7 +7,11 @@ addEventListener("DOMContentLoaded", (e) => {
 
     let darkMode = false;
     if (localStorage.getItem('darkMode') !== null) {
-        darkMode = JSON.parse(localStorage.getItem('darkMode'));
+        try {
+            darkMode = !!JSON.parse(localStorage.getItem('darkMode'));
+        } catch (e) {
+            console.error(e);
+        }
     } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
         darkMode = true;
     }
