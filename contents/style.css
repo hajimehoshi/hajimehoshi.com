@@ -358,7 +358,7 @@
     input#dark-mode ~ label {
         display: inline-block;
         position: absolute;
-        top: calc(2 * var(--unit-size));
+        top: calc((var(--unit-size) - var(--thick-border-width)) / 4); /* Put the image in the middle of the article top. */
         right: max(calc((100vw - 4 * var(--column-size) - 3 * var(--unit-size) ) / 2), var(--unit-size));
     }
     input#dark-mode ~ label#dark-mode-light {
@@ -369,6 +369,10 @@
     }
     input#dark-mode:checked ~ label#dark-mode-dark {
         display: none;
+    }
+    input#dark-mode ~ label svg {
+        width: var(--unit-size);
+        height: var(--unit-size);
     }
     input#dark-mode ~ label svg path {
         fill: var(--foreground-color);
