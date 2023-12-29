@@ -139,7 +139,8 @@ func copyNonHTMLFiles(outDir, inDir string) error {
 			}
 			defer in.Close()
 
-			if filepath.Ext(path) == ".css" {
+			switch filepath.Ext(path) {
+			case ".css":
 				outbuf := bufio.NewWriter(out)
 				if err := minifyCSS(outbuf, bufio.NewReader(in)); err != nil {
 					return err
@@ -147,7 +148,15 @@ func copyNonHTMLFiles(outDir, inDir string) error {
 				if err := outbuf.Flush(); err != nil {
 					return err
 				}
-			} else {
+			case ".js":
+				outbuf := bufio.NewWriter(out)
+				if err := minifyJS(outbuf, bufio.NewReader(in)); err != nil {
+					return err
+				}
+				if err := outbuf.Flush(); err != nil {
+					return err
+				}
+			default:
 				if _, err := io.Copy(out, in); err != nil {
 					return err
 				}
@@ -397,6 +406,25 @@ func generateHTML(path string, outDir, inDir string) error {
 	if err := addHeader(node); err != nil {
 		return err
 	}
+
+	h, err = fileHash(filepath.Join(outDir, "script.js"))
+	if err != nil {
+		return err
+	}
+	head.AppendChild(&html.Node{
+		Type: html.ElementNode,
+		Data: "script",
+		Attr: []html.Attribute{
+			{
+				Key: "src",
+				Val: fmt.Sprintf("/script.js?%s", h),
+			},
+			{
+				Key: "defer",
+			},
+		},
+	})
+
 	removeComments(node)
 	removeInterElementWhitespace(node)
 	processNewLines(node)
@@ -958,6 +986,30 @@ func minifyCSS(out io.Writer, in io.Reader) error {
 			msgs = append(msgs, e.Text)
 		}
 		return fmt.Errorf("gen: minifying CSS failed: %s", strings.Join(msgs, ", "))
+	}
+	if _, err := out.Write(bytes.TrimSpace(r.Code)); err != nil {
+		return err
+	}
+	return nil
+}
+
+func minifyJS(out io.Writer, in io.Reader) error {
+	js, err := io.ReadAll(in)
+	if err != nil {
+		return err
+	}
+	r := api.Transform(string(js), api.TransformOptions{
+		Loader:            api.LoaderJS,
+		MinifyWhitespace:  true,
+		MinifyIdentifiers: true,
+		MinifySyntax:      true,
+	})
+	if len(r.Errors) > 0 {
+		var msgs []string
+		for _, e := range r.Errors {
+			msgs = append(msgs, e.Text)
+		}
+		return fmt.Errorf("gen: minifying JS failed: %s", strings.Join(msgs, ", "))
 	}
 	if _, err := out.Write(bytes.TrimSpace(r.Code)); err != nil {
 		return err
