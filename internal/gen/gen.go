@@ -525,7 +525,7 @@ func removeComments(node *html.Node) {
 		if prev != nil && prev.Type == html.TextNode && next != nil && next.Type == html.TextNode {
 			prev.Data += next.Data
 			next2 := next.NextSibling
-			next2.Parent.RemoveChild(next2)
+			next.Parent.RemoveChild(next)
 			next = next2
 		}
 	}
