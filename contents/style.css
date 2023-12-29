@@ -370,6 +370,9 @@
     input#dark-mode:checked ~ label#dark-mode-dark {
         display: none;
     }
+    input#dark-mode ~ label {
+        cursor: pointer;
+    }
     input#dark-mode ~ label svg {
         width: var(--unit-size);
         height: var(--unit-size);
