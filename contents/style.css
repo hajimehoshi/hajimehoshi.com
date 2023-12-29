@@ -137,8 +137,8 @@
         --foreground-color: color-mix(in oklab, var(--color-black) 90%, var(--color-white));
     }
     :root:has(input#dark-mode:checked) {
-        --background-color: color-mix(in oklab, var(--color-black) 90%, var(--color-white));
-        --foreground-color: color-mix(in oklab, var(--color-black) 0%, var(--color-white));
+        --background-color: color-mix(in oklab, var(--color-black) 100%, var(--color-white));
+        --foreground-color: color-mix(in oklab, var(--color-black) 10%, var(--color-white));
     }
     html {
         background-color: var(--background-color);
