@@ -6,6 +6,7 @@ package gen
 import (
 	"bufio"
 	"bytes"
+	"embed"
 	"fmt"
 	"io"
 	"os"
@@ -20,6 +21,9 @@ import (
 	"golang.org/x/sync/errgroup"
 	"golang.org/x/text/width"
 )
+
+//go:embed *.html
+var htmlFiles embed.FS
 
 // asciiWhitespace is a set of ASCII whitespace characters defined by the HTML spec.
 // https://infra.spec.whatwg.org/#ascii-whitespace
@@ -390,6 +394,9 @@ func generateHTML(path string, outDir, inDir string) error {
 	})
 	head.AppendChild(style)
 
+	if err := addHeader(node); err != nil {
+		return err
+	}
 	removeComments(node)
 	removeInterElementWhitespace(node)
 	processNewLines(node)
@@ -453,6 +460,24 @@ func getAttribute(node *html.Node, key string) (html.Attribute, bool) {
 		}
 	}
 	return html.Attribute{}, false
+}
+
+func addHeader(node *html.Node) error {
+	body := getElementByName(node, "body")
+	main := getElementByName(node, "main")
+
+	f, err := htmlFiles.Open("header.html")
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+
+	header, err := html.Parse(f)
+	if err != nil {
+		return err
+	}
+	body.InsertBefore(header, main)
+	return nil
 }
 
 func removeComments(node *html.Node) {

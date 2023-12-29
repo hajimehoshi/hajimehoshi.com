@@ -54,7 +54,7 @@
     src: url(https://fonts.bunny.net/noto-sans-jp/files/noto-sans-jp-japanese-700-normal.woff2) format('woff2')
 }
 
-@layer margin, size, font, font-size, text-decoration, color, border, grid, figure;
+@layer margin, size, font, font-size, text-decoration, color, border, grid, figure, dark-mode;
 
 
 @layer margin {
@@ -131,14 +131,22 @@
 
 @layer color {
     :root {
-        --background-color: #ffffff;
-        --foreground-color: #101010;
+        --color-white: #ffffff;
+        --color-black: #101010;
+        --background-color: color-mix(in oklab, var(--color-black) 0%, var(--color-white));
+        --foreground-color: color-mix(in oklab, var(--color-black) 90%, var(--color-white));
+    }
+    :root:has(input#dark-mode:checked) {
+        --background-color: color-mix(in oklab, var(--color-black) 90%, var(--color-white));
+        --foreground-color: color-mix(in oklab, var(--color-black) 0%, var(--color-white));
     }
     html {
         background-color: var(--background-color);
+        transition: background-color 0.1s ease;
     }
     * {
         color: var(--foreground-color);
+        transition: color 0.1s ease;
     }
 }
 
@@ -340,5 +348,29 @@
     }
     figure * {
         vertical-align: middle;
+    }
+}
+
+@layer dark-mode {
+    input#dark-mode {
+        display: none;
+    }
+    input#dark-mode ~ label {
+        display: inline-block;
+        position: absolute;
+        top: calc(2 * var(--unit-size));
+        right: max(calc((100vw - 4 * var(--column-size) - 3 * var(--unit-size) ) / 2), var(--unit-size));
+    }
+    input#dark-mode ~ label#dark-mode-light {
+        display: none;
+    }
+    input#dark-mode:checked ~ label#dark-mode-light {
+        display: inline-block;
+    }
+    input#dark-mode:checked ~ label#dark-mode-dark {
+        display: none;
+    }
+    input#dark-mode ~ label svg path {
+        fill: var(--foreground-color);
     }
 }
