@@ -68,8 +68,8 @@
     :root {
         --unit-size: 24px;
         --column-size: calc(7 * var(--unit-size));
-        --thick-border-width: 3px;
-        --thin-border-width: 1px;
+        --thick-border-width: 2px;
+        --thin-border-width: 0.5px;
     }
 }
 
