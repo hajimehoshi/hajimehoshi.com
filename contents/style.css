@@ -263,7 +263,7 @@
     }
 
     /* Unfortunately, CSS variables are not available at @media queries yet. */
-    @media only screen and (max-width: calc(4 * 168px + 5 * 24px - 1px)) {
+    @media only screen and (max-width: calc(4 * 168px + 5 * 24px + 8px)) {
         section > * {
             width: 100%;
         }
@@ -286,8 +286,9 @@
         .grid-item-2 {
             grid-column: span 3;
         }
-        h2 {
-            padding-left: 0;
+        section > header, section > h2, .grid-container {
+            padding-left: calc(var(--unit-size) / 6);
+            padding-right: calc(var(--unit-size) / 6);
         }
         dt {
             width: calc((100% - 2 * var(--unit-size)) / 3);
@@ -299,7 +300,7 @@
             padding-left: var(--unit-size);
         }
     }
-    @media only screen and (max-width: calc(3 * 168px + 4 * 24px - 1px)) {
+    @media only screen and (max-width: calc(3 * 168px + 4 * 24px + 8px)) {
         section.title > aside {
             width: 100%;
         }
@@ -327,6 +328,10 @@
             padding-top: 0;
             border-top-style: none;
             margin-top: 0;
+        }
+        dt, dd {
+            padding-left: calc(var(--unit-size) / 6);
+            padding-right: calc(var(--unit-size) / 6);
         }
     }
     @media only screen and (max-width: calc(2 * 168px + 3 * 24px - 1px)) {
