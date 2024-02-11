@@ -73,8 +73,8 @@
     }
     :root:has(input#dark-mode:checked) {
         /* Use thinner borders as the border color is white, which is 'an expanding color'. */
-        --thick-border-width: 1.75px;
-        --thin-border-width: 0.25px;
+        --thick-border-width: 1.5px;
+        /* For thin borders, adjust colors instead of the width */
     }
 }
 
@@ -140,10 +140,12 @@
         --color-black: #101010;
         --background-color: color-mix(in oklab, var(--color-black) 0%, var(--color-white));
         --foreground-color: color-mix(in oklab, var(--color-black) 90%, var(--color-white));
+        --thin-border-color: var(--foreground-color);
     }
     :root:has(input#dark-mode:checked) {
         --background-color: color-mix(in oklab, var(--color-black) 100%, var(--color-white));
         --foreground-color: color-mix(in oklab, var(--color-black) 10%, var(--color-white));
+        --thin-border-color: color-mix(in oklab, var(--color-black) 55%, var(--color-white));
     }
     html {
         background-color: var(--background-color);
@@ -186,7 +188,7 @@
         padding-bottom: calc((var(--unit-size) - var(--thick-border-width)) / 2 + var(--unit-size));
     }
     h2 {
-        border-bottom: var(--thin-border-width) solid var(--foreground-color);
+        border-bottom: var(--thin-border-width) solid var(--thin-border-color);
         margin-bottom: calc((var(--unit-size) - var(--thin-border-width)) / 2 - var(--unit-size)); /* This negative margin invalidates the gap of the grid of a section. */
         padding-bottom: calc((var(--unit-size) - var(--thin-border-width)) / 2);
     }
@@ -251,7 +253,7 @@
     }
     dt, dd {
         padding-top: calc((var(--unit-size) / 3 - var(--thin-border-width)) / 2);
-        border-top: var(--thin-border-width) solid var(--foreground-color);
+        border-top: var(--thin-border-width) solid var(--thin-border-color);
         margin-top: calc((var(--unit-size) / 3 - var(--thin-border-width)) / 2);
     }
     dt:first-of-type, dd:first-of-type {
