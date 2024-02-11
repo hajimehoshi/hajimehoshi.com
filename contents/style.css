@@ -240,8 +240,8 @@
     }
     dl {
         display: flex;
-	flex-wrap: wrap;
-	align-items: stretch;
+        flex-wrap: wrap;
+        align-items: stretch;
     }
     dt {
         width: var(--column-size);
