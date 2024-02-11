@@ -245,9 +245,9 @@
         width: calc(100% - var(--column-size) - var(--unit-size));
     }
     dt, dd {
-        padding-top: 3.75px;
-        border-top: 0.5px solid var(--foreground-color);
-        margin-top: 3.75px;
+        padding-top: calc((var(--unit-size) / 3 - var(--thin-border-width)) / 2);
+        border-top: var(--thin-border-width) solid var(--foreground-color);
+        margin-top: calc((var(--unit-size) / 3 - var(--thin-border-width)) / 2);
     }
     dt:first-of-type, dd:first-of-type {
         padding-top: 0;
