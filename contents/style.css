@@ -71,6 +71,11 @@
         --thick-border-width: 2px;
         --thin-border-width: 0.5px;
     }
+    :root:has(input#dark-mode:checked) {
+        /* Use thinner borders as the border color is white, which is 'an expanding color'. */
+        --thick-border-width: 1.75px;
+        --thin-border-width: 0.25px;
+    }
 }
 
 @layer font {
