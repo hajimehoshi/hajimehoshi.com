@@ -263,12 +263,9 @@
     }
 
     /* Unfortunately, CSS variables are not available at @media queries yet. */
-    @media only screen and (max-width: calc(4 * 168px + 5 * 24px + 8px)) {
+    @media only screen and (max-width: calc(4 * 168px + 5 * 24px + 8px - 1px)) {
         section > * {
             width: 100%;
-        }
-        section.title > aside {
-            width: calc((100% - 2 * var(--unit-size)) / 3);
         }
         section.title > header {
             width: calc((100% - 2 * var(--unit-size)) / 3 * 2 + var(--unit-size));
@@ -300,7 +297,7 @@
             padding-left: var(--unit-size);
         }
     }
-    @media only screen and (max-width: calc(3 * 168px + 4 * 24px + 8px)) {
+    @media only screen and (max-width: calc(3 * 168px + 4 * 24px + 8px - 1px)) {
         section.title > aside {
             width: 100%;
         }
