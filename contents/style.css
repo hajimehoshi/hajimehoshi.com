@@ -125,6 +125,10 @@
         font-size: calc(var(--unit-size) * 2 / 3);
         line-height: var(--unit-size);
     }
+    small {
+        font-size: calc(var(--unit-size) * 1 / 2);
+        line-height: var(--unit-size);
+    }
 }
 
 @layer text-decoration {
@@ -141,11 +145,13 @@
         --background-color: color-mix(in oklab, var(--color-black) 0%, var(--color-white));
         --foreground-color: color-mix(in oklab, var(--color-black) 80%, var(--color-white));
         --thin-border-color: var(--foreground-color);
+        --sub-color: color-mix(in oklab, var(--color-black) 60%, var(--color-white));
     }
     :root:has(input#dark-mode:checked) {
         --background-color: color-mix(in oklab, var(--color-black) 100%, var(--color-white));
         --foreground-color: color-mix(in oklab, var(--color-black) 20%, var(--color-white));
         --thin-border-color: color-mix(in oklab, var(--foreground-color), transparent 50%);
+        --sub-color: color-mix(in oklab, var(--color-black) 40%, var(--color-white));
     }
     html {
         background-color: var(--background-color);
@@ -157,6 +163,9 @@
     }
     a {
         text-decoration-color: var(--thin-border-color);
+    }
+    small {
+        color: var(--sub-color);
     }
 }
 
