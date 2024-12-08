@@ -167,6 +167,9 @@
     small {
         color: var(--sub-color);
     }
+    li::marker {
+        color: var(--sub-color);
+    }
 }
 
 @layer flex {
