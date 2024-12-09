@@ -615,7 +615,7 @@ func processNewLines(node *html.Node) {
 		var data string
 		if len(n.Data) > 0 && (strings.Trim(n.Data, asciiWhitespace) != "" || !strings.Contains(n.Data, "\n")) {
 			if prev != nil && (hasASCIIWhitespaceTail(prev.Data) || hasASCIIWhitespaceHead(n.Data)) {
-				if shouldReserveSpaceBetweenTextNodes(prev, n) {
+				if shouldReserveSpaceBetweenTexts(prev.Data, n.Data) {
 					data += " "
 				}
 			}
@@ -630,12 +630,12 @@ func processNewLines(node *html.Node) {
 				data += t
 			}
 			if next != nil && (hasASCIIWhitespaceTail(n.Data) || hasASCIIWhitespaceHead(next.Data)) {
-				if shouldReserveSpaceBetweenTextNodes(n, next) {
+				if shouldReserveSpaceBetweenTexts(n.Data, next.Data) {
 					data += " "
 				}
 			}
 		} else if prev != nil && next != nil && (hasASCIIWhitespaceTail(prev.Data) || hasASCIIWhitespaceHead(next.Data) || len(n.Data) > 0) {
-			if shouldReserveSpaceBetweenTextNodes(prev, next) {
+			if shouldReserveSpaceBetweenTexts(prev.Data, next.Data) {
 				data += " "
 			}
 		}
@@ -884,20 +884,11 @@ func shouldReserveSpaceBetweenRunes(r0, r1 rune) bool {
 	return !w0 && !w1
 }
 
-func shouldReserveSpaceBetweenTextNodes(n0, n1 *html.Node) bool {
-	if n0.Type != html.TextNode {
-		panic("gen: node must be a text")
-	}
-	if n1.Type != html.TextNode {
-		panic("gen: node must be a text")
-	}
-
-	if n0.Data == "" && n1.Data == "" {
+func shouldReserveSpaceBetweenTexts(d0, d1 string) bool {
+	if d0 == "" && d1 == "" {
 		return false
 	}
 
-	d0 := n0.Data
-	d1 := n1.Data
 	if hasASCIIWhitespaceWithNewLineTail(d0) {
 		d0 = strings.TrimRight(d0, asciiWhitespace)
 	}
