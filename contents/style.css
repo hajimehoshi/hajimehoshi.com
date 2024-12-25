@@ -4,7 +4,7 @@
     font-weight: 400;
     font-stretch: normal;
     font-display: swap;
-    src: url(https://res.hajimehoshi.com/fonts/SuisseIntl-Regular-WebXL.woff2) format('woff2');
+    src: url(https://res.hajimehoshi.com/fonts/SuisseIntl-Regular.woff2) format('woff2');
 }
 
 @font-face {
@@ -13,7 +13,7 @@
     font-weight: 600;
     font-stretch: normal;
     font-display: swap;
-    src: url(https://res.hajimehoshi.com/fonts/SuisseIntl-SemiBold-WebXL.woff2) format('woff2');
+    src: url(https://res.hajimehoshi.com/fonts/SuisseIntl-SemiBold.woff2) format('woff2');
 }
 
 @font-face {
