@@ -1,6 +1,15 @@
 @font-face {
     font-family: 'SuisseIntl';
     font-style: normal;
+    font-weight: 300;
+    font-stretch: normal;
+    font-display: swap;
+    src: url(https://res.hajimehoshi.com/fonts/SuisseIntl-Light.woff2) format('woff2');
+}
+
+@font-face {
+    font-family: 'SuisseIntl';
+    font-style: normal;
     font-weight: 400;
     font-stretch: normal;
     font-display: swap;
@@ -37,11 +46,31 @@
 @font-face {
     font-family: 'Noto Sans JP';
     font-style: normal;
+    font-weight: 300;
+    font-stretch: 100%;
+    size-adjust: 95%;
+    font-display: swap;
+    src: url(https://fonts.bunny.net/noto-sans-jp/files/noto-sans-jp-japanese-300-normal.woff2) format('woff2')
+}
+
+@font-face {
+    font-family: 'Noto Sans JP';
+    font-style: normal;
     font-weight: 400;
     font-stretch: 100%;
     size-adjust: 95%;
     font-display: swap;
     src: url(https://fonts.bunny.net/noto-sans-jp/files/noto-sans-jp-japanese-400-normal.woff2) format('woff2')
+}
+
+@font-face {
+    font-family: 'Noto Sans JP';
+    font-style: normal;
+    font-weight: 6000;
+    font-stretch: 100%;
+    size-adjust: 95%;
+    font-display: swap;
+    src: url(https://fonts.bunny.net/noto-sans-jp/files/noto-sans-jp-japanese-600-normal.woff2) format('woff2')
 }
 
 @font-face {
@@ -81,26 +110,36 @@
 @layer font {
     body {
         font-family: 'SuisseIntl', 'Helvetica Neue', 'Helvetica', 'Arial', 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', 'BIZ UDPGothic', 'Meiryo', sans-serif;
+        font-weight: 300;
         letter-spacing: 0.02em;
     }
     h1 {
         font-family: 'SuisseIntl', 'Helvetica Neue', 'Helvetica', 'Arial', 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', 'BIZ UDPGothic', 'Meiryo', sans-serif-condensed, sans-serif;
-        font-weight: bold;
+        font-weight: 600;
         letter-spacing: 0;
     }
     section.title h1 {
         font-family: 'SuisseIntlCond', 'HelveticaNeue-CondensedBold', 'Helvetica Neue', 'Helvetica', 'Arial', 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', 'BIZ UDPGothic', 'Meiryo', sans-serif-condensed, sans-serif;
-        font-weight: bold;
+        font-weight: 700;
         letter-spacing: 0;
     }
-    h2, h3, h4, dt {
+    h2 {
         font-family: 'SuisseIntl', 'Helvetica Neue', 'Helvetica', 'Arial', 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', 'BIZ UDPGothic', 'Meiryo', sans-serif;
-        font-weight: bold;
+        font-weight: 600;
+        letter-spacing: 0;
+    }
+    h3, h4, dt {
+        font-family: 'SuisseIntl', 'Helvetica Neue', 'Helvetica', 'Arial', 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', 'BIZ UDPGothic', 'Meiryo', sans-serif;
+        font-weight: 600;
         letter-spacing: 0;
     }
     code {
         font-family: 'SuisseIntlMono', monospace;
+        font-weight: 400;
         letter-spacing: -0.04em;
+    }
+    small {
+        font-weight: 400;
     }
 }
 
@@ -141,15 +180,17 @@
 @layer color {
     :root {
         --color-white: #ffffff;
-        --color-black: color-mix(in oklab, #000000 80%, var(--color-white));;
+        --color-black: color-mix(in oklab, #000000 80%, var(--color-white));
         --background-color: color-mix(in oklab, var(--color-black), var(--color-white) 95%);
         --foreground-color: color-mix(in oklab, var(--color-black), var(--color-white) 10%);
+        --header-color: color-mix(in oklab, var(--color-black), var(--color-white) 10%);
         --thin-border-color: var(--foreground-color);
         --sub-color: color-mix(in oklab, var(--color-black) 60%, var(--color-white));
     }
     :root:has(input#dark-mode:checked) {
         --background-color: color-mix(in oklab, var(--color-black), var(--color-white) 5%);
-        --foreground-color: color-mix(in oklab, var(--color-black), var(--color-white) 90%);
+        --foreground-color: color-mix(in oklab, var(--color-black), var(--color-white) 80%);
+        --header-color: color-mix(in oklab, var(--color-black), var(--color-white) 90%);
         --thin-border-color: color-mix(in oklab, var(--foreground-color), transparent 50%);
         --sub-color: color-mix(in oklab, var(--color-black) 40%, var(--color-white));
     }
@@ -167,6 +208,9 @@
     }
     li::marker {
         color: var(--sub-color);
+    }
+    h1, h1 *, h2, h2 *, h3, h3 *, h4, h4 * {
+        color: var(--header-color);
     }
 }
 
