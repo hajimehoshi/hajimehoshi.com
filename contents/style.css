@@ -112,7 +112,7 @@
     h3, h4, dt {
         font-family: 'SuisseIntl', 'Helvetica Neue', 'Helvetica', 'Arial', 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', 'BIZ UDPGothic', 'Meiryo', sans-serif;
         font-weight: 600;
-        letter-spacing: 0;
+        letter-spacing: 0.02em;
     }
     code {
         font-family: 'SuisseIntlMono', monospace;
