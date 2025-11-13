@@ -1,15 +1,6 @@
 @font-face {
     font-family: 'SuisseIntl';
     font-style: normal;
-    font-weight: 300;
-    font-stretch: normal;
-    font-display: swap;
-    src: url(https://res.hajimehoshi.com/fonts/SuisseIntl-Light.woff2) format('woff2');
-}
-
-@font-face {
-    font-family: 'SuisseIntl';
-    font-style: normal;
     font-weight: 400;
     font-stretch: normal;
     font-display: swap;
@@ -46,16 +37,6 @@
 @font-face {
     font-family: 'Noto Sans JP';
     font-style: normal;
-    font-weight: 300;
-    font-stretch: 100%;
-    size-adjust: 95%;
-    font-display: swap;
-    src: url(https://fonts.bunny.net/noto-sans-jp/files/noto-sans-jp-japanese-300-normal.woff2) format('woff2')
-}
-
-@font-face {
-    font-family: 'Noto Sans JP';
-    font-style: normal;
     font-weight: 400;
     font-stretch: 100%;
     size-adjust: 95%;
@@ -66,7 +47,7 @@
 @font-face {
     font-family: 'Noto Sans JP';
     font-style: normal;
-    font-weight: 6000;
+    font-weight: 600;
     font-stretch: 100%;
     size-adjust: 95%;
     font-display: swap;
@@ -110,7 +91,7 @@
 @layer font {
     body {
         font-family: 'SuisseIntl', 'Helvetica Neue', 'Helvetica', 'Arial', 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', 'BIZ UDPGothic', 'Meiryo', sans-serif;
-        font-weight: 300;
+        font-weight: 400;
         letter-spacing: 0.02em;
     }
     h1 {
@@ -182,14 +163,14 @@
         --color-white: #ffffff;
         --color-black: color-mix(in oklab, #000000 80%, var(--color-white));
         --background-color: color-mix(in oklab, var(--color-black), var(--color-white) 95%);
-        --foreground-color: color-mix(in oklab, var(--color-black), var(--color-white) 10%);
+        --foreground-color: color-mix(in oklab, var(--color-black), var(--color-white) 25%);
         --header-color: color-mix(in oklab, var(--color-black), var(--color-white) 10%);
         --thin-border-color: var(--foreground-color);
         --sub-color: color-mix(in oklab, var(--color-black) 60%, var(--color-white));
     }
     :root:has(input#dark-mode:checked) {
         --background-color: color-mix(in oklab, var(--color-black), var(--color-white) 5%);
-        --foreground-color: color-mix(in oklab, var(--color-black), var(--color-white) 80%);
+        --foreground-color: color-mix(in oklab, var(--color-black), var(--color-white) 75%);
         --header-color: color-mix(in oklab, var(--color-black), var(--color-white) 90%);
         --thin-border-color: color-mix(in oklab, var(--foreground-color), transparent 50%);
         --sub-color: color-mix(in oklab, var(--color-black) 40%, var(--color-white));
@@ -209,7 +190,7 @@
     li::marker {
         color: var(--sub-color);
     }
-    h1, h1 *, h2, h2 *, h3, h3 *, h4, h4 * {
+    h1, h1 *, h2, h2 *, h3, h3 *, h4, h4 *, dt, dt * {
         color: var(--header-color);
     }
 }
