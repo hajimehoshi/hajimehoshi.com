@@ -66,7 +66,6 @@
 
 @layer margin, size, font, font-size, text-decoration, color, border, grid, figure, dark-mode;
 
-
 @layer margin {
     * {
         padding: 0;
@@ -81,6 +80,7 @@
         --thick-border-width: 2px;
         --thin-border-width: 0.5px;
     }
+
     :root:has(input#dark-mode:checked) {
         /* Use thinner borders as the border color is white, which is 'an expanding color'. */
         --thick-border-width: 1.5px;
@@ -94,31 +94,39 @@
         font-weight: 400;
         letter-spacing: 0.02em;
     }
+
     h1 {
         font-family: 'SuisseIntl', 'Helvetica Neue', 'Helvetica', 'Arial', 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', 'BIZ UDPGothic', 'Meiryo', sans-serif-condensed, sans-serif;
         font-weight: 600;
         letter-spacing: 0;
     }
+
     section.title h1 {
         font-family: 'SuisseIntlCond', 'HelveticaNeue-CondensedBold', 'Helvetica Neue', 'Helvetica', 'Arial', 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', 'BIZ UDPGothic', 'Meiryo', sans-serif-condensed, sans-serif;
         font-weight: 700;
         letter-spacing: 0;
     }
+
     h2 {
         font-family: 'SuisseIntl', 'Helvetica Neue', 'Helvetica', 'Arial', 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', 'BIZ UDPGothic', 'Meiryo', sans-serif;
         font-weight: 600;
         letter-spacing: 0;
     }
-    h3, h4, dt {
+
+    h3,
+    h4,
+    dt {
         font-family: 'SuisseIntl', 'Helvetica Neue', 'Helvetica', 'Arial', 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', 'BIZ UDPGothic', 'Meiryo', sans-serif;
         font-weight: 600;
         letter-spacing: 0.02em;
     }
+
     code {
         font-family: 'SuisseIntlMono', monospace;
         font-weight: 400;
         letter-spacing: -0.04em;
     }
+
     small {
         font-weight: 400;
     }
@@ -129,22 +137,27 @@
         font-size: calc(var(--unit-size) * 2 / 3);
         line-height: var(--unit-size);
     }
+
     h1 {
         font-size: calc(2 * var(--unit-size) * 2 / 3);
         line-height: calc(2 * var(--unit-size));
     }
+
     section.title h1 {
         font-size: calc(3 * var(--unit-size) * 2 / 3);
         line-height: calc(3 * var(--unit-size));
     }
+
     h2 {
         font-size: var(--unit-size);
         line-height: var(--unit-size);
     }
+
     h3 {
         font-size: calc(var(--unit-size) * 2 / 3);
         line-height: var(--unit-size);
     }
+
     small {
         font-size: calc(var(--unit-size) * 1 / 2);
         line-height: var(--unit-size);
@@ -169,6 +182,7 @@
         --thin-border-color: var(--foreground-color);
         --sub-color: color-mix(in oklab, var(--color-black) 60%, var(--color-white));
     }
+
     :root:has(input#dark-mode:checked) {
         --background-color: color-mix(in oklab, var(--color-black), var(--color-white) 5%);
         --foreground-color: color-mix(in oklab, var(--color-black), var(--color-white) 75%);
@@ -176,22 +190,37 @@
         --thin-border-color: color-mix(in oklab, var(--foreground-color), transparent 50%);
         --sub-color: color-mix(in oklab, var(--color-black) 40%, var(--color-white));
     }
+
     html {
         background-color: var(--background-color);
     }
+
     * {
         color: var(--foreground-color);
     }
+
     a {
         text-decoration-color: var(--thin-border-color);
     }
+
     small {
         color: var(--sub-color);
     }
+
     li::marker {
         color: var(--sub-color);
     }
-    h1, h1 *, h2, h2 *, h3, h3 *, h4, h4 *, dt, dt * {
+
+    h1,
+    h1 *,
+    h2,
+    h2 *,
+    h3,
+    h3 *,
+    h4,
+    h4 *,
+    dt,
+    dt * {
         color: var(--header-color);
     }
 }
@@ -200,6 +229,7 @@
     body {
         display: flex;
     }
+
     main {
         display: flex;
         flex-direction: column;
@@ -207,6 +237,7 @@
         flex-grow: 1;
         align-items: center;
     }
+
     article {
         display: flex;
         flex-direction: column;
@@ -226,17 +257,21 @@
         margin-bottom: calc((var(--unit-size) - var(--thick-border-width)) / 2 + var(--unit-size));
         padding-bottom: calc((var(--unit-size) - var(--thick-border-width)) / 2 + var(--unit-size));
     }
+
     h2 {
         border-bottom: var(--thin-border-width) solid var(--thin-border-color);
-        margin-bottom: calc((var(--unit-size) - var(--thin-border-width)) / 2 - var(--unit-size)); /* This negative margin invalidates the gap of the grid of a section. */
+        margin-bottom: calc((var(--unit-size) - var(--thin-border-width)) / 2 - var(--unit-size));
+        /* This negative margin invalidates the gap of the grid of a section. */
         padding-top: calc((var(--unit-size) - var(--thin-border-width)) * 1 / 8);
         padding-bottom: calc((var(--unit-size) - var(--thin-border-width)) * 3 / 8);
     }
+
     section {
         border-top: var(--thick-border-width) solid var(--foreground-color);
         margin-top: calc((var(--unit-size) - var(--thick-border-width)) / 2 + var(--unit-size));
         padding-top: calc((var(--unit-size) - var(--thick-border-width)) / 2);
     }
+
     section:first-of-type {
         border-top-style: none;
         margin-top: 0;
@@ -250,13 +285,17 @@
         flex-flow: row-reverse wrap;
         gap: var(--unit-size);
     }
-    section > * {
+
+    section>* {
         width: calc((100% - 3 * var(--unit-size)) / 4 * 3 + 2 * var(--unit-size));
     }
-    section > h2, section > dl {
+
+    section>h2,
+    section>dl {
         width: 100%;
     }
-    section > aside {
+
+    section>aside {
         width: var(--column-size);
     }
 
@@ -265,12 +304,15 @@
         grid-template-columns: repeat(3, calc((100% - 2 * var(--unit-size)) / 3));
         gap: var(--unit-size);
     }
+
     .grid-item-1 {
         grid-column: span 1;
     }
+
     .grid-item-2 {
         grid-column: span 2;
     }
+
     .grid-item-3 {
         grid-column: span 3;
     }
@@ -278,25 +320,32 @@
     h2 {
         padding-left: calc((100% - 3 * var(--unit-size)) / 4 + var(--unit-size))
     }
+
     dl {
         display: flex;
         flex-wrap: wrap;
         align-items: stretch;
     }
+
     dt {
         width: var(--column-size);
         padding-right: var(--unit-size);
         text-align: right;
     }
+
     dd {
         width: calc(100% - var(--column-size) - var(--unit-size));
     }
-    dt, dd {
+
+    dt,
+    dd {
         padding-top: calc((var(--unit-size) / 3 - var(--thin-border-width)) / 2);
         border-top: var(--thin-border-width) solid var(--thin-border-color);
         margin-top: calc((var(--unit-size) / 3 - var(--thin-border-width)) / 2);
     }
-    dt:first-of-type, dd:first-of-type {
+
+    dt:first-of-type,
+    dd:first-of-type {
         padding-top: 0;
         border-top-style: none;
         margin-top: 0;
@@ -304,15 +353,18 @@
 
     /* Unfortunately, CSS variables are not available at @media queries yet. */
     @media only screen and (max-width: calc(4 * 168px + 5 * 24px)) {
-        section > * {
+        section>* {
             width: 100%;
         }
-        section.title > header {
+
+        section.title>header {
             width: calc((100% - 2 * var(--unit-size)) / 3 * 2 + var(--unit-size));
         }
-        section > *:empty {
+
+        section>*:empty {
             display: none;
         }
+
         section {
             grid-template-columns: 1fr calc((100% - 2 * var(--unit-size)) / 3);
         }
@@ -320,67 +372,87 @@
         .grid-container {
             grid-template-columns: repeat(3, calc((100% - 2 * var(--unit-size)) / 3));
         }
+
         .grid-item-2 {
             grid-column: span 3;
         }
+
         h2 {
             padding-left: 0;
         }
-        section > h2, .grid-container {
+
+        section>h2,
+        .grid-container {
             padding-left: calc(var(--unit-size) / 6);
             padding-right: calc(var(--unit-size) / 6);
         }
+
         dt {
             width: calc((100% - 2 * var(--unit-size)) / 3);
         }
+
         dd {
             width: calc((100% - 2 * var(--unit-size)) / 3 * 2 + var(--unit-size));
         }
+
         ul {
             padding-left: var(--unit-size);
         }
     }
+
     @media only screen and (max-width: calc(3 * 168px + 4 * 24px)) {
-        section.title > aside {
+        section.title>aside {
             width: 100%;
         }
-        section.title > header {
+
+        section.title>header {
             width: 100%;
         }
 
         .grid-container {
             grid-template-columns: repeat(2, calc((100% - var(--unit-size)) / 2));
         }
+
         .grid-item-2 {
             grid-column: span 2;
         }
+
         .grid-item-3 {
             grid-column: span 2;
         }
-        section > header, dt, dd {
+
+        section>header,
+        dt,
+        dd {
             padding-left: calc(var(--unit-size) / 6);
             padding-right: calc(var(--unit-size) / 6);
         }
+
         dt {
             width: 100%;
             text-align: left;
         }
+
         dd {
             width: 100%;
         }
+
         dd {
             padding-top: 0;
             border-top-style: none;
             margin-top: 0;
         }
     }
+
     @media only screen and (max-width: calc(2 * 168px + 3 * 24px)) {
         .grid-container {
             grid-template-columns: 100%;
         }
+
         .grid-item-2 {
             grid-column: span 1;
         }
+
         .grid-item-3 {
             grid-column: span 1;
         }
@@ -395,9 +467,11 @@
         align-items: center;
         justify-content: center;
     }
+
     figure:only-child {
         height: 100%;
     }
+
     figure * {
         vertical-align: middle;
     }
@@ -407,29 +481,37 @@
     input#dark-mode {
         display: none;
     }
-    input#dark-mode ~ label {
+
+    input#dark-mode~label {
         display: inline-block;
         position: absolute;
-        top: calc((var(--unit-size) - var(--thick-border-width)) / 4); /* Put the image in the middle of the article top. */
-        right: max(calc((100vw - 4 * var(--column-size) - 3 * var(--unit-size) ) / 2), var(--unit-size));
+        top: calc((var(--unit-size) - var(--thick-border-width)) / 4);
+        /* Put the image in the middle of the article top. */
+        right: max(calc((100vw - 4 * var(--column-size) - 3 * var(--unit-size)) / 2), var(--unit-size));
     }
-    input#dark-mode ~ label#dark-mode-light {
+
+    input#dark-mode~label#dark-mode-light {
         display: none;
     }
-    input#dark-mode:checked ~ label#dark-mode-light {
+
+    input#dark-mode:checked~label#dark-mode-light {
         display: inline-block;
     }
-    input#dark-mode:checked ~ label#dark-mode-dark {
+
+    input#dark-mode:checked~label#dark-mode-dark {
         display: none;
     }
-    input#dark-mode ~ label {
+
+    input#dark-mode~label {
         cursor: pointer;
     }
-    input#dark-mode ~ label svg {
+
+    input#dark-mode~label svg {
         width: var(--unit-size);
         height: var(--unit-size);
     }
-    input#dark-mode ~ label svg path {
+
+    input#dark-mode~label svg path {
         fill: var(--foreground-color);
     }
 }
