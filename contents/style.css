@@ -64,7 +64,7 @@
     src: url(https://fonts.bunny.net/noto-sans-jp/files/noto-sans-jp-japanese-700-normal.woff2) format('woff2')
 }
 
-@layer margin, size, font, font-size, text-decoration, color, border, grid, figure, dark-mode;
+@layer margin, size, font, font-size, text-decoration, color, border, grid, figure, dark-mode, visibility;
 
 
 @layer margin {
@@ -431,5 +431,14 @@
     }
     input#dark-mode ~ label svg path {
         fill: var(--foreground-color);
+    }
+}
+
+@layer visibility {
+    :root:has(input#dark-mode:not(:checked)) .dark-mode {
+        display: none;
+    }
+    :root:has(input#dark-mode:checked) .light-mode {
+        display: none;
     }
 }
