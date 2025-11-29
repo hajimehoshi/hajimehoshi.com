@@ -366,7 +366,7 @@ func generateHTML(path string, outDir, inDir string) error {
 			},
 			{
 				Key: "href",
-				Val: "/hajimehoshi.webp",
+				Val: "/favicon.webp",
 			},
 			{
 				Key: "type",
