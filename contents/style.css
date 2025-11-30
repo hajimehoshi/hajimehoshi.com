@@ -122,6 +122,9 @@
     small {
         font-weight: 400;
     }
+    body {
+        text-autospace: normal;
+    }
 }
 
 @layer font-size {

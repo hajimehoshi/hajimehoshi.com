@@ -14,7 +14,3 @@ func RemoveInterElementWhitespace(node *html.Node) {
 func ProcessNewLines(node *html.Node) {
 	processNewLines(node)
 }
-
-func InsertNodeBetweenWideAndNarrow(node *html.Node, insertingNode *html.Node) {
-	insertNodeBetweenWideAndNarrow(node, insertingNode)
-}

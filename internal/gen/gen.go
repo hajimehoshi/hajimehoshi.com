@@ -13,7 +13,6 @@ import (
 	"path/filepath"
 	"regexp"
 	"strings"
-	"unicode"
 	"unicode/utf8"
 
 	"github.com/evanw/esbuild/pkg/api"
@@ -428,7 +427,7 @@ func generateHTML(path string, outDir, inDir string) error {
 	removeComments(node)
 	removeInterElementWhitespace(node)
 	processNewLines(node)
-	insertNodeBetweenWideAndNarrow(node, &html.Node{
+	/*insertNodeBetweenWideAndNarrow(node, &html.Node{
 		Type: html.ElementNode,
 		Data: "span",
 		Attr: []html.Attribute{
@@ -437,7 +436,7 @@ func generateHTML(path string, outDir, inDir string) error {
 				Val: "thin-space",
 			},
 		},
-	})
+	})*/
 
 	if err := os.MkdirAll(filepath.Dir(outPath), 0755); err != nil {
 		return err
@@ -667,140 +666,6 @@ func processNewLines(node *html.Node) {
 	}
 }
 
-func insertNodeBetweenWideAndNarrow(node *html.Node, insertingNode *html.Node) {
-	if node.Type == html.ElementNode {
-		if isMetadataElementName(node.Data) {
-			return
-		}
-		if node.Data == "pre" {
-			return
-		}
-	}
-
-	// Insert dummy empty text nodes between two elements. This might be replaced with insertingNode later.
-	var next *html.Node
-	for n := node.FirstChild; n != nil; n = next {
-		next = n.NextSibling
-
-		if n.Type != html.ElementNode {
-			continue
-		}
-		if n.NextSibling == nil {
-			continue
-		}
-		if n.NextSibling.Type != html.ElementNode {
-			continue
-		}
-		n.InsertBefore(&html.Node{
-			Type: html.TextNode,
-		}, n.NextSibling)
-	}
-
-	// Process child text nodes first.
-	for n := node.FirstChild; n != nil; n = next {
-		next = n.NextSibling
-
-		if n.Type != html.TextNode {
-			continue
-		}
-
-		var tokens []string
-		var lastI int
-		for i, r := range n.Data {
-			if i == 0 {
-				continue
-			}
-			if prevR, _ := utf8.DecodeLastRuneInString(n.Data[:i]); shouldHaveThinSpace(prevR, r) {
-				tokens = append(tokens, n.Data[lastI:i])
-				lastI = i
-			}
-		}
-		tokens = append(tokens, n.Data[lastI:])
-
-		prevR := lastRuneBefore(n)
-		nextR := firstRuneAfter(n)
-
-		parent := n.Parent
-		parent.RemoveChild(n)
-
-		insertSpan := func() {
-			node := &html.Node{
-				Type:      insertingNode.Type,
-				DataAtom:  insertingNode.DataAtom,
-				Data:      insertingNode.Data,
-				Namespace: insertingNode.Namespace,
-			}
-			node.Attr = make([]html.Attribute, len(insertingNode.Attr))
-			copy(node.Attr, insertingNode.Attr)
-			parent.InsertBefore(node, next)
-		}
-
-		if len(tokens) > 0 {
-			if r, _ := utf8.DecodeRuneInString(tokens[0]); shouldHaveThinSpace(prevR, r) {
-				insertSpan()
-			}
-			for i, t := range tokens {
-				parent.InsertBefore(&html.Node{
-					Type: html.TextNode,
-					Data: t,
-				}, next)
-				if i == len(tokens)-1 {
-					continue
-				}
-				insertSpan()
-			}
-			if r, _ := utf8.DecodeLastRuneInString(tokens[len(tokens)-1]); shouldHaveThinSpace(r, nextR) {
-				insertSpan()
-			}
-		} else {
-			if shouldHaveThinSpace(prevR, nextR) {
-				insertSpan()
-			}
-		}
-	}
-
-	// Process child element nodes next.
-	for n := node.FirstChild; n != nil; n = n.NextSibling {
-		if n.Type == html.TextNode {
-			continue
-		}
-		insertNodeBetweenWideAndNarrow(n, insertingNode)
-	}
-
-	// Remove dummy empty text nodes.
-	for n := node.FirstChild; n != nil; n = next {
-		next = n.NextSibling
-
-		if n.Type != html.TextNode {
-			continue
-		}
-		if len(n.Data) > 0 {
-			continue
-		}
-		n.Parent.RemoveChild(n)
-	}
-}
-
-func firstRuneAfter(node *html.Node) rune {
-	node = nextVisibleTextNode(node)
-	if node == nil {
-		return -1
-	}
-
-	r, _ := utf8.DecodeRuneInString(node.Data)
-	return r
-}
-
-func lastRuneBefore(node *html.Node) rune {
-	node = prevVisibleTextNode(node)
-	if node == nil {
-		return -1
-	}
-
-	r, _ := utf8.DecodeLastRuneInString(node.Data)
-	return r
-}
-
 func nextVisibleTextNode(node *html.Node) *html.Node {
 	for {
 		node = nextVisibleNode(node)
@@ -899,26 +764,6 @@ func shouldReserveSpaceBetweenTexts(d0, d1 string) bool {
 	r0, _ := utf8.DecodeLastRuneInString(d0)
 	r1, _ := utf8.DecodeRuneInString(d1)
 	return shouldReserveSpaceBetweenRunes(r0, r1)
-}
-
-func shouldHaveThinSpace(r0, r1 rune) bool {
-	if r0 == -1 || r1 == -1 {
-		return false
-	}
-
-	if unicode.IsSpace(r0) || unicode.IsSpace(r1) {
-		return false
-	}
-
-	k0 := width.LookupRune(r0).Kind()
-	k1 := width.LookupRune(r1).Kind()
-	w0 := k0 == width.EastAsianWide || k0 == width.EastAsianFullwidth
-	w1 := k1 == width.EastAsianWide || k1 == width.EastAsianFullwidth
-	if w0 == w1 {
-		return false
-	}
-
-	return (w0 && !unicode.IsPunct(r0)) != (w1 && !unicode.IsPunct(r1))
 }
 
 func isMetadataElementName(name string) bool {
