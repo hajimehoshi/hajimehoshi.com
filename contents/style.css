@@ -264,18 +264,18 @@
     }
 
     .grid-container {
-        display: grid;
-        grid-template-columns: repeat(3, calc((100% - 2 * var(--unit-size)) / 3));
+        display: flex;
+        flex-wrap: wrap;
         gap: var(--unit-size);
     }
     .grid-item-1 {
-        grid-column: span 1;
+        width: calc((100% - 2 * var(--unit-size)) / 3);
     }
     .grid-item-2 {
-        grid-column: span 2;
+        width: calc((100% - 2 * var(--unit-size)) * 2 / 3 + var(--unit-size));
     }
     .grid-item-3 {
-        grid-column: span 3;
+        width: 100%;
     }
 
     h2 {
@@ -320,16 +320,7 @@
         section > *:empty {
             display: none;
         }
-        section {
-            grid-template-columns: 1fr calc((100% - 2 * var(--unit-size)) / 3);
-        }
 
-        .grid-container {
-            grid-template-columns: repeat(3, calc((100% - 2 * var(--unit-size)) / 3));
-        }
-        .grid-item-2 {
-            grid-column: span 3;
-        }
         h2 {
             padding-left: 0;
         }
@@ -355,14 +346,11 @@
             width: 100%;
         }
 
-        .grid-container {
-            grid-template-columns: repeat(2, calc((100% - var(--unit-size)) / 2));
+        .grid-item-1 {
+            width: calc((100% - var(--unit-size)) / 2);
         }
         .grid-item-2 {
-            grid-column: span 2;
-        }
-        .grid-item-3 {
-            grid-column: span 2;
+            width: 100%;
         }
         section > header, dt, dd {
             padding-left: calc(var(--unit-size) / 6);
@@ -382,14 +370,8 @@
         }
     }
     @container (width < calc(2 * 168px + 3 * 24px)) {
-        .grid-container {
-            grid-template-columns: 100%;
-        }
-        .grid-item-2 {
-            grid-column: span 1;
-        }
-        .grid-item-3 {
-            grid-column: span 1;
+        .grid-item-1 {
+            width: 100%;
         }
     }
 }
