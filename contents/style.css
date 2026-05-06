@@ -330,9 +330,6 @@ main {
     section.title > header {
         width: calc((100% - 2 * var(--unit-size)) / 3 * 2 + var(--unit-size));
     }
-    section > *:empty {
-        display: none;
-    }
 
     h2 {
         padding-left: 0;
