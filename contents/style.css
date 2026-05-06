@@ -80,6 +80,9 @@
     --column-size: calc(7 * var(--unit-size));
     --thick-border-width: 2px;
     --thin-border-width: 0.5px;
+    --thick-border-pad: calc((var(--unit-size) - var(--thick-border-width)) / 2);
+    --thick-border-gap: calc(var(--thick-border-pad) + var(--unit-size));
+    --thin-border-pad: calc((var(--unit-size) / 3 - var(--thin-border-width)) / 2);
 }
 :root:has(input#dark-mode:checked) {
     /* Use thinner borders as the border color is white, which is 'an expanding color'. */
@@ -231,12 +234,12 @@ article {
 
 article {
     border-top: var(--thick-border-width) solid var(--foreground-color);
-    margin-top: calc((var(--unit-size) - var(--thick-border-width)) / 2 + var(--unit-size));
-    padding-top: calc((var(--unit-size) - var(--thick-border-width)) / 2);
+    margin-top: var(--thick-border-gap);
+    padding-top: var(--thick-border-pad);
 
     border-bottom: var(--thick-border-width) solid var(--foreground-color);
-    margin-bottom: calc((var(--unit-size) - var(--thick-border-width)) / 2 + var(--unit-size));
-    padding-bottom: calc((var(--unit-size) - var(--thick-border-width)) / 2 + var(--unit-size));
+    margin-bottom: var(--thick-border-gap);
+    padding-bottom: var(--thick-border-gap);
 }
 h2 {
     border-bottom: var(--thin-border-width) solid var(--thin-border-color);
@@ -246,8 +249,8 @@ h2 {
 }
 section {
     border-top: var(--thick-border-width) solid var(--foreground-color);
-    margin-top: calc((var(--unit-size) - var(--thick-border-width)) / 2 + var(--unit-size));
-    padding-top: calc((var(--unit-size) - var(--thick-border-width)) / 2);
+    margin-top: var(--thick-border-gap);
+    padding-top: var(--thick-border-pad);
 }
 section:first-of-type {
     border-top-style: none;
@@ -305,9 +308,9 @@ dd {
     width: calc(100% - var(--column-size) - var(--unit-size));
 }
 dt, dd {
-    padding-top: calc((var(--unit-size) / 3 - var(--thin-border-width)) / 2);
+    padding-top: var(--thin-border-pad);
     border-top: var(--thin-border-width) solid var(--thin-border-color);
-    margin-top: calc((var(--unit-size) / 3 - var(--thin-border-width)) / 2);
+    margin-top: var(--thin-border-pad);
 }
 dt:first-of-type, dd:first-of-type {
     padding-top: 0;
@@ -411,7 +414,7 @@ input#dark-mode {
 input#dark-mode ~ label {
     display: inline-block;
     position: absolute;
-    top: calc((var(--unit-size) - var(--thick-border-width)) / 4); /* Put the image in the middle of the article top. */
+    top: calc(var(--thick-border-pad) / 2); /* Put the image in the middle of the article top. */
     right: max(calc((100vw - 4 * var(--column-size) - 3 * var(--unit-size) ) / 2), var(--unit-size));
 }
 input#dark-mode ~ label#dark-mode-light {
