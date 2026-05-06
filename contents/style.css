@@ -84,7 +84,7 @@
     --thick-border-gap: calc(var(--thick-border-pad) + var(--unit-size));
     --thin-border-pad: calc((var(--unit-size) / 3 - var(--thin-border-width)) / 2);
 }
-:root:has(input#dark-mode:checked) {
+:root:has(#dark-mode:checked) {
     /* Use thinner borders as the border color is white, which is 'an expanding color'. */
     --thick-border-width: 1.5px;
     /* For thin borders, adjust colors instead of the width */
@@ -180,7 +180,7 @@ a {
     --thin-border-color: var(--foreground-color);
     --sub-color: color-mix(in oklab, var(--color-black) 60%, var(--color-white));
 }
-:root:has(input#dark-mode:checked) {
+:root:has(#dark-mode:checked) {
     --background-color: color-mix(in oklab, var(--color-black), var(--color-white) 5%);
     --foreground-color: color-mix(in oklab, var(--color-black), var(--color-white) 75%);
     --header-color: color-mix(in oklab, var(--color-black), var(--color-white) 90%);
@@ -408,41 +408,41 @@ figure * {
 
 /* dark-mode */
 
-input#dark-mode {
+#dark-mode {
     display: none;
 }
-input#dark-mode ~ label {
+#dark-mode ~ label {
     display: inline-block;
     position: absolute;
     top: calc(var(--thick-border-pad) / 2); /* Put the image in the middle of the article top. */
     right: max(calc((100vw - 4 * var(--column-size) - 3 * var(--unit-size) ) / 2), var(--unit-size));
 }
-input#dark-mode ~ label#dark-mode-light {
+#dark-mode ~ #dark-mode-light {
     display: none;
 }
-input#dark-mode:checked ~ label#dark-mode-light {
+#dark-mode:checked ~ #dark-mode-light {
     display: inline-block;
 }
-input#dark-mode:checked ~ label#dark-mode-dark {
+#dark-mode:checked ~ #dark-mode-dark {
     display: none;
 }
-input#dark-mode ~ label {
+#dark-mode ~ label {
     cursor: pointer;
 }
-input#dark-mode ~ label svg {
+#dark-mode ~ label svg {
     width: var(--unit-size);
     height: var(--unit-size);
 }
-input#dark-mode ~ label svg path {
+#dark-mode ~ label svg path {
     fill: var(--foreground-color);
 }
 
 
 /* visibility */
 
-:root:has(input#dark-mode:not(:checked)) .dark-mode {
+:root:has(#dark-mode:not(:checked)) .dark-mode {
     display: none;
 }
-:root:has(input#dark-mode:checked) .light-mode {
+:root:has(#dark-mode:checked) .light-mode {
     display: none;
 }
