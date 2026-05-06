@@ -186,11 +186,10 @@ a {
 }
 html {
     background-color: var(--background-color);
-}
-* {
     color: var(--foreground-color);
 }
 a {
+    color: var(--foreground-color);
     text-decoration-color: var(--thin-border-color);
 }
 small {
@@ -199,7 +198,10 @@ small {
 li::marker {
     color: var(--sub-color);
 }
-h1, h1 *, h2, h2 *, h3, h3 *, h4, h4 *, dt, dt * {
+h1, h2, h3, h4, dt {
+    color: var(--header-color);
+}
+:is(h1, h2, h3, h4, dt) a {
     color: var(--header-color);
 }
 
