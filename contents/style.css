@@ -64,370 +64,379 @@
     src: url(https://fonts.bunny.net/noto-sans-jp/files/noto-sans-jp-japanese-700-normal.woff2) format('woff2')
 }
 
-@layer margin, size, font, font-size, text-decoration, color, border, grid, figure, dark-mode, visibility;
 
+/* margin */
 
-@layer margin {
-    * {
-        padding: 0;
-        margin: 0;
-    }
+* {
+    padding: 0;
+    margin: 0;
 }
 
-@layer size {
-    :root {
-        --unit-size: 24px;
-        --column-size: calc(7 * var(--unit-size));
-        --thick-border-width: 2px;
-        --thin-border-width: 0.5px;
-    }
-    :root:has(input#dark-mode:checked) {
-        /* Use thinner borders as the border color is white, which is 'an expanding color'. */
-        --thick-border-width: 1.5px;
-        /* For thin borders, adjust colors instead of the width */
-    }
+
+/* size */
+
+:root {
+    --unit-size: 24px;
+    --column-size: calc(7 * var(--unit-size));
+    --thick-border-width: 2px;
+    --thin-border-width: 0.5px;
+}
+:root:has(input#dark-mode:checked) {
+    /* Use thinner borders as the border color is white, which is 'an expanding color'. */
+    --thick-border-width: 1.5px;
+    /* For thin borders, adjust colors instead of the width */
 }
 
-@layer font {
-    body {
-        font-family: 'SuisseIntl', 'Helvetica Neue', 'Helvetica', 'Arial', 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', 'BIZ UDPGothic', 'Meiryo', sans-serif;
-        font-weight: 400;
-        letter-spacing: 0.02em;
-    }
-    h1 {
-        font-family: 'SuisseIntl', 'Helvetica Neue', 'Helvetica', 'Arial', 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', 'BIZ UDPGothic', 'Meiryo', sans-serif-condensed, sans-serif;
-        font-weight: 600;
-        letter-spacing: 0;
-    }
-    section.title h1 {
-        font-family: 'SuisseIntlCond', 'HelveticaNeue-CondensedBold', 'Helvetica Neue', 'Helvetica', 'Arial', 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', 'BIZ UDPGothic', 'Meiryo', sans-serif-condensed, sans-serif;
-        font-weight: 700;
-        letter-spacing: 0;
-    }
-    h2 {
-        font-family: 'SuisseIntl', 'Helvetica Neue', 'Helvetica', 'Arial', 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', 'BIZ UDPGothic', 'Meiryo', sans-serif;
-        font-weight: 600;
-        letter-spacing: 0;
-    }
-    h3, h4, dt {
-        font-family: 'SuisseIntl', 'Helvetica Neue', 'Helvetica', 'Arial', 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', 'BIZ UDPGothic', 'Meiryo', sans-serif;
-        font-weight: 600;
-        letter-spacing: 0.02em;
-    }
-    code {
-        font-family: 'SuisseIntlMono', monospace;
-        font-weight: 400;
-        letter-spacing: -0.04em;
-    }
-    small {
-        font-weight: 400;
-    }
-    body {
-        text-autospace: normal;
-    }
+
+/* font */
+
+body {
+    font-family: 'SuisseIntl', 'Helvetica Neue', 'Helvetica', 'Arial', 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', 'BIZ UDPGothic', 'Meiryo', sans-serif;
+    font-weight: 400;
+    letter-spacing: 0.02em;
+}
+h1 {
+    font-family: 'SuisseIntl', 'Helvetica Neue', 'Helvetica', 'Arial', 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', 'BIZ UDPGothic', 'Meiryo', sans-serif-condensed, sans-serif;
+    font-weight: 600;
+    letter-spacing: 0;
+}
+section.title h1 {
+    font-family: 'SuisseIntlCond', 'HelveticaNeue-CondensedBold', 'Helvetica Neue', 'Helvetica', 'Arial', 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', 'BIZ UDPGothic', 'Meiryo', sans-serif-condensed, sans-serif;
+    font-weight: 700;
+    letter-spacing: 0;
+}
+h2 {
+    font-family: 'SuisseIntl', 'Helvetica Neue', 'Helvetica', 'Arial', 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', 'BIZ UDPGothic', 'Meiryo', sans-serif;
+    font-weight: 600;
+    letter-spacing: 0;
+}
+h3, h4, dt {
+    font-family: 'SuisseIntl', 'Helvetica Neue', 'Helvetica', 'Arial', 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', 'BIZ UDPGothic', 'Meiryo', sans-serif;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+}
+code {
+    font-family: 'SuisseIntlMono', monospace;
+    font-weight: 400;
+    letter-spacing: -0.04em;
+}
+small {
+    font-weight: 400;
+}
+body {
+    text-autospace: normal;
 }
 
-@layer font-size {
-    body {
-        font-size: calc(var(--unit-size) * 2 / 3);
-        line-height: var(--unit-size);
-    }
-    h1 {
-        font-size: calc(2 * var(--unit-size) * 2 / 3);
-        line-height: calc(2 * var(--unit-size));
-    }
-    section.title h1 {
-        font-size: calc(3 * var(--unit-size) * 2 / 3);
-        line-height: calc(3 * var(--unit-size));
-    }
-    h2 {
-        font-size: var(--unit-size);
-        line-height: var(--unit-size);
-    }
-    h3 {
-        font-size: calc(var(--unit-size) * 2 / 3);
-        line-height: var(--unit-size);
-    }
-    small {
-        font-size: calc(var(--unit-size) * 1 / 2);
-        line-height: var(--unit-size);
-    }
+
+/* font-size */
+
+body {
+    font-size: calc(var(--unit-size) * 2 / 3);
+    line-height: var(--unit-size);
+}
+h1 {
+    font-size: calc(2 * var(--unit-size) * 2 / 3);
+    line-height: calc(2 * var(--unit-size));
+}
+section.title h1 {
+    font-size: calc(3 * var(--unit-size) * 2 / 3);
+    line-height: calc(3 * var(--unit-size));
+}
+h2 {
+    font-size: var(--unit-size);
+    line-height: var(--unit-size);
+}
+h3 {
+    font-size: calc(var(--unit-size) * 2 / 3);
+    line-height: var(--unit-size);
+}
+small {
+    font-size: calc(var(--unit-size) * 1 / 2);
+    line-height: var(--unit-size);
 }
 
-@layer text-decoration {
-    a {
-        text-decoration-line: underline;
-        text-decoration-thickness: 1px;
-        text-underline-offset: 0.25em;
-    }
+
+/* text-decoration */
+
+a {
+    text-decoration-line: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.25em;
 }
 
-@layer color {
-    :root {
-        --color-white: #ffffff;
-        --color-black: color-mix(in oklab, #000000 80%, var(--color-white));
-        --background-color: color-mix(in oklab, var(--color-black), var(--color-white) 95%);
-        --foreground-color: color-mix(in oklab, var(--color-black), var(--color-white) 25%);
-        --header-color: color-mix(in oklab, var(--color-black), var(--color-white) 10%);
-        --thin-border-color: var(--foreground-color);
-        --sub-color: color-mix(in oklab, var(--color-black) 60%, var(--color-white));
-    }
-    :root:has(input#dark-mode:checked) {
-        --background-color: color-mix(in oklab, var(--color-black), var(--color-white) 5%);
-        --foreground-color: color-mix(in oklab, var(--color-black), var(--color-white) 75%);
-        --header-color: color-mix(in oklab, var(--color-black), var(--color-white) 90%);
-        --thin-border-color: color-mix(in oklab, var(--foreground-color), transparent 50%);
-        --sub-color: color-mix(in oklab, var(--color-black) 40%, var(--color-white));
-    }
-    html {
-        background-color: var(--background-color);
-    }
-    * {
-        color: var(--foreground-color);
-    }
-    a {
-        text-decoration-color: var(--thin-border-color);
-    }
-    small {
-        color: var(--sub-color);
-    }
-    li::marker {
-        color: var(--sub-color);
-    }
-    h1, h1 *, h2, h2 *, h3, h3 *, h4, h4 *, dt, dt * {
-        color: var(--header-color);
-    }
+
+/* color */
+
+:root {
+    --color-white: #ffffff;
+    --color-black: color-mix(in oklab, #000000 80%, var(--color-white));
+    --background-color: color-mix(in oklab, var(--color-black), var(--color-white) 95%);
+    --foreground-color: color-mix(in oklab, var(--color-black), var(--color-white) 25%);
+    --header-color: color-mix(in oklab, var(--color-black), var(--color-white) 10%);
+    --thin-border-color: var(--foreground-color);
+    --sub-color: color-mix(in oklab, var(--color-black) 60%, var(--color-white));
+}
+:root:has(input#dark-mode:checked) {
+    --background-color: color-mix(in oklab, var(--color-black), var(--color-white) 5%);
+    --foreground-color: color-mix(in oklab, var(--color-black), var(--color-white) 75%);
+    --header-color: color-mix(in oklab, var(--color-black), var(--color-white) 90%);
+    --thin-border-color: color-mix(in oklab, var(--foreground-color), transparent 50%);
+    --sub-color: color-mix(in oklab, var(--color-black) 40%, var(--color-white));
+}
+html {
+    background-color: var(--background-color);
+}
+* {
+    color: var(--foreground-color);
+}
+a {
+    text-decoration-color: var(--thin-border-color);
+}
+small {
+    color: var(--sub-color);
+}
+li::marker {
+    color: var(--sub-color);
+}
+h1, h1 *, h2, h2 *, h3, h3 *, h4, h4 *, dt, dt * {
+    color: var(--header-color);
 }
 
-@layer flex {
-    body {
-        display: flex;
-    }
-    main {
-        display: flex;
-        flex-direction: column;
 
-        flex-grow: 1;
-        align-items: center;
-    }
-    article {
-        display: flex;
-        flex-direction: column;
+/* flex */
 
-        width: calc(4 * var(--column-size) + 3 * var(--unit-size));
-        max-width: calc(100vw - 2 * var(--unit-size) + 2 * var(--unit-size) / 6);
-    }
+body {
+    display: flex;
+}
+main {
+    display: flex;
+    flex-direction: column;
+
+    flex-grow: 1;
+    align-items: center;
+}
+article {
+    display: flex;
+    flex-direction: column;
+
+    width: calc(4 * var(--column-size) + 3 * var(--unit-size));
+    max-width: calc(100vw - 2 * var(--unit-size) + 2 * var(--unit-size) / 6);
 }
 
-@layer border {
-    article {
-        border-top: var(--thick-border-width) solid var(--foreground-color);
-        margin-top: calc((var(--unit-size) - var(--thick-border-width)) / 2 + var(--unit-size));
-        padding-top: calc((var(--unit-size) - var(--thick-border-width)) / 2);
 
-        border-bottom: var(--thick-border-width) solid var(--foreground-color);
-        margin-bottom: calc((var(--unit-size) - var(--thick-border-width)) / 2 + var(--unit-size));
-        padding-bottom: calc((var(--unit-size) - var(--thick-border-width)) / 2 + var(--unit-size));
-    }
-    h2 {
-        border-bottom: var(--thin-border-width) solid var(--thin-border-color);
-        margin-bottom: calc((var(--unit-size) - var(--thin-border-width)) / 2 - var(--unit-size)); /* This negative margin invalidates the gap of the grid of a section. */
-        padding-top: calc((var(--unit-size) - var(--thin-border-width)) * 1 / 8);
-        padding-bottom: calc((var(--unit-size) - var(--thin-border-width)) * 3 / 8);
-    }
-    section {
-        border-top: var(--thick-border-width) solid var(--foreground-color);
-        margin-top: calc((var(--unit-size) - var(--thick-border-width)) / 2 + var(--unit-size));
-        padding-top: calc((var(--unit-size) - var(--thick-border-width)) / 2);
-    }
-    section:first-of-type {
-        border-top-style: none;
-        margin-top: 0;
-        padding-top: 0;
-    }
+/* border */
+
+article {
+    border-top: var(--thick-border-width) solid var(--foreground-color);
+    margin-top: calc((var(--unit-size) - var(--thick-border-width)) / 2 + var(--unit-size));
+    padding-top: calc((var(--unit-size) - var(--thick-border-width)) / 2);
+
+    border-bottom: var(--thick-border-width) solid var(--foreground-color);
+    margin-bottom: calc((var(--unit-size) - var(--thick-border-width)) / 2 + var(--unit-size));
+    padding-bottom: calc((var(--unit-size) - var(--thick-border-width)) / 2 + var(--unit-size));
+}
+h2 {
+    border-bottom: var(--thin-border-width) solid var(--thin-border-color);
+    margin-bottom: calc((var(--unit-size) - var(--thin-border-width)) / 2 - var(--unit-size)); /* This negative margin invalidates the gap of the grid of a section. */
+    padding-top: calc((var(--unit-size) - var(--thin-border-width)) * 1 / 8);
+    padding-bottom: calc((var(--unit-size) - var(--thin-border-width)) * 3 / 8);
+}
+section {
+    border-top: var(--thick-border-width) solid var(--foreground-color);
+    margin-top: calc((var(--unit-size) - var(--thick-border-width)) / 2 + var(--unit-size));
+    padding-top: calc((var(--unit-size) - var(--thick-border-width)) / 2);
+}
+section:first-of-type {
+    border-top-style: none;
+    margin-top: 0;
+    padding-top: 0;
 }
 
-@layer grid {
-    section {
-        display: flex;
-        flex-flow: row-reverse wrap;
-        gap: var(--unit-size);
-    }
+
+/* grid */
+
+section {
+    display: flex;
+    flex-flow: row-reverse wrap;
+    gap: var(--unit-size);
+}
+section > * {
+    width: calc((100% - 3 * var(--unit-size)) / 4 * 3 + 2 * var(--unit-size));
+}
+section > h2, section > dl {
+    width: 100%;
+}
+section > aside {
+    width: var(--column-size);
+}
+
+.grid-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--unit-size);
+}
+.grid-item-1 {
+    width: calc((100% - 2 * var(--unit-size)) / 3);
+}
+.grid-item-2 {
+    width: calc((100% - 2 * var(--unit-size)) * 2 / 3 + var(--unit-size));
+}
+.grid-item-3 {
+    width: 100%;
+}
+
+h2 {
+    padding-left: calc((100% - 3 * var(--unit-size)) / 4 + var(--unit-size))
+}
+dl {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: stretch;
+}
+dt {
+    width: var(--column-size);
+    padding-right: var(--unit-size);
+    text-align: right;
+}
+dd {
+    width: calc(100% - var(--column-size) - var(--unit-size));
+}
+dt, dd {
+    padding-top: calc((var(--unit-size) / 3 - var(--thin-border-width)) / 2);
+    border-top: var(--thin-border-width) solid var(--thin-border-color);
+    margin-top: calc((var(--unit-size) / 3 - var(--thin-border-width)) / 2);
+}
+dt:first-of-type, dd:first-of-type {
+    padding-top: 0;
+    border-top-style: none;
+    margin-top: 0;
+}
+
+main {
+    container-type: inline-size;
+}
+
+/* Unfortunately, CSS variables are not available at @container queries with conditions yet. */
+@container (width < calc(4 * 168px + 5 * 24px)) {
     section > * {
-        width: calc((100% - 3 * var(--unit-size)) / 4 * 3 + 2 * var(--unit-size));
-    }
-    section > h2, section > dl {
         width: 100%;
     }
-    section > aside {
-        width: var(--column-size);
+    section.title > header {
+        width: calc((100% - 2 * var(--unit-size)) / 3 * 2 + var(--unit-size));
     }
-
-    .grid-container {
-        display: flex;
-        flex-wrap: wrap;
-        gap: var(--unit-size);
-    }
-    .grid-item-1 {
-        width: calc((100% - 2 * var(--unit-size)) / 3);
-    }
-    .grid-item-2 {
-        width: calc((100% - 2 * var(--unit-size)) * 2 / 3 + var(--unit-size));
-    }
-    .grid-item-3 {
-        width: 100%;
+    section > *:empty {
+        display: none;
     }
 
     h2 {
-        padding-left: calc((100% - 3 * var(--unit-size)) / 4 + var(--unit-size))
+        padding-left: 0;
     }
-    dl {
-        display: flex;
-        flex-wrap: wrap;
-        align-items: stretch;
+    section > h2, .grid-container {
+        padding-left: calc(var(--unit-size) / 6);
+        padding-right: calc(var(--unit-size) / 6);
     }
     dt {
-        width: var(--column-size);
-        padding-right: var(--unit-size);
-        text-align: right;
+        width: calc((100% - 2 * var(--unit-size)) / 3);
     }
     dd {
-        width: calc(100% - var(--column-size) - var(--unit-size));
+        width: calc((100% - 2 * var(--unit-size)) / 3 * 2 + var(--unit-size));
     }
-    dt, dd {
-        padding-top: calc((var(--unit-size) / 3 - var(--thin-border-width)) / 2);
-        border-top: var(--thin-border-width) solid var(--thin-border-color);
-        margin-top: calc((var(--unit-size) / 3 - var(--thin-border-width)) / 2);
+    ul {
+        padding-left: var(--unit-size);
     }
-    dt:first-of-type, dd:first-of-type {
+}
+@container (width < calc(3 * 168px + 4 * 24px)) {
+    section.title > aside {
+        width: 100%;
+    }
+    section.title > header {
+        width: 100%;
+    }
+
+    .grid-item-1 {
+        width: calc((100% - var(--unit-size)) / 2);
+    }
+    .grid-item-2 {
+        width: 100%;
+    }
+    section > header, dt, dd {
+        padding-left: calc(var(--unit-size) / 6);
+        padding-right: calc(var(--unit-size) / 6);
+    }
+    dt {
+        width: 100%;
+        text-align: left;
+    }
+    dd {
+        width: 100%;
+    }
+    dd {
         padding-top: 0;
         border-top-style: none;
         margin-top: 0;
     }
-
-    main {
-        container-type: inline-size;
-    }
-
-    /* Unfortunately, CSS variables are not available at @container queries with conditions yet. */
-    @container (width < calc(4 * 168px + 5 * 24px)) {
-        section > * {
-            width: 100%;
-        }
-        section.title > header {
-            width: calc((100% - 2 * var(--unit-size)) / 3 * 2 + var(--unit-size));
-        }
-        section > *:empty {
-            display: none;
-        }
-
-        h2 {
-            padding-left: 0;
-        }
-        section > h2, .grid-container {
-            padding-left: calc(var(--unit-size) / 6);
-            padding-right: calc(var(--unit-size) / 6);
-        }
-        dt {
-            width: calc((100% - 2 * var(--unit-size)) / 3);
-        }
-        dd {
-            width: calc((100% - 2 * var(--unit-size)) / 3 * 2 + var(--unit-size));
-        }
-        ul {
-            padding-left: var(--unit-size);
-        }
-    }
-    @container (width < calc(3 * 168px + 4 * 24px)) {
-        section.title > aside {
-            width: 100%;
-        }
-        section.title > header {
-            width: 100%;
-        }
-
-        .grid-item-1 {
-            width: calc((100% - var(--unit-size)) / 2);
-        }
-        .grid-item-2 {
-            width: 100%;
-        }
-        section > header, dt, dd {
-            padding-left: calc(var(--unit-size) / 6);
-            padding-right: calc(var(--unit-size) / 6);
-        }
-        dt {
-            width: 100%;
-            text-align: left;
-        }
-        dd {
-            width: 100%;
-        }
-        dd {
-            padding-top: 0;
-            border-top-style: none;
-            margin-top: 0;
-        }
-    }
-    @container (width < calc(2 * 168px + 3 * 24px)) {
-        .grid-item-1 {
-            width: 100%;
-        }
-    }
 }
-
-@layer figure {
-    figure {
+@container (width < calc(2 * 168px + 3 * 24px)) {
+    .grid-item-1 {
         width: 100%;
-
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-    figure:only-child {
-        height: 100%;
-    }
-    figure * {
-        vertical-align: middle;
     }
 }
 
-@layer dark-mode {
-    input#dark-mode {
-        display: none;
-    }
-    input#dark-mode ~ label {
-        display: inline-block;
-        position: absolute;
-        top: calc((var(--unit-size) - var(--thick-border-width)) / 4); /* Put the image in the middle of the article top. */
-        right: max(calc((100vw - 4 * var(--column-size) - 3 * var(--unit-size) ) / 2), var(--unit-size));
-    }
-    input#dark-mode ~ label#dark-mode-light {
-        display: none;
-    }
-    input#dark-mode:checked ~ label#dark-mode-light {
-        display: inline-block;
-    }
-    input#dark-mode:checked ~ label#dark-mode-dark {
-        display: none;
-    }
-    input#dark-mode ~ label {
-        cursor: pointer;
-    }
-    input#dark-mode ~ label svg {
-        width: var(--unit-size);
-        height: var(--unit-size);
-    }
-    input#dark-mode ~ label svg path {
-        fill: var(--foreground-color);
-    }
+
+/* figure */
+
+figure {
+    width: 100%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+figure:only-child {
+    height: 100%;
+}
+figure * {
+    vertical-align: middle;
 }
 
-@layer visibility {
-    :root:has(input#dark-mode:not(:checked)) .dark-mode {
-        display: none;
-    }
-    :root:has(input#dark-mode:checked) .light-mode {
-        display: none;
-    }
+
+/* dark-mode */
+
+input#dark-mode {
+    display: none;
+}
+input#dark-mode ~ label {
+    display: inline-block;
+    position: absolute;
+    top: calc((var(--unit-size) - var(--thick-border-width)) / 4); /* Put the image in the middle of the article top. */
+    right: max(calc((100vw - 4 * var(--column-size) - 3 * var(--unit-size) ) / 2), var(--unit-size));
+}
+input#dark-mode ~ label#dark-mode-light {
+    display: none;
+}
+input#dark-mode:checked ~ label#dark-mode-light {
+    display: inline-block;
+}
+input#dark-mode:checked ~ label#dark-mode-dark {
+    display: none;
+}
+input#dark-mode ~ label {
+    cursor: pointer;
+}
+input#dark-mode ~ label svg {
+    width: var(--unit-size);
+    height: var(--unit-size);
+}
+input#dark-mode ~ label svg path {
+    fill: var(--foreground-color);
+}
+
+
+/* visibility */
+
+:root:has(input#dark-mode:not(:checked)) .dark-mode {
+    display: none;
+}
+:root:has(input#dark-mode:checked) .light-mode {
+    display: none;
 }
