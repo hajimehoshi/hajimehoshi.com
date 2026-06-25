@@ -277,18 +277,15 @@ section > aside {
 }
 
 .grid-container {
-    display: flex;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
     gap: var(--unit-size);
 }
-.grid-item-1 {
-    width: calc((100% - 2 * var(--unit-size)) / 3);
-}
 .grid-item-2 {
-    width: calc((100% - 2 * var(--unit-size)) * 2 / 3 + var(--unit-size));
+    grid-column: span 2;
 }
 .grid-item-3 {
-    width: 100%;
+    grid-column: span 3;
 }
 
 h2 {
@@ -359,11 +356,8 @@ main {
         width: 100%;
     }
 
-    .grid-item-1 {
-        width: calc((100% - var(--unit-size)) / 2);
-    }
-    .grid-item-2 {
-        width: 100%;
+    .grid-container {
+        grid-template-columns: repeat(2, 1fr);
     }
     section > header, dt, dd {
         padding-left: calc(var(--unit-size) / 6);
@@ -383,8 +377,8 @@ main {
     }
 }
 @container (width < calc(2 * 168px + 3 * 24px)) {
-    .grid-item-1 {
-        width: 100%;
+    .grid-container {
+        grid-template-columns: 1fr;
     }
 }
 
