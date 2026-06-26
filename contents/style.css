@@ -79,7 +79,7 @@
     --unit-size: 24px;
     --column-size: calc(7 * var(--unit-size));
     --block-gap: var(--unit-size);          /* 24px: space between sections */
-    --row-gap: calc(var(--unit-size) * 2 / 3);  /* 16px: space between dl rows */
+    --row-gap: var(--unit-size);  /* 24px: space between dl rows */
 }
 
 
