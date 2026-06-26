@@ -406,6 +406,7 @@ figure * {
 }
 #dark-mode ~ label {
     cursor: pointer;
+    user-select: none;
 }
 #dark-mode ~ label svg {
     width: var(--unit-size);
