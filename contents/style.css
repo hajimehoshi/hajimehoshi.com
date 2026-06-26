@@ -374,8 +374,12 @@ figure {
     align-items: center;
     justify-content: center;
 }
-figure:only-child {
+aside > figure {
     height: 100%;
+}
+dt img {
+    vertical-align: bottom;
+    margin-right: calc(var(--unit-size) / 3);
 }
 figure * {
     vertical-align: middle;
