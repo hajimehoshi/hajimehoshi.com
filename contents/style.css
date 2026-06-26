@@ -226,14 +226,16 @@ article {
 
 article {
     margin-top: calc(2 * var(--block-gap)); /* page margin (top) */
-    margin-bottom: var(--block-gap);        /* page margin (bottom) */
+    margin-bottom: calc(2 * var(--block-gap)); /* page margin (bottom) */
 }
 h2 {
     box-sizing: border-box;
     height: calc(3 * var(--unit-size)); /* 72px: half-module header band */
     display: flex;
     align-items: flex-end;
-    padding-bottom: var(--unit-size);
+}
+h3 {
+    margin-bottom: calc(var(--unit-size) / 3); /* 8px */
 }
 section {
     margin-top: var(--block-gap);
@@ -258,11 +260,6 @@ section > h2, section > dl {
 }
 section > aside {
     width: var(--column-size);
-}
-section.title > header {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
 }
 
 .grid-container {
@@ -352,6 +349,7 @@ main {
     dt {
         width: 100%;
         text-align: left;
+        margin-bottom: calc(var(--unit-size) / 3); /* 8px: gap above the stacked dd */
     }
     dd {
         width: 100%;
