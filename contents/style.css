@@ -317,15 +317,16 @@ main {
     h2 {
         padding-left: 0;
     }
-    section > h2, .grid-container {
-        padding-left: calc(var(--unit-size) / 6);
-        padding-right: calc(var(--unit-size) / 6);
-    }
     dt {
-        width: calc((100% - 2 * var(--unit-size)) / 3);
+        width: 100%;
+        text-align: left;
+        margin-bottom: calc(var(--unit-size) / 3);
     }
     dd {
-        width: calc((100% - 2 * var(--unit-size)) / 3 * 2 + var(--unit-size));
+        width: 100%;
+    }
+    dd {
+        margin-top: 0;
     }
     ul {
         padding-left: var(--unit-size);
@@ -341,21 +342,6 @@ main {
 
     .grid-container {
         grid-template-columns: repeat(2, 1fr);
-    }
-    section > header, dt, dd {
-        padding-left: calc(var(--unit-size) / 6);
-        padding-right: calc(var(--unit-size) / 6);
-    }
-    dt {
-        width: 100%;
-        text-align: left;
-        margin-bottom: calc(var(--unit-size) / 3); /* 8px: gap above the stacked dd */
-    }
-    dd {
-        width: 100%;
-    }
-    dd {
-        margin-top: 0;
     }
 }
 @container (width < calc(2 * 168px + 3 * 24px)) {
