@@ -32,6 +32,14 @@
     font-stretch: normal;
     font-display: swap;
     src: url(https://res.hajimehoshi.com/fonts/SuisseIntlMono-Regular-WebXL.woff2) format('woff2');
+    /* Match SuisseIntl's metrics so mixing the two fonts on one line
+       doesn't grow the line box past line-height (would make dt/dd 24.5px,
+       e.g. the Mail row whose value is a <code>).
+       Values are SuisseIntl's own font metrics (hhea/OS/2 typo, USE_TYPO):
+       unitsPerEm=1000, ascent=1174, descent=-556, lineGap=0. */
+    ascent-override: 117.4%;   /* 1174/1000 */
+    descent-override: 55.6%;   /* 556/1000 */
+    line-gap-override: 0%;
 }
 
 @font-face {
