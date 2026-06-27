@@ -290,6 +290,7 @@ dl {
     display: flex;
     flex-wrap: wrap;
     align-items: stretch;
+    row-gap: var(--row-gap);
 }
 dt {
     width: var(--column-size);
@@ -299,11 +300,8 @@ dt {
 dd {
     width: calc(100% - var(--column-size) - var(--unit-size));
 }
-dt, dd {
-    margin-top: var(--row-gap);
-}
-dt:first-of-type, dd:first-of-type {
-    margin-top: 0;
+ul li + li {
+    margin-top: calc(var(--unit-size) / 3);
 }
 
 main {
@@ -325,16 +323,20 @@ main {
     h2 {
         padding-left: 0;
     }
+    dl {
+        row-gap: 0;
+    }
     dt {
         width: 100%;
         text-align: left;
+        margin-top: var(--row-gap);
         margin-bottom: calc(var(--unit-size) / 3);
+    }
+    dt:first-of-type {
+        margin-top: 0;
     }
     dd {
         width: 100%;
-    }
-    dd {
-        margin-top: 0;
     }
     ul {
         padding-left: var(--unit-size);
