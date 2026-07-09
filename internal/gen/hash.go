@@ -5,8 +5,8 @@ package gen
 
 import (
 	"bufio"
-	"crypto/sha256"
 	"encoding/base64"
+	"hash/fnv"
 	"io"
 	"os"
 	"sync"
@@ -31,7 +31,7 @@ func fileHash(path string) (string, error) {
 	}
 	defer f.Close()
 
-	h := sha256.New()
+	h := fnv.New128a()
 	if _, err := io.Copy(h, bufio.NewReader(f)); err != nil {
 		return "", err
 	}
