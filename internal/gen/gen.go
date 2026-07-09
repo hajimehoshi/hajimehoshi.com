@@ -333,7 +333,7 @@ func generateHTML(path string, outDir, inDir string) error {
 			},
 			{
 				Key: "href",
-				Val: fmt.Sprintf("/style.css?%s", h),
+				Val: fmt.Sprintf("/style.css?v=%s", h),
 			},
 			{
 				Key: "as",
@@ -351,7 +351,7 @@ func generateHTML(path string, outDir, inDir string) error {
 			},
 			{
 				Key: "href",
-				Val: fmt.Sprintf("/style.css?%s", h),
+				Val: fmt.Sprintf("/style.css?v=%s", h),
 			},
 		},
 	})
@@ -365,7 +365,7 @@ func generateHTML(path string, outDir, inDir string) error {
 			},
 			{
 				Key: "href",
-				Val: "/favicon.webp?20251129",
+				Val: "/favicon.webp?v=20251129",
 			},
 			{
 				Key: "type",
@@ -416,7 +416,7 @@ func generateHTML(path string, outDir, inDir string) error {
 		Attr: []html.Attribute{
 			{
 				Key: "src",
-				Val: fmt.Sprintf("/script.js?%s", h),
+				Val: fmt.Sprintf("/script.js?v=%s", h),
 			},
 			{
 				Key: "defer",
