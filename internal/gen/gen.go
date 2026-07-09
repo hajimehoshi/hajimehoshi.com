@@ -355,6 +355,10 @@ func generateHTML(path string, outDir, inDir string) error {
 			},
 		},
 	})
+	h, err = fileHash(filepath.Join(outDir, "favicon.webp"))
+	if err != nil {
+		return err
+	}
 	head.AppendChild(&html.Node{
 		Type: html.ElementNode,
 		Data: "link",
@@ -365,7 +369,7 @@ func generateHTML(path string, outDir, inDir string) error {
 			},
 			{
 				Key: "href",
-				Val: "/favicon.webp?v=20251129",
+				Val: fmt.Sprintf("/favicon.webp?v=%s", h),
 			},
 			{
 				Key: "type",
