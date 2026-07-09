@@ -72,7 +72,7 @@ func hasASCIIWhitespaceWithNewLineTail(str string) bool {
 
 func Run() error {
 	const (
-		outDir = "_site"
+		outDir = "dist"
 		inDir  = "contents"
 	)
 
