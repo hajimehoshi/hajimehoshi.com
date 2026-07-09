@@ -390,22 +390,6 @@ func generateHTML(path string, outDir, inDir string) error {
 			Data: titleStr,
 		},
 	})
-	style := &html.Node{
-		Type: html.ElementNode,
-		Data: "style",
-	}
-	var cssBuf bytes.Buffer
-	if err := minifyCSS(&cssBuf, bytes.NewReader([]byte(`.thin-space:after {
-	content: '\2006';
-}`))); err != nil {
-		return err
-	}
-	style.AppendChild(&html.Node{
-		Type: html.TextNode,
-		Data: cssBuf.String(),
-	})
-	head.AppendChild(style)
-
 	if err := addHeader(node); err != nil {
 		return err
 	}
@@ -431,16 +415,6 @@ func generateHTML(path string, outDir, inDir string) error {
 	removeComments(node)
 	removeInterElementWhitespace(node)
 	processNewLines(node)
-	/*insertNodeBetweenWideAndNarrow(node, &html.Node{
-		Type: html.ElementNode,
-		Data: "span",
-		Attr: []html.Attribute{
-			{
-				Key: "class",
-				Val: "thin-space",
-			},
-		},
-	})*/
 
 	if err := os.MkdirAll(filepath.Dir(outPath), 0755); err != nil {
 		return err
