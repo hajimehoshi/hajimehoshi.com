@@ -85,7 +85,7 @@
 
 :root {
     --unit-size: 24px;
-    --column-size: calc(7 * var(--unit-size));
+    --column-size: calc(9 * var(--unit-size));
     --block-gap: var(--unit-size);          /* 24px: space between sections */
     --row-gap: var(--unit-size);  /* 24px: space between dl rows */
 }
@@ -309,7 +309,7 @@ main {
 }
 
 /* Unfortunately, CSS variables are not available at @container queries with conditions yet. */
-@container (width < calc(4 * 168px + 5 * 24px)) {
+@container (width < calc(4 * 216px + 5 * 24px)) {
     section > * {
         width: 100%;
     }
@@ -342,7 +342,7 @@ main {
         padding-left: var(--unit-size);
     }
 }
-@container (width < calc(3 * 168px + 4 * 24px)) {
+@container (width < calc(3 * 216px + 4 * 24px)) {
     section.title > aside {
         width: 100%;
     }
@@ -354,7 +354,7 @@ main {
         grid-template-columns: repeat(2, 1fr);
     }
 }
-@container (width < calc(2 * 168px + 3 * 24px)) {
+@container (width < calc(2 * 216px + 3 * 24px)) {
     .grid-container {
         grid-template-columns: 1fr;
     }
