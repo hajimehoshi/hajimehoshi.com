@@ -106,7 +106,7 @@ h1 {
     font-weight: 600;
     letter-spacing: 0;
 }
-main > header h1, .brand {
+.brand {
     font-family: 'SuisseIntlCond', 'HelveticaNeue-CondensedBold', var(--font-sans), sans-serif-condensed, sans-serif;
     font-weight: 700;
     letter-spacing: 0;
@@ -142,10 +142,6 @@ h1 {
     font-size: calc(2 * var(--unit-size) * 2 / 3);
     line-height: calc(2 * var(--unit-size));
 }
-main > header h1 {
-    font-size: calc(3 * var(--unit-size) * 2 / 3);
-    line-height: calc(3 * var(--unit-size));
-}
 .brand {
     font-size: var(--unit-size);
     line-height: var(--unit-size);
@@ -153,6 +149,10 @@ main > header h1 {
 h2 {
     font-size: var(--unit-size);
     line-height: var(--unit-size);
+}
+main > header p {
+    font-size: calc(1.5 * var(--unit-size));
+    line-height: calc(2 * var(--unit-size));
 }
 h3 {
     font-size: calc(var(--unit-size) * 2 / 3);
@@ -201,6 +201,16 @@ html {
 body > header {
     background-color: var(--background-color);
     border-bottom: 1px solid var(--thin-border-color);
+}
+main > header::after {
+    /* Full-bleed line: a border would only span the centered column. */
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: calc(50% - 50vw);
+    width: 100vw;
+    height: 1px;
+    background-color: var(--thin-border-color);
 }
 a {
     color: var(--foreground-color);
@@ -254,6 +264,12 @@ article {
     display: flex;
     flex-direction: column;
 }
+main > header {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: var(--unit-size);
+}
 
 
 /* site header */
@@ -274,26 +290,27 @@ body > header {
 /* block spacing */
 
 main > header {
-    margin-top: calc(2 * var(--block-gap)); /* page margin (top) */
+    margin-top: calc(2 * var(--block-gap));
+    padding-bottom: calc(2 * var(--block-gap));
 }
 article {
-    margin-top: var(--block-gap); /* gap below the hero */
-    margin-bottom: calc(2 * var(--block-gap)); /* page margin (bottom) */
+    margin-top: 0;
+    margin-bottom: calc(2 * var(--block-gap));
 }
 h2 {
     box-sizing: border-box;
-    height: calc(3 * var(--unit-size)); /* 72px: half-module header band */
+    height: calc(3 * var(--unit-size));
     display: flex;
     align-items: flex-end;
+}
+section:first-of-type h2 {
+    height: calc(2 * var(--unit-size));
 }
 h3 {
     margin-bottom: calc(var(--unit-size) / 3); /* 8px */
 }
 section {
     margin-top: var(--block-gap);
-}
-section:first-of-type {
-    margin-top: 0;
 }
 
 
@@ -389,6 +406,12 @@ main {
     .grid-container {
         grid-template-columns: 1fr;
     }
+
+    /* Stack the logo above the phrase; a row is too cramped this narrow. */
+    main > header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
 }
 
 
@@ -397,6 +420,11 @@ main {
 dt img {
     vertical-align: bottom;
     margin-right: calc(var(--unit-size) / 3);
+}
+main > header img {
+    flex-shrink: 0;
+    width: calc(4 * var(--unit-size));
+    height: calc(4 * var(--unit-size));
 }
 
 
