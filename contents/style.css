@@ -106,7 +106,7 @@ h1 {
     font-weight: 600;
     letter-spacing: 0;
 }
-section.title h1, .brand {
+main > header h1, .brand {
     font-family: 'SuisseIntlCond', 'HelveticaNeue-CondensedBold', var(--font-sans), sans-serif-condensed, sans-serif;
     font-weight: 700;
     letter-spacing: 0;
@@ -142,7 +142,7 @@ h1 {
     font-size: calc(2 * var(--unit-size) * 2 / 3);
     line-height: calc(2 * var(--unit-size));
 }
-section.title h1 {
+main > header h1 {
     font-size: calc(3 * var(--unit-size) * 2 / 3);
     line-height: calc(3 * var(--unit-size));
 }
@@ -246,12 +246,13 @@ main {
     flex-grow: 1;
     align-items: center;
 }
+main > header, article {
+    width: calc(4 * var(--column-size) + 3 * var(--unit-size));
+    max-width: calc(100vw - 2 * var(--unit-size) + 2 * var(--unit-size) / 6);
+}
 article {
     display: flex;
     flex-direction: column;
-
-    width: calc(4 * var(--column-size) + 3 * var(--unit-size));
-    max-width: calc(100vw - 2 * var(--unit-size) + 2 * var(--unit-size) / 6);
 }
 
 
@@ -272,8 +273,11 @@ body > header {
 
 /* block spacing */
 
-article {
+main > header {
     margin-top: calc(2 * var(--block-gap)); /* page margin (top) */
+}
+article {
+    margin-top: var(--block-gap); /* gap below the hero */
     margin-bottom: calc(2 * var(--block-gap)); /* page margin (bottom) */
 }
 h2 {
@@ -304,10 +308,6 @@ section > * {
     width: calc((100% - 3 * var(--unit-size)) / 4 * 3 + 2 * var(--unit-size));
 }
 section > h2, section > dl {
-    width: 100%;
-}
-/* Hero-section placeholder; the design is not determined yet. */
-section.title > header {
     width: 100%;
 }
 
