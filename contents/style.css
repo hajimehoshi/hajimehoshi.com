@@ -106,7 +106,7 @@ h1 {
     font-weight: 600;
     letter-spacing: 0;
 }
-section.title h1 {
+section.title h1, .brand {
     font-family: 'SuisseIntlCond', 'HelveticaNeue-CondensedBold', var(--font-sans), sans-serif-condensed, sans-serif;
     font-weight: 700;
     letter-spacing: 0;
@@ -146,6 +146,10 @@ section.title h1 {
     font-size: calc(3 * var(--unit-size) * 2 / 3);
     line-height: calc(3 * var(--unit-size));
 }
+.brand {
+    font-size: var(--unit-size);
+    line-height: var(--unit-size);
+}
 h2 {
     font-size: var(--unit-size);
     line-height: var(--unit-size);
@@ -167,6 +171,9 @@ a {
     text-decoration-thickness: 1px;
     text-underline-offset: 0.25em;
 }
+a.brand {
+    text-decoration-line: none;
+}
 
 
 /* color */
@@ -177,19 +184,23 @@ a {
     --background-color: color-mix(in oklab, var(--color-black), var(--color-white) 95%);
     --foreground-color: color-mix(in oklab, var(--color-black), var(--color-white) 25%);
     --header-color: color-mix(in oklab, var(--color-black), var(--color-white) 10%);
-    --thin-border-color: var(--foreground-color);
+    --thin-border-color: oklab(from var(--foreground-color) l a b / 50%);
     --sub-color: color-mix(in oklab, var(--color-black) 60%, var(--color-white));
 }
 :root:has(#dark-mode:checked) {
     --background-color: color-mix(in oklab, var(--color-black), var(--color-white) 5%);
     --foreground-color: color-mix(in oklab, var(--color-black), var(--color-white) 75%);
     --header-color: color-mix(in oklab, var(--color-black), var(--color-white) 90%);
-    --thin-border-color: color-mix(in oklab, var(--foreground-color), transparent 50%);
+    --thin-border-color: oklab(from var(--foreground-color) l a b / 25%);
     --sub-color: color-mix(in oklab, var(--color-black) 40%, var(--color-white));
 }
 html {
     background-color: var(--background-color);
     color: var(--foreground-color);
+}
+body > header {
+    background-color: var(--background-color);
+    border-bottom: 1px solid var(--thin-border-color);
 }
 a {
     color: var(--foreground-color);
@@ -207,12 +218,26 @@ h1, h2, h3, h4, dt {
 :is(h1, h2, h3, h4, dt) a {
     color: var(--header-color);
 }
+a.brand {
+    color: var(--header-color);
+}
 
 
 /* flex */
 
 body {
     display: flex;
+    flex-direction: column;
+}
+body > header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+body > header > .brand {
+    display: flex;
+    align-items: center;
+    gap: calc(var(--unit-size) / 3);
 }
 main {
     display: flex;
@@ -227,6 +252,21 @@ article {
 
     width: calc(4 * var(--column-size) + 3 * var(--unit-size));
     max-width: calc(100vw - 2 * var(--unit-size) + 2 * var(--unit-size) / 6);
+}
+
+
+/* site header */
+
+body > header {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+
+    box-sizing: content-box;
+    /* The 1px bottom border adds to the box, so subtract it to keep the total height at 3 units. */
+    height: calc(3 * var(--unit-size) - 1px);
+    /* Align the contents with the article column. */
+    padding: 0 max(calc((100vw - 4 * var(--column-size) - 3 * var(--unit-size)) / 2), var(--unit-size));
 }
 
 
@@ -266,8 +306,9 @@ section > * {
 section > h2, section > dl {
     width: 100%;
 }
-section > aside {
-    width: var(--column-size);
+/* Hero-section placeholder; the design is not determined yet. */
+section.title > header {
+    width: 100%;
 }
 
 .grid-container {
@@ -313,9 +354,6 @@ main {
     section > * {
         width: 100%;
     }
-    section.title > header {
-        width: calc((100% - 2 * var(--unit-size)) / 3 * 2 + var(--unit-size));
-    }
     section > *:empty {
         display: none;
     }
@@ -343,13 +381,6 @@ main {
     }
 }
 @container (width < calc(3 * 216px + 4 * 24px)) {
-    section.title > aside {
-        width: 100%;
-    }
-    section.title > header {
-        width: 100%;
-    }
-
     .grid-container {
         grid-template-columns: repeat(2, 1fr);
     }
@@ -361,24 +392,11 @@ main {
 }
 
 
-/* figure */
+/* img */
 
-figure {
-    width: 100%;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-aside > figure {
-    height: 100%;
-}
 dt img {
     vertical-align: bottom;
     margin-right: calc(var(--unit-size) / 3);
-}
-figure * {
-    vertical-align: middle;
 }
 
 
@@ -388,23 +406,19 @@ figure * {
     display: none;
 }
 #dark-mode ~ label {
-    display: inline-block;
-    position: absolute;
-    top: calc(var(--block-gap) / 4); /* Sit near the top of the page. */
-    right: max(calc((100vw - 4 * var(--column-size) - 3 * var(--unit-size) ) / 2), var(--unit-size));
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    user-select: none;
 }
 #dark-mode ~ #dark-mode-light {
     display: none;
 }
 #dark-mode:checked ~ #dark-mode-light {
-    display: inline-block;
+    display: flex;
 }
 #dark-mode:checked ~ #dark-mode-dark {
     display: none;
-}
-#dark-mode ~ label {
-    cursor: pointer;
-    user-select: none;
 }
 #dark-mode ~ label svg {
     width: var(--unit-size);

@@ -17,6 +17,7 @@ import (
 
 	"github.com/evanw/esbuild/pkg/api"
 	"golang.org/x/net/html"
+	"golang.org/x/net/html/atom"
 	"golang.org/x/sync/errgroup"
 	"golang.org/x/text/width"
 )
@@ -477,11 +478,17 @@ func addHeader(node *html.Node) error {
 	}
 	defer f.Close()
 
-	header, err := html.Parse(f)
+	nodes, err := html.ParseFragment(f, &html.Node{
+		Type:     html.ElementNode,
+		Data:     "body",
+		DataAtom: atom.Body,
+	})
 	if err != nil {
 		return err
 	}
-	body.InsertBefore(header, main)
+	for _, n := range nodes {
+		body.InsertBefore(n, main)
+	}
 	return nil
 }
 
