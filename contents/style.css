@@ -151,8 +151,8 @@ h2 {
     line-height: var(--unit-size);
 }
 main > header p {
-    font-size: calc(1.5 * var(--unit-size));
-    line-height: calc(2 * var(--unit-size));
+    font-size: var(--unit-size);
+    line-height: var(--unit-size);
 }
 h3 {
     font-size: calc(var(--unit-size) * 2 / 3);
@@ -201,16 +201,6 @@ html {
 body > header {
     background-color: var(--background-color);
     border-bottom: 1px solid var(--thin-border-color);
-}
-main > header::after {
-    /* Full-bleed line: a border would only span the centered column. */
-    content: "";
-    position: absolute;
-    top: 100%;
-    left: calc(50% - 50vw);
-    width: 100vw;
-    height: 1px;
-    background-color: var(--thin-border-color);
 }
 a {
     color: var(--foreground-color);
@@ -265,10 +255,11 @@ article {
     flex-direction: column;
 }
 main > header {
-    position: relative;
     display: flex;
+    flex-direction: column;
     align-items: center;
     gap: var(--unit-size);
+    text-align: center;
 }
 
 
@@ -290,12 +281,12 @@ body > header {
 /* block spacing */
 
 main > header {
-    margin-top: calc(2 * var(--block-gap));
-    padding-bottom: calc(2 * var(--block-gap));
+    margin-top: calc(2 * var(--unit-size));
+    margin-bottom: calc(2 * var(--unit-size));
 }
 article {
     margin-top: 0;
-    margin-bottom: calc(2 * var(--block-gap));
+    margin-bottom: calc(2 * var(--unit-size));
 }
 h2 {
     box-sizing: border-box;
@@ -406,12 +397,6 @@ main {
     .grid-container {
         grid-template-columns: 1fr;
     }
-
-    /* Stack the logo above the phrase; a row is too cramped this narrow. */
-    main > header {
-        flex-direction: column;
-        align-items: flex-start;
-    }
 }
 
 
@@ -422,7 +407,7 @@ dt img {
     margin-right: calc(var(--unit-size) / 3);
 }
 main > header img {
-    flex-shrink: 0;
+    display: block;
     width: calc(4 * var(--unit-size));
     height: calc(4 * var(--unit-size));
 }
