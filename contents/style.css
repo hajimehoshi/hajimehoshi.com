@@ -148,11 +148,11 @@ h1 {
 }
 h2 {
     font-size: var(--unit-size);
-    line-height: var(--unit-size);
+    line-height: calc(2 * var(--unit-size));
 }
 main > header p {
     font-size: var(--unit-size);
-    line-height: var(--unit-size);
+    line-height: calc(2 * var(--unit-size));
 }
 h3 {
     font-size: calc(var(--unit-size) * 2 / 3);
@@ -260,6 +260,7 @@ main > header {
     align-items: center;
     gap: var(--unit-size);
     text-align: center;
+    text-wrap: balance;
 }
 
 
