@@ -10,7 +10,7 @@ import (
 
 	"golang.org/x/net/html"
 
-	"github.com/hajimehoshi/hajimehoshi.com/internal/gen"
+	"github.com/hajimehoshi/hajimehoshi.com/ssg/internal/gen"
 )
 
 func TestRemoveInterElementWhitespace(t *testing.T) {

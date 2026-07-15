@@ -9,11 +9,11 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/hajimehoshi/hajimehoshi.com/internal/gen"
+	"github.com/hajimehoshi/hajimehoshi.com/ssg"
 )
 
 func main() {
-	if err := gen.Run(); err != nil {
+	if err := ssg.Run(); err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
 	}

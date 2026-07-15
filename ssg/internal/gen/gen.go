@@ -13,6 +13,7 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+	"slices"
 	"strings"
 	"unicode/utf8"
 
@@ -762,21 +763,11 @@ func shouldReserveSpaceBetweenTexts(d0, d1 string) bool {
 }
 
 func isMetadataElementName(name string) bool {
-	for _, n := range []string{"base", "link", "meta", "noscript", "script", "style", "template", "title"} {
-		if name == n {
-			return true
-		}
-	}
-	return false
+	return slices.Contains([]string{"base", "link", "meta", "noscript", "script", "style", "template", "title"}, name)
 }
 
 func isPhrasingElementName(name string) bool {
-	for _, n := range []string{"a", "abbr", "area", "audio", "b", "bdi", "bdo", "br", "button", "canvas", "cite", "code", "data", "datalist", "del", "dfn", "em", "embed", "i", "iframe", "img", "input", "ins", "kbd", "label", "link", "map", "mark", "math", "meta", "meter", "noscript", "object", "output", "picture", "progress", "q", "ruby", "s", "samp", "script", "select", "slot", "small", "span", "strong", "sub", "sup", "svg", "template", "textarea", "time", "u", "var", "video", "wbr"} {
-		if name == n {
-			return true
-		}
-	}
-	return false
+	return slices.Contains([]string{"a", "abbr", "area", "audio", "b", "bdi", "bdo", "br", "button", "canvas", "cite", "code", "data", "datalist", "del", "dfn", "em", "embed", "i", "iframe", "img", "input", "ins", "kbd", "label", "link", "map", "mark", "math", "meta", "meter", "noscript", "object", "output", "picture", "progress", "q", "ruby", "s", "samp", "script", "select", "slot", "small", "span", "strong", "sub", "sup", "svg", "template", "textarea", "time", "u", "var", "video", "wbr"}, name)
 }
 
 func woff2URLsInCSS(cssFile string) ([]string, error) {
