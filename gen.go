@@ -13,7 +13,10 @@ import (
 )
 
 func main() {
-	if err := ssg.Run(); err != nil {
+	if err := ssg.Run(&ssg.RunOptions{
+		SiteName: "hajimehoshi.com",
+		SiteURL:  "https://hajimehoshi.com",
+	}); err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
 	}

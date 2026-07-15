@@ -70,7 +70,17 @@ func hasASCIIWhitespaceWithNewLineTail(str string) bool {
 	}
 }
 
-func Run() error {
+// Options is options for Run.
+type Options struct {
+	// SiteName is the name of the website, used e.g. in page titles.
+	SiteName string
+
+	// SiteURL is the absolute URL of the website root, used when a page
+	// needs an absolute URL. This can be empty.
+	SiteURL string
+}
+
+func Run(options Options) error {
 	const (
 		outDir = "dist"
 		inDir  = "contents"
@@ -82,7 +92,7 @@ func Run() error {
 	if err := copyNonHTMLFiles(outDir, inDir); err != nil {
 		return err
 	}
-	if err := generateHTMLs(outDir, inDir); err != nil {
+	if err := generateHTMLs(outDir, inDir, options); err != nil {
 		return err
 	}
 	return nil
@@ -172,7 +182,7 @@ func copyNonHTMLFiles(outDir, inDir string) error {
 	return nil
 }
 
-func generateHTMLs(outDir, inDir string) error {
+func generateHTMLs(outDir, inDir string, options Options) error {
 	// templateFile is the base name of each directory's HTML template. Its
 	// leading underscore keeps it out of the generated site (see isIgnoredFile).
 	const templateFile = "_tmpl.html"
@@ -225,7 +235,7 @@ func generateHTMLs(outDir, inDir string) error {
 			return fmt.Errorf("gen: no %s found for %s", templateFile, path)
 		}
 		wg.Go(func() error {
-			return generateHTML(path, tmpl, outDir, inDir)
+			return generateHTML(path, tmpl, outDir, inDir, options)
 		})
 	}
 	return wg.Wait()
@@ -249,7 +259,7 @@ func closestTemplate(templates map[string]*template.Template, inDir, dir string)
 	}
 }
 
-func generateHTML(path string, tmpl *template.Template, outDir, inDir string) error {
+func generateHTML(path string, tmpl *template.Template, outDir, inDir string, options Options) error {
 	inPath := filepath.Join(inDir, path)
 	outPath := filepath.Join(outDir, path)
 
@@ -265,7 +275,7 @@ func generateHTML(path string, tmpl *template.Template, outDir, inDir string) er
 		}
 	}
 
-	titleStr := "hajimehoshi.com"
+	titleStr := options.SiteName
 	if path != "index.html" {
 		title, err := firstH1Text(content)
 		if err != nil {

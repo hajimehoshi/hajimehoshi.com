@@ -3,10 +3,30 @@
 
 package ssg
 
-import "github.com/hajimehoshi/hajimehoshi.com/ssg/internal/gen"
+import (
+	"fmt"
 
-func Run() error {
-	if err := gen.Run(); err != nil {
+	"github.com/hajimehoshi/hajimehoshi.com/ssg/internal/gen"
+)
+
+// RunOptions is options for Run.
+type RunOptions struct {
+	// SiteName is the name of the website, used e.g. in page titles.
+	SiteName string
+
+	// SiteURL is the absolute URL of the website root, used when a page
+	// needs an absolute URL. This can be empty.
+	SiteURL string
+}
+
+func Run(options *RunOptions) error {
+	if options == nil || options.SiteName == "" {
+		return fmt.Errorf("ssg: SiteName must not be empty")
+	}
+	if err := gen.Run(gen.Options{
+		SiteName: options.SiteName,
+		SiteURL:  options.SiteURL,
+	}); err != nil {
 		return err
 	}
 	return nil
