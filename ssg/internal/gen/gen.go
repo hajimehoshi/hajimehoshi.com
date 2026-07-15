@@ -284,32 +284,25 @@ func generateHTML(path string, tmpl *template.Template, outDir, inDir string, op
 		titleStr = fmt.Sprintf("%s - %s", title, titleStr)
 	}
 
-	// Preload woff2 files.
-	fonts, err := woff2URLsInCSS(filepath.Join(outDir, "style.css"))
-	if err != nil {
-		return err
-	}
-	if len(fonts) == 0 {
-		return fmt.Errorf("gen: no woff2 files")
-	}
-
 	var buf bytes.Buffer
 	if err := tmpl.Execute(&buf, struct {
-		Lang         string
-		Title        string
-		PreloadFonts []string
-		Content      template.HTML
+		Lang    string
+		Title   string
+		Content template.HTML
 	}{
-		Lang:         lang,
-		Title:        titleStr,
-		PreloadFonts: fonts,
-		Content:      template.HTML(content),
+		Lang:    lang,
+		Title:   titleStr,
+		Content: template.HTML(content),
 	}); err != nil {
 		return err
 	}
 
 	node, err := html.Parse(&buf)
 	if err != nil {
+		return err
+	}
+
+	if err := addFontPreloads(node, outDir, filepath.Dir(path)); err != nil {
 		return err
 	}
 
@@ -436,24 +429,35 @@ func addResourceVersions(node *html.Node, outDir, pageDir string) error {
 	return nil
 }
 
-// versionedURL returns rawURL with a ?v=<hash> cache-busting query. External
-// URLs (with a scheme or host, including protocol-relative ones) are returned
-// unchanged; only URLs pointing at a local file under outDir are versioned.
+// localFilePath resolves rawURL to a file path under outDir. It reports false
+// for URLs that do not point at a local file, such as external URLs (with a
+// scheme or host, including protocol-relative ones). pageDir is the document's
+// directory relative to the site root, used to resolve relative URLs.
+func localFilePath(rawURL, outDir, pageDir string) (string, bool) {
+	u, err := url.Parse(rawURL)
+	if err != nil {
+		return "", false
+	}
+	if u.Scheme != "" || u.Host != "" || u.Path == "" {
+		return "", false
+	}
+	if strings.HasPrefix(u.Path, "/") {
+		// A leading slash denotes the site root; resolve under outDir.
+		return filepath.Join(outDir, filepath.FromSlash(u.Path[1:])), true
+	}
+	return filepath.Join(outDir, pageDir, filepath.FromSlash(u.Path)), true
+}
+
+// versionedURL returns rawURL with a ?v=<hash> cache-busting query. URLs that
+// do not point at a local file under outDir are returned unchanged.
 func versionedURL(rawURL, outDir, pageDir string) (string, error) {
+	file, ok := localFilePath(rawURL, outDir, pageDir)
+	if !ok {
+		return rawURL, nil
+	}
 	u, err := url.Parse(rawURL)
 	if err != nil {
 		return rawURL, nil
-	}
-	if u.Scheme != "" || u.Host != "" || u.Path == "" {
-		return rawURL, nil
-	}
-
-	var file string
-	if strings.HasPrefix(u.Path, "/") {
-		// A leading slash denotes the site root; resolve under outDir.
-		file = filepath.Join(outDir, filepath.FromSlash(u.Path[1:]))
-	} else {
-		file = filepath.Join(outDir, pageDir, filepath.FromSlash(u.Path))
 	}
 	h, err := fileHash(file)
 	if err != nil {
@@ -750,6 +754,77 @@ func isPhrasingElementName(name string) bool {
 	return slices.Contains([]string{"a", "abbr", "area", "audio", "b", "bdi", "bdo", "br", "button", "canvas", "cite", "code", "data", "datalist", "del", "dfn", "em", "embed", "i", "iframe", "img", "input", "ins", "kbd", "label", "link", "map", "mark", "math", "meta", "meter", "noscript", "object", "output", "picture", "progress", "q", "ruby", "s", "samp", "script", "select", "slot", "small", "span", "strong", "sub", "sup", "svg", "template", "textarea", "time", "u", "var", "video", "wbr"}, name)
 }
 
+// addFontPreloads appends a <link rel="preload"> element to the end of the
+// document's <head> for every woff2 font used by the document's local
+// stylesheets. pageDir is the document's directory relative to the site root,
+// used to resolve relative stylesheet URLs.
+func addFontPreloads(node *html.Node, outDir, pageDir string) error {
+	head := getElementByName(node, "head")
+	if head == nil {
+		return nil
+	}
+
+	seen := map[string]struct{}{}
+	for _, href := range stylesheetHrefs(node) {
+		file, ok := localFilePath(href, outDir, pageDir)
+		if !ok {
+			continue
+		}
+		urls, err := woff2URLsInCSS(file)
+		if err != nil {
+			return err
+		}
+		for _, u := range urls {
+			if _, ok := seen[u]; ok {
+				continue
+			}
+			seen[u] = struct{}{}
+			head.AppendChild(&html.Node{
+				Type:     html.ElementNode,
+				Data:     "link",
+				DataAtom: atom.Link,
+				Attr: []html.Attribute{
+					{Key: "rel", Val: "preload"},
+					{Key: "href", Val: u},
+					{Key: "as", Val: "font"},
+					{Key: "crossorigin", Val: "anonymous"},
+				},
+			})
+		}
+	}
+	return nil
+}
+
+// stylesheetHrefs returns the href values of the document's
+// <link rel="stylesheet"> elements.
+func stylesheetHrefs(node *html.Node) []string {
+	var hrefs []string
+	var walk func(*html.Node)
+	walk = func(n *html.Node) {
+		if n.Type == html.ElementNode && n.Data == "link" {
+			var rel, href string
+			for _, a := range n.Attr {
+				switch a.Key {
+				case "rel":
+					rel = a.Val
+				case "href":
+					href = a.Val
+				}
+			}
+			if href != "" && slices.ContainsFunc(strings.Fields(rel), func(t string) bool {
+				return strings.EqualFold(t, "stylesheet")
+			}) {
+				hrefs = append(hrefs, href)
+			}
+		}
+		for c := n.FirstChild; c != nil; c = c.NextSibling {
+			walk(c)
+		}
+	}
+	walk(node)
+	return hrefs
+}
+
 func woff2URLsInCSS(cssFile string) ([]string, error) {
 	f, err := os.Open(cssFile)
 	if err != nil {
@@ -762,11 +837,12 @@ func woff2URLsInCSS(cssFile string) ([]string, error) {
 	var urls []string
 	s := bufio.NewScanner(f)
 	for s.Scan() {
-		m := re.FindStringSubmatch(s.Text())
-		if m == nil {
-			continue
+		for _, m := range re.FindAllStringSubmatch(s.Text(), -1) {
+			urls = append(urls, m[1])
 		}
-		urls = append(urls, m[1])
+	}
+	if err := s.Err(); err != nil {
+		return nil, err
 	}
 	return urls, nil
 }

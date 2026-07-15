@@ -7,9 +7,6 @@
     <link rel="stylesheet" href="/style.css">
     <link rel="icon" href="/favicon.webp" type="image/webp">
     <script src="/script.js" defer></script>
-    {{- range .PreloadFonts }}
-    <link rel="preload" href="{{ . }}" as="font" crossorigin="anonymous">
-    {{- end }}
     <title>{{ .Title }}</title>
   </head>
   <body>
