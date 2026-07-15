@@ -6,8 +6,8 @@ package gen
 import (
 	"bufio"
 	"bytes"
-	"embed"
 	"fmt"
+	"html/template"
 	"io"
 	"net/url"
 	"os"
@@ -23,9 +23,6 @@ import (
 	"golang.org/x/sync/errgroup"
 	"golang.org/x/text/width"
 )
-
-//go:embed *.html
-var htmlFiles embed.FS
 
 // asciiWhitespace is a set of ASCII whitespace characters defined by the HTML spec.
 // https://infra.spec.whatwg.org/#ascii-whitespace
@@ -176,7 +173,16 @@ func copyNonHTMLFiles(outDir, inDir string) error {
 }
 
 func generateHTMLs(outDir, inDir string) error {
-	var wg errgroup.Group
+	// templateFile is the base name of each directory's HTML template. Its
+	// leading underscore keeps it out of the generated site (see isIgnoredFile).
+	const templateFile = "_tmpl.html"
+
+	// templates maps a directory to the template it defines. Building it in the
+	// walk (which is single-threaded) lets the concurrent generation below read
+	// it without locking.
+	templates := map[string]*template.Template{}
+	var contentPaths []string
+
 	if err := filepath.Walk(inDir, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err
@@ -187,140 +193,121 @@ func generateHTMLs(outDir, inDir string) error {
 		if filepath.Ext(path) != ".html" {
 			return nil
 		}
+		if filepath.Base(path) == templateFile {
+			data, err := os.ReadFile(path)
+			if err != nil {
+				return err
+			}
+			tmpl, err := template.New(templateFile).Parse(string(data))
+			if err != nil {
+				return err
+			}
+			templates[filepath.Dir(path)] = tmpl
+			return nil
+		}
 		if isIgnoredFile(path) {
 			return nil
 		}
-		path, err = filepath.Rel(inDir, path)
+		rel, err := filepath.Rel(inDir, path)
 		if err != nil {
 			return err
 		}
-
-		wg.Go(func() error {
-			return generateHTML(path, outDir, inDir)
-		})
+		contentPaths = append(contentPaths, rel)
 		return nil
 	}); err != nil {
 		return err
 	}
 
-	if err := wg.Wait(); err != nil {
-		return err
+	var wg errgroup.Group
+	for _, path := range contentPaths {
+		tmpl := closestTemplate(templates, inDir, filepath.Dir(filepath.Join(inDir, path)))
+		if tmpl == nil {
+			return fmt.Errorf("gen: no %s found for %s", templateFile, path)
+		}
+		wg.Go(func() error {
+			return generateHTML(path, tmpl, outDir, inDir)
+		})
 	}
-	return nil
+	return wg.Wait()
 }
 
-func generateHTML(path string, outDir, inDir string) error {
+// closestTemplate returns the template defined in dir or its nearest ancestor up
+// to inDir, or nil if none of them define one.
+func closestTemplate(templates map[string]*template.Template, inDir, dir string) *template.Template {
+	for {
+		if tmpl, ok := templates[dir]; ok {
+			return tmpl
+		}
+		if dir == inDir {
+			return nil
+		}
+		parent := filepath.Dir(dir)
+		if parent == dir {
+			return nil
+		}
+		dir = parent
+	}
+}
+
+func generateHTML(path string, tmpl *template.Template, outDir, inDir string) error {
 	inPath := filepath.Join(inDir, path)
 	outPath := filepath.Join(outDir, path)
 
-	in, err := os.Open(inPath)
-	if err != nil {
-		return err
-	}
-	defer in.Close()
-
-	node, err := html.Parse(bufio.NewReader(in))
+	content, err := os.ReadFile(inPath)
 	if err != nil {
 		return err
 	}
 
-	htmle := getElementByName(node, "html")
-	if _, ok := getAttribute(htmle, "lang"); !ok {
-		lang := "en"
-		if dir := filepath.Dir(path); dir != "." {
-			if ts := strings.Split(dir, string(filepath.Separator)); len(ts) > 0 {
-				lang = ts[0]
-			}
+	lang := "en"
+	if dir := filepath.Dir(path); dir != "." {
+		if ts := strings.Split(dir, string(filepath.Separator)); len(ts) > 0 {
+			lang = ts[0]
 		}
-		htmle.Attr = append(htmle.Attr, html.Attribute{
-			Key: "lang",
-			Val: lang,
-		})
 	}
 
-	head := getElementByName(htmle, "head")
-	if getElement(head, func(n *html.Node) bool {
-		if n.Data != "meta" {
-			return false
-		}
-		for _, a := range n.Attr {
-			if a.Key == "name" && a.Val == "description" {
-				return true
-			}
-		}
-		return false
-	}) == nil {
-		// TODO: Generate a good description.
-		head.AppendChild(&html.Node{
-			Type: html.ElementNode,
-			Data: "meta",
-			Attr: []html.Attribute{
-				{
-					Key: "name",
-					Val: "description",
-				},
-				{
-					Key: "content",
-					Val: "Hajime Hoshi is a software engineer in Tokyo",
-				},
-			},
-		})
-	}
-	if err := addHead(node); err != nil {
-		return err
-	}
-	// Preload woff2 files.
-	urls, err := woff2URLsInCSS(filepath.Join(outDir, "style.css"))
-	if err != nil {
-		return err
-	}
-	if len(urls) == 0 {
-		return fmt.Errorf("gen: no woff2 files")
-	}
-	for _, url := range urls {
-		head.AppendChild(&html.Node{
-			Type: html.ElementNode,
-			Data: "link",
-			Attr: []html.Attribute{
-				{
-					Key: "rel",
-					Val: "preload",
-				},
-				{
-					Key: "href",
-					Val: url,
-				},
-				{
-					Key: "as",
-					Val: "font",
-				},
-				{
-					Key: "crossorigin",
-					Val: "anonymous",
-				},
-			},
-		})
-	}
 	titleStr := "hajimehoshi.com"
 	if path != "index.html" {
-		title := getElementByName(htmle, "h1").FirstChild.Data
+		title, err := firstH1Text(content)
+		if err != nil {
+			return err
+		}
 		titleStr = fmt.Sprintf("%s - %s", title, titleStr)
 	}
-	head.AppendChild(&html.Node{
-		Type: html.ElementNode,
-		Data: "title",
-		FirstChild: &html.Node{
-			Type: html.TextNode,
-			Data: titleStr,
-		},
-	})
-	if err := addHeader(node); err != nil {
+
+	// Preload woff2 files.
+	fonts, err := woff2URLsInCSS(filepath.Join(outDir, "style.css"))
+	if err != nil {
 		return err
 	}
+	if len(fonts) == 0 {
+		return fmt.Errorf("gen: no woff2 files")
+	}
+
+	var buf bytes.Buffer
+	if err := tmpl.Execute(&buf, struct {
+		Lang         string
+		Title        string
+		PreloadFonts []string
+		Content      template.HTML
+	}{
+		Lang:         lang,
+		Title:        titleStr,
+		PreloadFonts: fonts,
+		Content:      template.HTML(content),
+	}); err != nil {
+		return err
+	}
+
+	node, err := html.Parse(&buf)
+	if err != nil {
+		return err
+	}
+
 	if err := addResourceVersions(node, outDir, filepath.Dir(path)); err != nil {
 		return err
 	}
 
+	removeHeadWhitespace(node)
 	removeComments(node)
 	removeInterElementWhitespace(node)
 	processNewLines(node)
@@ -367,64 +354,30 @@ func getElementByName(node *html.Node, name string) *html.Node {
 	})
 }
 
-func getAttribute(node *html.Node, key string) (html.Attribute, bool) {
-	for _, a := range node.Attr {
-		if a.Key == key {
-			return a, true
-		}
-	}
-	return html.Attribute{}, false
-}
-
-func addHeader(node *html.Node) error {
-	body := getElementByName(node, "body")
-	main := getElementByName(node, "main")
-
-	f, err := htmlFiles.Open("header.html")
-	if err != nil {
-		return err
-	}
-	defer f.Close()
-
-	nodes, err := html.ParseFragment(f, &html.Node{
+// firstH1Text returns the text of the first <h1> element in the given main
+// content fragment.
+func firstH1Text(content []byte) (string, error) {
+	nodes, err := html.ParseFragment(bytes.NewReader(content), &html.Node{
 		Type:     html.ElementNode,
-		Data:     "body",
-		DataAtom: atom.Body,
+		Data:     "main",
+		DataAtom: atom.Main,
 	})
 	if err != nil {
-		return err
+		return "", err
 	}
-	for _, n := range nodes {
-		body.InsertBefore(n, main)
-	}
-	return nil
-}
-
-func addHead(node *html.Node) error {
-	head := getElementByName(node, "head")
-
-	f, err := htmlFiles.Open("head.html")
-	if err != nil {
-		return err
-	}
-	defer f.Close()
-
-	nodes, err := html.ParseFragment(f, &html.Node{
+	root := &html.Node{
 		Type:     html.ElementNode,
-		Data:     "head",
-		DataAtom: atom.Head,
-	})
-	if err != nil {
-		return err
+		Data:     "main",
+		DataAtom: atom.Main,
 	}
 	for _, n := range nodes {
-		// Skip whitespace-only text nodes from the template's formatting.
-		if n.Type == html.TextNode && strings.Trim(n.Data, asciiWhitespace) == "" {
-			continue
-		}
-		head.AppendChild(n)
+		root.AppendChild(n)
 	}
-	return nil
+	h1 := getElementByName(root, "h1")
+	if h1 == nil || h1.FirstChild == nil {
+		return "", fmt.Errorf("gen: no <h1> found in content")
+	}
+	return h1.FirstChild.Data, nil
 }
 
 // resourceAttr identifies an element attribute whose value is a single URL of a
@@ -501,6 +454,23 @@ func versionedURL(rawURL, outDir, pageDir string) (string, error) {
 	q.Set("v", h)
 	u.RawQuery = q.Encode()
 	return u.String(), nil
+}
+
+// removeHeadWhitespace drops the formatting whitespace between the <head>'s
+// child elements. The head holds only metadata elements, so inter-element
+// whitespace is insignificant and would otherwise survive as stray spaces.
+func removeHeadWhitespace(node *html.Node) {
+	head := getElementByName(node, "head")
+	if head == nil {
+		return
+	}
+	var next *html.Node
+	for n := head.FirstChild; n != nil; n = next {
+		next = n.NextSibling
+		if n.Type == html.TextNode && strings.Trim(n.Data, asciiWhitespace) == "" {
+			head.RemoveChild(n)
+		}
+	}
 }
 
 func removeComments(node *html.Node) {
