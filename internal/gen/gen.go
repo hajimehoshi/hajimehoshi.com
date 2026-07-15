@@ -9,6 +9,7 @@ import (
 	"embed"
 	"fmt"
 	"io"
+	"net/url"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -264,30 +265,9 @@ func generateHTML(path string, outDir, inDir string) error {
 			},
 		})
 	}
-	head.AppendChild(&html.Node{
-		Type: html.ElementNode,
-		Data: "meta",
-		Attr: []html.Attribute{
-			{
-				Key: "name",
-				Val: "viewport",
-			},
-			{
-				Key: "content",
-				Val: "width=device-width, initial-scale=1",
-			},
-		},
-	})
-	head.AppendChild(&html.Node{
-		Type: html.ElementNode,
-		Data: "meta",
-		Attr: []html.Attribute{
-			{
-				Key: "charset",
-				Val: "utf-8",
-			},
-		},
-	})
+	if err := addHead(node); err != nil {
+		return err
+	}
 	// Preload woff2 files.
 	urls, err := woff2URLsInCSS(filepath.Join(outDir, "style.css"))
 	if err != nil {
@@ -320,64 +300,6 @@ func generateHTML(path string, outDir, inDir string) error {
 			},
 		})
 	}
-	h, err := fileHash(filepath.Join(outDir, "style.css"))
-	if err != nil {
-		return err
-	}
-	head.AppendChild(&html.Node{
-		Type: html.ElementNode,
-		Data: "link",
-		Attr: []html.Attribute{
-			{
-				Key: "preload",
-				Val: "stylesheet",
-			},
-			{
-				Key: "href",
-				Val: fmt.Sprintf("/style.css?v=%s", h),
-			},
-			{
-				Key: "as",
-				Val: "style",
-			},
-		},
-	})
-	head.AppendChild(&html.Node{
-		Type: html.ElementNode,
-		Data: "link",
-		Attr: []html.Attribute{
-			{
-				Key: "rel",
-				Val: "stylesheet",
-			},
-			{
-				Key: "href",
-				Val: fmt.Sprintf("/style.css?v=%s", h),
-			},
-		},
-	})
-	h, err = fileHash(filepath.Join(outDir, "favicon.webp"))
-	if err != nil {
-		return err
-	}
-	head.AppendChild(&html.Node{
-		Type: html.ElementNode,
-		Data: "link",
-		Attr: []html.Attribute{
-			{
-				Key: "rel",
-				Val: "icon",
-			},
-			{
-				Key: "href",
-				Val: fmt.Sprintf("/favicon.webp?v=%s", h),
-			},
-			{
-				Key: "type",
-				Val: "image/webp",
-			},
-		},
-	})
 	titleStr := "hajimehoshi.com"
 	if path != "index.html" {
 		title := getElementByName(htmle, "h1").FirstChild.Data
@@ -394,24 +316,9 @@ func generateHTML(path string, outDir, inDir string) error {
 	if err := addHeader(node); err != nil {
 		return err
 	}
-
-	h, err = fileHash(filepath.Join(outDir, "script.js"))
-	if err != nil {
+	if err := addResourceVersions(node, outDir, filepath.Dir(path)); err != nil {
 		return err
 	}
-	head.AppendChild(&html.Node{
-		Type: html.ElementNode,
-		Data: "script",
-		Attr: []html.Attribute{
-			{
-				Key: "src",
-				Val: fmt.Sprintf("/script.js?v=%s", h),
-			},
-			{
-				Key: "defer",
-			},
-		},
-	})
 
 	removeComments(node)
 	removeInterElementWhitespace(node)
@@ -490,6 +397,109 @@ func addHeader(node *html.Node) error {
 		body.InsertBefore(n, main)
 	}
 	return nil
+}
+
+func addHead(node *html.Node) error {
+	head := getElementByName(node, "head")
+
+	f, err := htmlFiles.Open("head.html")
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+
+	nodes, err := html.ParseFragment(f, &html.Node{
+		Type:     html.ElementNode,
+		Data:     "head",
+		DataAtom: atom.Head,
+	})
+	if err != nil {
+		return err
+	}
+	for _, n := range nodes {
+		// Skip whitespace-only text nodes from the template's formatting.
+		if n.Type == html.TextNode && strings.Trim(n.Data, asciiWhitespace) == "" {
+			continue
+		}
+		head.AppendChild(n)
+	}
+	return nil
+}
+
+// resourceAttr identifies an element attribute whose value is a single URL of a
+// resource the browser fetches, as opposed to a hyperlink (e.g. a[href]).
+type resourceAttr struct {
+	elem string
+	attr string
+}
+
+// resourceAttrs is the set of attributes to version. srcset attributes (img,
+// source) are excluded: their value is a URL list, whereas versionedURL handles
+// only a single URL.
+var resourceAttrs = map[resourceAttr]struct{}{
+	{"img", "src"}:      {},
+	{"script", "src"}:   {},
+	{"link", "href"}:    {},
+	{"audio", "src"}:    {},
+	{"video", "src"}:    {},
+	{"video", "poster"}: {},
+	{"source", "src"}:   {},
+	{"embed", "src"}:    {},
+	{"track", "src"}:    {},
+}
+
+// addResourceVersions appends a ?v=<hash> query to every local resource URL in
+// the document so that updated files bypass stale caches. pageDir is the
+// document's directory relative to the site root, used to resolve relative URLs.
+func addResourceVersions(node *html.Node, outDir, pageDir string) error {
+	if node.Type == html.ElementNode {
+		for i := range node.Attr {
+			if _, ok := resourceAttrs[resourceAttr{node.Data, node.Attr[i].Key}]; !ok {
+				continue
+			}
+			v, err := versionedURL(node.Attr[i].Val, outDir, pageDir)
+			if err != nil {
+				return err
+			}
+			node.Attr[i].Val = v
+		}
+	}
+	for n := node.FirstChild; n != nil; n = n.NextSibling {
+		if err := addResourceVersions(n, outDir, pageDir); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+// versionedURL returns rawURL with a ?v=<hash> cache-busting query. External
+// URLs (with a scheme or host, including protocol-relative ones) are returned
+// unchanged; only URLs pointing at a local file under outDir are versioned.
+func versionedURL(rawURL, outDir, pageDir string) (string, error) {
+	u, err := url.Parse(rawURL)
+	if err != nil {
+		return rawURL, nil
+	}
+	if u.Scheme != "" || u.Host != "" || u.Path == "" {
+		return rawURL, nil
+	}
+
+	var file string
+	if strings.HasPrefix(u.Path, "/") {
+		// A leading slash denotes the site root; resolve under outDir.
+		file = filepath.Join(outDir, filepath.FromSlash(u.Path[1:]))
+	} else {
+		file = filepath.Join(outDir, pageDir, filepath.FromSlash(u.Path))
+	}
+	h, err := fileHash(file)
+	if err != nil {
+		return "", err
+	}
+
+	q := u.Query()
+	q.Set("v", h)
+	u.RawQuery = q.Encode()
+	return u.String(), nil
 }
 
 func removeComments(node *html.Node) {
