@@ -7,6 +7,10 @@ import (
 	"golang.org/x/net/html"
 )
 
+func ExtractMetadataFromHTML(content []byte) (map[string]string, []byte, error) {
+	return extractMetadataFromHTML(content)
+}
+
 func RemoveInterElementWhitespace(node *html.Node) {
 	removeInterElementWhitespace(node)
 }

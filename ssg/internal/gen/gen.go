@@ -22,6 +22,7 @@ import (
 	"golang.org/x/net/html/atom"
 	"golang.org/x/sync/errgroup"
 	"golang.org/x/text/width"
+	"gopkg.in/yaml.v3"
 )
 
 // asciiWhitespace is a set of ASCII whitespace characters defined by the HTML spec.
@@ -259,6 +260,19 @@ func closestTemplate(templates map[string]*template.Template, inDir, dir string)
 	}
 }
 
+// siteData is the site-wide data available to templates as .Site.
+type siteData struct {
+	Name string
+	URL  string
+}
+
+// pageData is the per-page data available to templates as .Page.
+type pageData struct {
+	Lang    string
+	Meta    map[string]string
+	Content template.HTML
+}
+
 func generateHTML(path string, tmpl *template.Template, outDir, inDir string, options Options) error {
 	inPath := filepath.Join(inDir, path)
 	outPath := filepath.Join(outDir, path)
@@ -268,6 +282,11 @@ func generateHTML(path string, tmpl *template.Template, outDir, inDir string, op
 		return err
 	}
 
+	meta, content, err := extractMetadataFromHTML(content)
+	if err != nil {
+		return fmt.Errorf("gen: extracting metadata in %s failed: %w", inPath, err)
+	}
+
 	lang := "en"
 	if dir := filepath.Dir(path); dir != "." {
 		if ts := strings.Split(dir, string(filepath.Separator)); len(ts) > 0 {
@@ -275,24 +294,20 @@ func generateHTML(path string, tmpl *template.Template, outDir, inDir string, op
 		}
 	}
 
-	titleStr := options.SiteName
-	if path != "index.html" {
-		title, err := firstH1Text(content)
-		if err != nil {
-			return err
-		}
-		titleStr = fmt.Sprintf("%s - %s", title, titleStr)
-	}
-
 	var buf bytes.Buffer
 	if err := tmpl.Execute(&buf, struct {
-		Lang    string
-		Title   string
-		Content template.HTML
+		Site siteData
+		Page pageData
 	}{
-		Lang:    lang,
-		Title:   titleStr,
-		Content: template.HTML(content),
+		Site: siteData{
+			Name: options.SiteName,
+			URL:  options.SiteURL,
+		},
+		Page: pageData{
+			Lang:    lang,
+			Meta:    meta,
+			Content: template.HTML(content),
+		},
 	}); err != nil {
 		return err
 	}
@@ -301,6 +316,8 @@ func generateHTML(path string, tmpl *template.Template, outDir, inDir string, op
 	if err != nil {
 		return err
 	}
+
+	setMissingTitle(node, options.SiteName)
 
 	if err := addFontPreloads(node, outDir, filepath.Dir(path)); err != nil {
 		return err
@@ -357,30 +374,116 @@ func getElementByName(node *html.Node, name string) *html.Node {
 	})
 }
 
-// firstH1Text returns the text of the first <h1> element in the given main
-// content fragment.
-func firstH1Text(content []byte) (string, error) {
-	nodes, err := html.ParseFragment(bytes.NewReader(content), &html.Node{
-		Type:     html.ElementNode,
-		Data:     "main",
-		DataAtom: atom.Main,
+// extractMetadataFromHTML parses the metadata data block at the beginning of
+// an HTML content file and returns the metadata and the content with the data
+// block removed. The data block is a <script type="application/yaml"> element
+// preceded by nothing but whitespace, holding a YAML mapping of string keys to
+// string values. A content file without a data block yields a nil map and
+// unmodified content.
+func extractMetadataFromHTML(content []byte) (map[string]string, []byte, error) {
+	// metadataScriptType is the type attribute value that identifies a
+	// metadata data block.
+	const metadataScriptType = "application/yaml"
+
+	z := html.NewTokenizer(bytes.NewReader(content))
+
+	// offset tracks how many bytes of content the accepted tokens cover, so
+	// that the remainder after the data block can be sliced off.
+	var offset int
+
+	// Find the data block's start tag, allowing only whitespace before it.
+loop:
+	for {
+		switch z.Next() {
+		case html.TextToken:
+			if strings.Trim(string(z.Raw()), asciiWhitespace) != "" {
+				return nil, content, nil
+			}
+			offset += len(z.Raw())
+		case html.StartTagToken:
+			break loop
+		default:
+			return nil, content, nil
+		}
+	}
+
+	// TagName and TagAttr may overwrite the raw token buffer, so record the
+	// start tag's length first.
+	rawLen := len(z.Raw())
+	name, hasAttr := z.TagName()
+	if string(name) != "script" {
+		return nil, content, nil
+	}
+	var isMetadata bool
+	for hasAttr {
+		var key, val []byte
+		key, val, hasAttr = z.TagAttr()
+		if string(key) == "type" && strings.EqualFold(string(val), metadataScriptType) {
+			isMetadata = true
+		}
+	}
+	if !isMetadata {
+		return nil, content, nil
+	}
+	offset += rawLen
+
+	var yamlSrc []byte
+	for {
+		switch z.Next() {
+		case html.TextToken:
+			yamlSrc = append(yamlSrc, z.Raw()...)
+			offset += len(z.Raw())
+		case html.EndTagToken:
+			// In the raw text state, only </script> ends the element, so this
+			// must be the data block's end tag.
+			offset += len(z.Raw())
+			meta := map[string]string{}
+			if err := yaml.Unmarshal(yamlSrc, &meta); err != nil {
+				return nil, nil, err
+			}
+			return meta, content[offset:], nil
+		default:
+			return nil, nil, fmt.Errorf("gen: metadata element is not closed")
+		}
+	}
+}
+
+// setMissingTitle sets the document's title to the first <h1> text combined
+// with the site name when the document has no non-empty <title>. This is a
+// safety net for pages whose template does not emit a title, e.g. because the
+// page has no title metadata.
+func setMissingTitle(node *html.Node, siteName string) {
+	title := getElementByName(node, "title")
+	if title != nil && title.FirstChild != nil && strings.Trim(title.FirstChild.Data, asciiWhitespace) != "" {
+		return
+	}
+
+	text := siteName
+	if h1 := getElementByName(node, "h1"); h1 != nil && h1.FirstChild != nil && h1.FirstChild.Type == html.TextNode {
+		if t := strings.Trim(h1.FirstChild.Data, asciiWhitespace); t != "" {
+			text = t + " – " + siteName
+		}
+	}
+
+	if title == nil {
+		head := getElementByName(node, "head")
+		if head == nil {
+			return
+		}
+		title = &html.Node{
+			Type:     html.ElementNode,
+			Data:     "title",
+			DataAtom: atom.Title,
+		}
+		head.AppendChild(title)
+	}
+	for title.FirstChild != nil {
+		title.RemoveChild(title.FirstChild)
+	}
+	title.AppendChild(&html.Node{
+		Type: html.TextNode,
+		Data: text,
 	})
-	if err != nil {
-		return "", err
-	}
-	root := &html.Node{
-		Type:     html.ElementNode,
-		Data:     "main",
-		DataAtom: atom.Main,
-	}
-	for _, n := range nodes {
-		root.AppendChild(n)
-	}
-	h1 := getElementByName(root, "h1")
-	if h1 == nil || h1.FirstChild == nil {
-		return "", fmt.Errorf("gen: no <h1> found in content")
-	}
-	return h1.FirstChild.Data, nil
 }
 
 // resourceAttr identifies an element attribute whose value is a single URL of a
