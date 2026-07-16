@@ -130,7 +130,9 @@ small {
 body {
     text-autospace: normal;
 }
-
+main > header.hero p {
+    font-weight: 600;
+}
 
 /* font-size */
 
@@ -139,7 +141,7 @@ body {
     line-height: var(--unit-size);
 }
 h1 {
-    font-size: calc(2 * var(--unit-size) * 2 / 3);
+    font-size: calc(var(--unit-size) * 5 / 3);
     line-height: calc(2 * var(--unit-size));
 }
 .brand {
@@ -150,7 +152,7 @@ h2 {
     font-size: var(--unit-size);
     line-height: calc(2 * var(--unit-size));
 }
-main > header p {
+main > header.hero p {
     font-size: var(--unit-size);
     line-height: calc(2 * var(--unit-size));
 }
@@ -242,9 +244,9 @@ body > header > .brand {
 main {
     display: flex;
     flex-direction: column;
-
     flex-grow: 1;
     align-items: center;
+    row-gap: var(--unit-size);
 }
 main > header, article {
     width: calc(4 * var(--column-size) + 3 * var(--unit-size));
@@ -253,8 +255,9 @@ main > header, article {
 article {
     display: flex;
     flex-direction: column;
+    gap: calc(2 * var(--unit-size));
 }
-main > header {
+main > header.hero {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -281,74 +284,50 @@ body > header {
 
 /* block spacing */
 
-main > header {
-    margin-top: calc(2 * var(--unit-size));
-    margin-bottom: calc(2 * var(--unit-size));
+main {
+    padding-top: calc(3 * var(--unit-size));
+    padding-bottom: calc(2 * var(--unit-size));
 }
-article {
-    margin-top: 0;
-    margin-bottom: calc(2 * var(--unit-size));
+main:has(header.hero) {
+    padding-top: 0;
+}
+main > header.hero {
+    padding-top: calc(4 * var(--unit-size));
+    padding-bottom: calc(4 * var(--unit-size));
 }
 h2 {
-    box-sizing: border-box;
-    height: calc(3 * var(--unit-size));
-    display: flex;
-    align-items: flex-end;
-}
-section:first-of-type h2 {
-    height: calc(2 * var(--unit-size));
+    margin-bottom: var(--unit-size);
 }
 h3 {
     margin-bottom: calc(var(--unit-size) / 3); /* 8px */
 }
-section {
-    margin-top: var(--block-gap);
-}
 
 
-/* grid */
-
-section {
-    display: flex;
-    flex-flow: row-reverse wrap;
-    gap: var(--unit-size);
-}
-section > * {
-    width: calc((100% - 3 * var(--unit-size)) / 4 * 3 + 2 * var(--unit-size));
-}
-section > h2, section > dl {
-    width: 100%;
+section > *:empty {
+    display: none;
 }
 
-.grid-container {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    grid-auto-rows: var(--column-size);
-    gap: var(--unit-size);
-}
-.grid-item-2 {
-    grid-column: span 2;
-}
-.grid-item-3 {
-    grid-column: span 3;
-}
-
-h2 {
-    padding-left: calc((100% - 3 * var(--unit-size)) / 4 + var(--unit-size))
-}
 dl {
     display: flex;
     flex-wrap: wrap;
     align-items: stretch;
-    row-gap: var(--row-gap);
+    row-gap: 0;
 }
 dt {
-    width: var(--column-size);
+    width: 100%;
+    text-align: left;
+    margin-top: var(--row-gap);
+    margin-bottom: calc(var(--unit-size) / 3);
     padding-right: var(--unit-size);
-    text-align: right;
+}
+dt:first-of-type {
+    margin-top: 0;
 }
 dd {
-    width: calc(100% - var(--column-size) - var(--unit-size));
+    width: 100%;
+}
+ul {
+    padding-left: var(--unit-size);
 }
 ul li + li {
     margin-top: calc(var(--unit-size) / 3);
@@ -356,48 +335,6 @@ ul li + li {
 
 main {
     container-type: inline-size;
-}
-
-/* Unfortunately, CSS variables are not available at @container queries with conditions yet. */
-@container (width < calc(4 * 216px + 5 * 24px)) {
-    section > * {
-        width: 100%;
-    }
-    section > *:empty {
-        display: none;
-    }
-
-    h2 {
-        padding-left: 0;
-    }
-    dl {
-        row-gap: 0;
-    }
-    dt {
-        width: 100%;
-        text-align: left;
-        margin-top: var(--row-gap);
-        margin-bottom: calc(var(--unit-size) / 3);
-    }
-    dt:first-of-type {
-        margin-top: 0;
-    }
-    dd {
-        width: 100%;
-    }
-    ul {
-        padding-left: var(--unit-size);
-    }
-}
-@container (width < calc(3 * 216px + 4 * 24px)) {
-    .grid-container {
-        grid-template-columns: repeat(2, 1fr);
-    }
-}
-@container (width < calc(2 * 216px + 3 * 24px)) {
-    .grid-container {
-        grid-template-columns: 1fr;
-    }
 }
 
 
