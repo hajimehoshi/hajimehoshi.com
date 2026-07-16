@@ -13,6 +13,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 var (
@@ -50,6 +51,17 @@ func (handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		// The generator advertises a directory's index page as the directory
+		// itself, so .../index must not serve the page at a second URL.
+		// http.ServeFile already redirects .../index.html.
+		if strings.HasSuffix(r.URL.Path, "/index") {
+			dir := "./"
+			if r.URL.RawQuery != "" {
+				dir += "?" + r.URL.RawQuery
+			}
+			http.Redirect(w, r, dir, http.StatusMovedPermanently)
 			return
 		}
 	}
