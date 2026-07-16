@@ -300,9 +300,6 @@ main > header.hero {
     padding-top: calc(4 * var(--unit-size));
     padding-bottom: calc(4 * var(--unit-size));
 }
-h2 {
-    margin-bottom: var(--unit-size);
-}
 h3 {
     margin-bottom: calc(var(--unit-size) / 3); /* 8px */
 }
