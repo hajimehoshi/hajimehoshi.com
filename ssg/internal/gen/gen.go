@@ -79,6 +79,11 @@ type Options struct {
 	// SiteURL is the absolute URL of the website root, used when a page
 	// needs an absolute URL. This can be empty.
 	SiteURL string
+
+	// KeepHTMLExtension keeps the .html extension in page URLs. By default a
+	// page URL omits it, which requires the server to resolve an extensionless
+	// URL to its .html file.
+	KeepHTMLExtension bool
 }
 
 func Run(options Options) error {
@@ -269,8 +274,34 @@ type siteData struct {
 // pageData is the per-page data available to templates as .Page.
 type pageData struct {
 	Lang    string
+	Path    string
+	URL     string
 	Meta    map[string]any
 	Content template.HTML
+}
+
+// pagePath returns the site-root-absolute path of the content file at relPath,
+// which is relative to the content root. A trailing index.html is dropped so
+// that the path denotes the directory the browser requests; any other .html
+// extension is dropped unless keepHTMLExtension is set.
+func pagePath(relPath string, keepHTMLExtension bool) string {
+	p := "/" + filepath.ToSlash(relPath)
+	if strings.HasSuffix(p, "/index.html") {
+		return strings.TrimSuffix(p, "index.html")
+	}
+	if !keepHTMLExtension {
+		p = strings.TrimSuffix(p, ".html")
+	}
+	return p
+}
+
+// pageURL returns the absolute URL of the page at the site-root-absolute path,
+// or an empty string when siteURL is empty.
+func pageURL(siteURL, path string) string {
+	if siteURL == "" {
+		return ""
+	}
+	return strings.TrimSuffix(siteURL, "/") + path
 }
 
 func generateHTML(path string, tmpl *template.Template, outDir, inDir string, options Options) error {
@@ -294,6 +325,8 @@ func generateHTML(path string, tmpl *template.Template, outDir, inDir string, op
 		}
 	}
 
+	urlPath := pagePath(path, options.KeepHTMLExtension)
+
 	var buf bytes.Buffer
 	if err := tmpl.Execute(&buf, struct {
 		Site siteData
@@ -305,6 +338,8 @@ func generateHTML(path string, tmpl *template.Template, outDir, inDir string, op
 		},
 		Page: pageData{
 			Lang:    lang,
+			Path:    urlPath,
+			URL:     pageURL(options.SiteURL, urlPath),
 			Meta:    meta,
 			Content: template.HTML(content),
 		},
@@ -326,6 +361,8 @@ func generateHTML(path string, tmpl *template.Template, outDir, inDir string, op
 	if err := addResourceVersions(node, outDir, filepath.Dir(path)); err != nil {
 		return err
 	}
+
+	rewritePageLinks(node, options.KeepHTMLExtension)
 
 	removeHeadWhitespace(node)
 	removeComments(node)
@@ -486,17 +523,18 @@ func setMissingTitle(node *html.Node, siteName string) {
 	})
 }
 
-// resourceAttr identifies an element attribute whose value is a single URL of a
-// resource the browser fetches, as opposed to a hyperlink (e.g. a[href]).
-type resourceAttr struct {
+// elemAttr identifies an element attribute by the element and attribute names.
+type elemAttr struct {
 	elem string
 	attr string
 }
 
-// resourceAttrs is the set of attributes to version. srcset attributes (img,
-// source) are excluded: their value is a URL list, whereas versionedURL handles
-// only a single URL.
-var resourceAttrs = map[resourceAttr]struct{}{
+// resourceAttrs is the set of attributes whose value is a single URL of a
+// resource the browser fetches, as opposed to a hyperlink (see hyperlinkAttrs).
+// These are the attributes to version. srcset attributes (img, source) are
+// excluded: their value is a URL list, whereas versionedURL handles only a
+// single URL.
+var resourceAttrs = map[elemAttr]struct{}{
 	{"img", "src"}:      {},
 	{"script", "src"}:   {},
 	{"link", "href"}:    {},
@@ -508,13 +546,68 @@ var resourceAttrs = map[resourceAttr]struct{}{
 	{"track", "src"}:    {},
 }
 
+// hyperlinkAttrs is the set of attributes whose value can be a single URL of
+// another page, as opposed to a resource the browser fetches (see
+// resourceAttrs). cite attributes (blockquote, q, ins, del) are excluded: they
+// reference a source document rather than link to one.
+var hyperlinkAttrs = map[elemAttr]struct{}{
+	{"a", "href"}:      {},
+	{"area", "href"}:   {},
+	{"iframe", "src"}:  {},
+	{"form", "action"}: {},
+	{"object", "data"}: {},
+}
+
+// pageHref returns href with its path adjusted to match the URL of the page it
+// points at: a trailing index.html is dropped, and unless keepHTMLExtension is
+// set, so is any other .html extension. An href that does not point at a local
+// page is returned unchanged.
+func pageHref(href string, keepHTMLExtension bool) string {
+	u, err := url.Parse(href)
+	if err != nil {
+		return href
+	}
+	if u.Scheme != "" || u.Host != "" || u.Path == "" {
+		return href
+	}
+	switch {
+	case u.Path == "index.html":
+		// An empty path would denote the current page rather than its
+		// directory.
+		u.Path = "./"
+	case strings.HasSuffix(u.Path, "/index.html"):
+		u.Path = strings.TrimSuffix(u.Path, "index.html")
+	case !keepHTMLExtension && strings.HasSuffix(u.Path, ".html"):
+		u.Path = strings.TrimSuffix(u.Path, ".html")
+	default:
+		return href
+	}
+	return u.String()
+}
+
+// rewritePageLinks adjusts every hyperlink to a local page so that it matches
+// the URL that page is served at.
+func rewritePageLinks(node *html.Node, keepHTMLExtension bool) {
+	if node.Type == html.ElementNode {
+		for i := range node.Attr {
+			if _, ok := hyperlinkAttrs[elemAttr{node.Data, node.Attr[i].Key}]; !ok {
+				continue
+			}
+			node.Attr[i].Val = pageHref(node.Attr[i].Val, keepHTMLExtension)
+		}
+	}
+	for n := node.FirstChild; n != nil; n = n.NextSibling {
+		rewritePageLinks(n, keepHTMLExtension)
+	}
+}
+
 // addResourceVersions appends a ?v=<hash> query to every local resource URL in
 // the document so that updated files bypass stale caches. pageDir is the
 // document's directory relative to the site root, used to resolve relative URLs.
 func addResourceVersions(node *html.Node, outDir, pageDir string) error {
 	if node.Type == html.ElementNode {
 		for i := range node.Attr {
-			if _, ok := resourceAttrs[resourceAttr{node.Data, node.Attr[i].Key}]; !ok {
+			if _, ok := resourceAttrs[elemAttr{node.Data, node.Attr[i].Key}]; !ok {
 				continue
 			}
 			v, err := versionedURL(node.Attr[i].Val, outDir, pageDir)

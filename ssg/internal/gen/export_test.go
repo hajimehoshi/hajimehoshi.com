@@ -11,6 +11,22 @@ func ExtractMetadataFromHTML(content []byte) (map[string]any, []byte, error) {
 	return extractMetadataFromHTML(content)
 }
 
+func PagePath(relPath string, keepHTMLExtension bool) string {
+	return pagePath(relPath, keepHTMLExtension)
+}
+
+func PageURL(siteURL, path string) string {
+	return pageURL(siteURL, path)
+}
+
+func PageHref(href string, keepHTMLExtension bool) string {
+	return pageHref(href, keepHTMLExtension)
+}
+
+func RewritePageLinks(node *html.Node, keepHTMLExtension bool) {
+	rewritePageLinks(node, keepHTMLExtension)
+}
+
 func RemoveInterElementWhitespace(node *html.Node) {
 	removeInterElementWhitespace(node)
 }

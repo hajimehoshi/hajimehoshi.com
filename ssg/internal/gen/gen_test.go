@@ -5,6 +5,7 @@ package gen_test
 
 import (
 	"bytes"
+	"path/filepath"
 	"reflect"
 	"strings"
 	"testing"
@@ -141,6 +142,327 @@ func TestExtractMetadataFromHTML(t *testing.T) {
 				t.Errorf("content: got: %q, want: %q", got, want)
 			}
 		})
+	}
+}
+
+func TestPagePath(t *testing.T) {
+	testCases := []struct {
+		Name              string
+		In                string
+		KeepHTMLExtension bool
+		Out               string
+	}{
+		{
+			Name: "root index",
+			In:   "index.html",
+			Out:  "/",
+		},
+		{
+			Name:              "root index, keeping the extension",
+			In:                "index.html",
+			KeepHTMLExtension: true,
+			Out:               "/",
+		},
+		{
+			Name: "root page",
+			In:   "404.html",
+			Out:  "/404",
+		},
+		{
+			Name:              "root page, keeping the extension",
+			In:                "404.html",
+			KeepHTMLExtension: true,
+			Out:               "/404.html",
+		},
+		{
+			Name: "nested index",
+			In:   "writings/index.html",
+			Out:  "/writings/",
+		},
+		{
+			Name:              "nested index, keeping the extension",
+			In:                "writings/index.html",
+			KeepHTMLExtension: true,
+			Out:               "/writings/",
+		},
+		{
+			Name: "nested page",
+			In:   "writings/foo.html",
+			Out:  "/writings/foo",
+		},
+		{
+			Name:              "nested page, keeping the extension",
+			In:                "writings/foo.html",
+			KeepHTMLExtension: true,
+			Out:               "/writings/foo.html",
+		},
+		{
+			Name: "deeply nested index",
+			In:   "ja/writings/index.html",
+			Out:  "/ja/writings/",
+		},
+		{
+			Name: "name ending with index.html",
+			In:   "myindex.html",
+			Out:  "/myindex",
+		},
+		{
+			Name:              "name ending with index.html, keeping the extension",
+			In:                "myindex.html",
+			KeepHTMLExtension: true,
+			Out:               "/myindex.html",
+		},
+	}
+	for _, tc := range testCases {
+		t.Run(tc.Name, func(t *testing.T) {
+			if got, want := gen.PagePath(filepath.FromSlash(tc.In), tc.KeepHTMLExtension), tc.Out; got != want {
+				t.Errorf("got: %q, want: %q", got, want)
+			}
+		})
+	}
+}
+
+func TestPageURL(t *testing.T) {
+	testCases := []struct {
+		Name    string
+		SiteURL string
+		Path    string
+		Out     string
+	}{
+		{
+			Name:    "no site URL",
+			SiteURL: "",
+			Path:    "/writings/",
+			Out:     "",
+		},
+		{
+			Name:    "root",
+			SiteURL: "https://example.com",
+			Path:    "/",
+			Out:     "https://example.com/",
+		},
+		{
+			Name:    "site URL with a trailing slash",
+			SiteURL: "https://example.com/",
+			Path:    "/",
+			Out:     "https://example.com/",
+		},
+		{
+			Name:    "nested index",
+			SiteURL: "https://example.com",
+			Path:    "/writings/",
+			Out:     "https://example.com/writings/",
+		},
+		{
+			Name:    "nested page",
+			SiteURL: "https://example.com/",
+			Path:    "/writings/foo.html",
+			Out:     "https://example.com/writings/foo.html",
+		},
+	}
+	for _, tc := range testCases {
+		t.Run(tc.Name, func(t *testing.T) {
+			if got, want := gen.PageURL(tc.SiteURL, tc.Path), tc.Out; got != want {
+				t.Errorf("got: %q, want: %q", got, want)
+			}
+		})
+	}
+}
+
+func TestPageHref(t *testing.T) {
+	testCases := []struct {
+		Name              string
+		In                string
+		KeepHTMLExtension bool
+		Out               string
+	}{
+		{
+			Name: "absolute page",
+			In:   "/writings/foo.html",
+			Out:  "/writings/foo",
+		},
+		{
+			Name:              "absolute page, keeping the extension",
+			In:                "/writings/foo.html",
+			KeepHTMLExtension: true,
+			Out:               "/writings/foo.html",
+		},
+		{
+			Name: "relative page",
+			In:   "foo.html",
+			Out:  "foo",
+		},
+		{
+			Name:              "relative page, keeping the extension",
+			In:                "foo.html",
+			KeepHTMLExtension: true,
+			Out:               "foo.html",
+		},
+		{
+			Name: "absolute index",
+			In:   "/writings/index.html",
+			Out:  "/writings/",
+		},
+		{
+			Name:              "absolute index, keeping the extension",
+			In:                "/writings/index.html",
+			KeepHTMLExtension: true,
+			Out:               "/writings/",
+		},
+		{
+			Name: "root index",
+			In:   "/index.html",
+			Out:  "/",
+		},
+		{
+			Name: "relative index",
+			In:   "index.html",
+			Out:  "./",
+		},
+		{
+			Name:              "relative index, keeping the extension",
+			In:                "index.html",
+			KeepHTMLExtension: true,
+			Out:               "./",
+		},
+		{
+			Name: "parent index",
+			In:   "../index.html",
+			Out:  "../",
+		},
+		{
+			Name: "name ending with index.html",
+			In:   "myindex.html",
+			Out:  "myindex",
+		},
+		{
+			Name: "fragment",
+			In:   "/writings/foo.html#section",
+			Out:  "/writings/foo#section",
+		},
+		{
+			Name: "query",
+			In:   "/writings/foo.html?a=b",
+			Out:  "/writings/foo?a=b",
+		},
+		{
+			Name: "index with a fragment",
+			In:   "index.html#section",
+			Out:  "./#section",
+		},
+		{
+			Name: "external page",
+			In:   "https://example.com/foo.html",
+			Out:  "https://example.com/foo.html",
+		},
+		{
+			Name: "protocol-relative page",
+			In:   "//example.com/foo.html",
+			Out:  "//example.com/foo.html",
+		},
+		{
+			Name: "mailto",
+			In:   "mailto:foo@example.com",
+			Out:  "mailto:foo@example.com",
+		},
+		{
+			Name: "non-page resource",
+			In:   "/style.css",
+			Out:  "/style.css",
+		},
+		{
+			Name: "fragment only",
+			In:   "#section",
+			Out:  "#section",
+		},
+		{
+			Name: "empty",
+			In:   "",
+			Out:  "",
+		},
+	}
+	for _, tc := range testCases {
+		t.Run(tc.Name, func(t *testing.T) {
+			if got, want := gen.PageHref(tc.In, tc.KeepHTMLExtension), tc.Out; got != want {
+				t.Errorf("got: %q, want: %q", got, want)
+			}
+		})
+	}
+}
+
+func TestRewritePageLinks(t *testing.T) {
+	testCases := []struct {
+		In                string
+		KeepHTMLExtension bool
+		Out               string
+	}{
+		{
+			In:  `<a href="/writings/foo.html">foo</a>`,
+			Out: `<a href="/writings/foo">foo</a>`,
+		},
+		{
+			In:                `<a href="/writings/foo.html">foo</a>`,
+			KeepHTMLExtension: true,
+			Out:               `<a href="/writings/foo.html">foo</a>`,
+		},
+		{
+			In:                `<a href="/writings/index.html">foo</a>`,
+			KeepHTMLExtension: true,
+			Out:               `<a href="/writings/">foo</a>`,
+		},
+		{
+			In:  `<a href="https://example.com/foo.html">foo</a>`,
+			Out: `<a href="https://example.com/foo.html">foo</a>`,
+		},
+		{
+			In:  `<area href="/writings/foo.html"/>`,
+			Out: `<area href="/writings/foo"/>`,
+		},
+		{
+			In:  `<iframe src="/writings/foo.html"></iframe>`,
+			Out: `<iframe src="/writings/foo"></iframe>`,
+		},
+		{
+			In:  `<form action="/search.html"></form>`,
+			Out: `<form action="/search"></form>`,
+		},
+		{
+			In:  `<object data="/doc.html"></object>`,
+			Out: `<object data="/doc"></object>`,
+		},
+		{
+			// A resource attribute must not be rewritten.
+			In:  `<img src="/foo.html"/>`,
+			Out: `<img src="/foo.html"/>`,
+		},
+		{
+			// A cite attribute references a document rather than links to it.
+			In:  `<blockquote cite="/writings/foo.html"></blockquote>`,
+			Out: `<blockquote cite="/writings/foo.html"></blockquote>`,
+		},
+	}
+	for _, tc := range testCases {
+		nodes, err := html.ParseFragment(bytes.NewBufferString(tc.In), nil)
+		if err != nil {
+			t.Error(err)
+			continue
+		}
+
+		node := nodes[0]
+		gen.RewritePageLinks(node, tc.KeepHTMLExtension)
+
+		var out bytes.Buffer
+		if err := html.Render(&out, node); err != nil {
+			t.Error(err)
+			continue
+		}
+		got := out.String()
+		got = strings.TrimPrefix(got, "<html><head></head><body>")
+		got = strings.TrimSuffix(got, "</body></html>")
+		want := tc.Out
+		if got != want {
+			t.Errorf("got: %q, want: %q (in: %q)", got, want, tc.In)
+		}
 	}
 }
 

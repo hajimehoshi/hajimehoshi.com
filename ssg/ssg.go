@@ -17,6 +17,11 @@ type RunOptions struct {
 	// SiteURL is the absolute URL of the website root, used when a page
 	// needs an absolute URL. This can be empty.
 	SiteURL string
+
+	// KeepHTMLExtension keeps the .html extension in page URLs. By default a
+	// page URL omits it, which requires the server to resolve an extensionless
+	// URL to its .html file.
+	KeepHTMLExtension bool
 }
 
 func Run(options *RunOptions) error {
@@ -24,8 +29,9 @@ func Run(options *RunOptions) error {
 		return fmt.Errorf("ssg: SiteName must not be empty")
 	}
 	if err := gen.Run(gen.Options{
-		SiteName: options.SiteName,
-		SiteURL:  options.SiteURL,
+		SiteName:          options.SiteName,
+		SiteURL:           options.SiteURL,
+		KeepHTMLExtension: options.KeepHTMLExtension,
 	}); err != nil {
 		return err
 	}

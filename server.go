@@ -36,12 +36,22 @@ func (handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	path := filepath.Join(rootPath, r.URL.Path[1:])
 	f, err := os.Stat(path)
 	if err != nil {
-		if errors.Is(err, os.ErrNotExist) {
-			notFound(w, r)
+		if !errors.Is(err, os.ErrNotExist) {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
+		// The generator omits the .html extension from page URLs by
+		// default, so an extensionless URL must reach its .html file.
+		path += ".html"
+		f, err = os.Stat(path)
+		if err != nil {
+			if errors.Is(err, os.ErrNotExist) {
+				notFound(w, r)
+				return
+			}
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
 	}
 
 	if f.IsDir() {
