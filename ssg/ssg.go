@@ -1,12 +1,14 @@
 // SPDX-License-Identifier: Apache-2.0
 // SPDX-FileCopyrightText: 2026 Hajime Hoshi
 
+// Package ssg generates a static website from a directory of contents.
 package ssg
 
 import (
 	"fmt"
-
-	"github.com/hajimehoshi/hajimehoshi.com/ssg/internal/gen"
+	"os"
+	"path/filepath"
+	"strings"
 )
 
 // RunOptions is options for Run.
@@ -25,15 +27,36 @@ type RunOptions struct {
 }
 
 func Run(options *RunOptions) error {
+	const (
+		outDir = "dist"
+		inDir  = "contents"
+	)
+
 	if options == nil || options.SiteName == "" {
 		return fmt.Errorf("ssg: SiteName must not be empty")
 	}
-	if err := gen.Run(gen.Options{
-		SiteName:          options.SiteName,
-		SiteURL:           options.SiteURL,
-		KeepHTMLExtension: options.KeepHTMLExtension,
-	}); err != nil {
+
+	if err := os.RemoveAll(outDir); err != nil {
+		return err
+	}
+	if err := copyNonHTMLFiles(outDir, inDir); err != nil {
+		return err
+	}
+	if err := generateHTMLs(outDir, inDir, options); err != nil {
 		return err
 	}
 	return nil
+}
+
+func isIgnoredFile(path string) bool {
+	if strings.HasPrefix(filepath.Base(path), "#") {
+		return true
+	}
+	if strings.HasPrefix(filepath.Base(path), "_") {
+		return true
+	}
+	if strings.HasSuffix(path, "~") {
+		return true
+	}
+	return false
 }
