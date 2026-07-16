@@ -3,8 +3,19 @@
 
 package ssg
 
+import (
+	"net/http"
+)
+
 func ExtractMetadataFromHTML(content []byte) (map[string]any, []byte, error) {
 	return extractMetadataFromHTML(content)
+}
+
+func NewHandler(rootPath string, keepHTMLExtension bool) http.Handler {
+	return handler{
+		rootPath:          rootPath,
+		keepHTMLExtension: keepHTMLExtension,
+	}
 }
 
 func PagePath(relPath string, keepHTMLExtension bool) string {
