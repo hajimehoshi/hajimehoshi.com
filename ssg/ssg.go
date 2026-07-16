@@ -11,6 +11,11 @@ import (
 	"strings"
 )
 
+const (
+	outDir = "dist"
+	inDir  = "contents"
+)
+
 // GenerateOptions is options for Generate.
 type GenerateOptions struct {
 	// SiteName is the name of the website, used e.g. in page titles.
@@ -27,11 +32,6 @@ type GenerateOptions struct {
 }
 
 func Generate(options *GenerateOptions) error {
-	const (
-		outDir = "dist"
-		inDir  = "contents"
-	)
-
 	if options == nil || options.SiteName == "" {
 		return fmt.Errorf("ssg: SiteName must not be empty")
 	}
