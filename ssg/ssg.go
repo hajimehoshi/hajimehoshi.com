@@ -11,8 +11,8 @@ import (
 	"strings"
 )
 
-// RunOptions is options for Run.
-type RunOptions struct {
+// GenerateOptions is options for Generate.
+type GenerateOptions struct {
 	// SiteName is the name of the website, used e.g. in page titles.
 	SiteName string
 
@@ -26,7 +26,7 @@ type RunOptions struct {
 	KeepHTMLExtension bool
 }
 
-func Run(options *RunOptions) error {
+func Generate(options *GenerateOptions) error {
 	const (
 		outDir = "dist"
 		inDir  = "contents"

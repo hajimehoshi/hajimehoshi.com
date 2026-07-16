@@ -18,7 +18,7 @@ import (
 	"github.com/hajimehoshi/hajimehoshi.com/ssg/internal/htmlrewrite"
 )
 
-func generateHTMLs(outDir, inDir string, options *RunOptions) error {
+func generateHTMLs(outDir, inDir string, options *GenerateOptions) error {
 	// templateFile is the base name of each directory's HTML template. Its
 	// leading underscore keeps it out of the generated site (see isIgnoredFile).
 	const templateFile = "_tmpl.html"
@@ -134,7 +134,7 @@ func pageURL(siteURL, path string) string {
 	return strings.TrimSuffix(siteURL, "/") + path
 }
 
-func generateHTML(path string, tmpl *template.Template, outDir, inDir string, options *RunOptions) error {
+func generateHTML(path string, tmpl *template.Template, outDir, inDir string, options *GenerateOptions) error {
 	inPath := filepath.Join(inDir, path)
 	outPath := filepath.Join(outDir, path)
 

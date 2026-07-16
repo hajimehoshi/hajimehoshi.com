@@ -13,7 +13,7 @@ import (
 )
 
 func main() {
-	if err := ssg.Run(&ssg.RunOptions{
+	if err := ssg.Generate(&ssg.GenerateOptions{
 		SiteName: "hajimehoshi.com",
 		SiteURL:  "https://hajimehoshi.com",
 	}); err != nil {
