@@ -7,7 +7,7 @@ import (
 	"golang.org/x/net/html"
 )
 
-func ExtractMetadataFromHTML(content []byte) (map[string]string, []byte, error) {
+func ExtractMetadataFromHTML(content []byte) (map[string]any, []byte, error) {
 	return extractMetadataFromHTML(content)
 }
 

@@ -269,7 +269,7 @@ type siteData struct {
 // pageData is the per-page data available to templates as .Page.
 type pageData struct {
 	Lang    string
-	Meta    map[string]string
+	Meta    map[string]any
 	Content template.HTML
 }
 
@@ -377,10 +377,10 @@ func getElementByName(node *html.Node, name string) *html.Node {
 // extractMetadataFromHTML parses the metadata data block at the beginning of
 // an HTML content file and returns the metadata and the content with the data
 // block removed. The data block is a <script type="application/yaml"> element
-// preceded by nothing but whitespace, holding a YAML mapping of string keys to
-// string values. A content file without a data block yields a nil map and
-// unmodified content.
-func extractMetadataFromHTML(content []byte) (map[string]string, []byte, error) {
+// preceded by nothing but whitespace, holding a YAML mapping with string keys.
+// Each value keeps the type YAML resolves it to. A content file without a data
+// block yields a nil map and unmodified content.
+func extractMetadataFromHTML(content []byte) (map[string]any, []byte, error) {
 	// metadataScriptType is the type attribute value that identifies a
 	// metadata data block.
 	const metadataScriptType = "application/yaml"
@@ -437,7 +437,7 @@ loop:
 			// In the raw text state, only </script> ends the element, so this
 			// must be the data block's end tag.
 			offset += len(z.Raw())
-			meta := map[string]string{}
+			meta := map[string]any{}
 			if err := yaml.Unmarshal(yamlSrc, &meta); err != nil {
 				return nil, nil, err
 			}
