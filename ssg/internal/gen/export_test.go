@@ -27,6 +27,10 @@ func RewritePageLinks(node *html.Node, keepHTMLExtension bool) {
 	rewritePageLinks(node, keepHTMLExtension)
 }
 
+func AddResourceVersions(node *html.Node, outDir, pageDir string) error {
+	return addResourceVersions(node, outDir, pageDir)
+}
+
 func RemoveInterElementWhitespace(node *html.Node) {
 	removeInterElementWhitespace(node)
 }

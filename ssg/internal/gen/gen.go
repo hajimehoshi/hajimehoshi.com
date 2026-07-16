@@ -533,11 +533,11 @@ type elemAttr struct {
 // resource the browser fetches, as opposed to a hyperlink (see hyperlinkAttrs).
 // These are the attributes to version. srcset attributes (img, source) are
 // excluded: their value is a URL list, whereas versionedURL handles only a
-// single URL.
+// single URL. link[href] is excluded: it is either kind depending on rel, and
+// isResourceAttr classifies it.
 var resourceAttrs = map[elemAttr]struct{}{
 	{"img", "src"}:      {},
 	{"script", "src"}:   {},
-	{"link", "href"}:    {},
 	{"audio", "src"}:    {},
 	{"video", "src"}:    {},
 	{"video", "poster"}: {},
@@ -549,13 +549,72 @@ var resourceAttrs = map[elemAttr]struct{}{
 // hyperlinkAttrs is the set of attributes whose value can be a single URL of
 // another page, as opposed to a resource the browser fetches (see
 // resourceAttrs). cite attributes (blockquote, q, ins, del) are excluded: they
-// reference a source document rather than link to one.
+// reference a source document rather than link to one. link[href] is excluded:
+// it is either kind depending on rel, and isHyperlinkAttr classifies it.
 var hyperlinkAttrs = map[elemAttr]struct{}{
 	{"a", "href"}:      {},
 	{"area", "href"}:   {},
 	{"iframe", "src"}:  {},
 	{"form", "action"}: {},
 	{"object", "data"}: {},
+}
+
+// resourceRels is the set of rel keywords denoting a <link> whose href is a
+// resource the browser fetches. A <link> with any other rel is treated as a
+// hyperlink, as versioning a page URL would hash an output file that the
+// concurrent generation has possibly not written yet. prefetch and prerender
+// are absent for that reason: their target is a page. A keyword whose href is
+// an origin or an endpoint, such as preconnect or pingback, needs neither
+// treatment and carries a host that both of them ignore.
+var resourceRels = []string{
+	"apple-touch-icon",
+	"apple-touch-startup-image",
+	"icon",
+	"manifest",
+	"mask-icon",
+	"modulepreload",
+	"preload",
+	"stylesheet",
+}
+
+// isResourceLink reports whether the <link> element node points at a resource
+// the browser fetches rather than at a page.
+func isResourceLink(node *html.Node) bool {
+	for _, a := range node.Attr {
+		if a.Key != "rel" {
+			continue
+		}
+		for t := range strings.FieldsSeq(a.Val) {
+			if slices.ContainsFunc(resourceRels, func(r string) bool {
+				return strings.EqualFold(t, r)
+			}) {
+				return true
+			}
+		}
+	}
+	return false
+}
+
+// isResourceAttr reports whether the node's attr holds a resource URL to
+// version. A <link> is classified by its rel keywords, as the element name
+// alone does not tell the two kinds apart.
+func isResourceAttr(node *html.Node, attr string) bool {
+	if node.Data == "link" && attr == "href" {
+		return isResourceLink(node)
+	}
+	_, ok := resourceAttrs[elemAttr{node.Data, attr}]
+	return ok
+}
+
+// isHyperlinkAttr reports whether the node's attr holds a URL that can point at
+// another page. A <link> is classified by its rel keywords, as the element name
+// alone does not tell the two kinds apart.
+func isHyperlinkAttr(node *html.Node, attr string) bool {
+	if node.Data == "link" && attr == "href" {
+		return !isResourceLink(node)
+	}
+	_, ok := hyperlinkAttrs[elemAttr{node.Data, attr}]
+	return ok
 }
 
 // pageHref returns href with its path adjusted to match the URL of the page it
@@ -590,7 +649,7 @@ func pageHref(href string, keepHTMLExtension bool) string {
 func rewritePageLinks(node *html.Node, keepHTMLExtension bool) {
 	if node.Type == html.ElementNode {
 		for i := range node.Attr {
-			if _, ok := hyperlinkAttrs[elemAttr{node.Data, node.Attr[i].Key}]; !ok {
+			if !isHyperlinkAttr(node, node.Attr[i].Key) {
 				continue
 			}
 			node.Attr[i].Val = pageHref(node.Attr[i].Val, keepHTMLExtension)
@@ -607,7 +666,7 @@ func rewritePageLinks(node *html.Node, keepHTMLExtension bool) {
 func addResourceVersions(node *html.Node, outDir, pageDir string) error {
 	if node.Type == html.ElementNode {
 		for i := range node.Attr {
-			if _, ok := resourceAttrs[elemAttr{node.Data, node.Attr[i].Key}]; !ok {
+			if !isResourceAttr(node, node.Attr[i].Key) {
 				continue
 			}
 			v, err := versionedURL(node.Attr[i].Val, outDir, pageDir)
