@@ -225,6 +225,14 @@ a.brand {
 }
 
 
+/* width */
+
+main > * {
+    width: calc(4 * var(--column-size) + 3 * var(--unit-size));
+    max-width: calc(100vw - 2 * var(--unit-size));
+}
+
+
 /* flex */
 
 body {
@@ -248,14 +256,10 @@ main {
     align-items: center;
     row-gap: var(--unit-size);
 }
-main > header, article {
-    width: calc(4 * var(--column-size) + 3 * var(--unit-size));
-    max-width: calc(100vw - 2 * var(--unit-size) + 2 * var(--unit-size) / 6);
-}
 article {
     display: flex;
     flex-direction: column;
-    gap: calc(2 * var(--unit-size));
+    gap: var(--unit-size);
 }
 main > header.hero {
     display: flex;
@@ -264,11 +268,6 @@ main > header.hero {
     gap: var(--unit-size);
     text-align: center;
     text-wrap: balance;
-}
-section {
-    display: flex;
-    flex-direction: column;
-    gap: calc(var(--unit-size));
 }
 
 
@@ -279,10 +278,7 @@ body > header {
     top: 0;
     z-index: 1;
 
-    box-sizing: content-box;
-    /* The 1px bottom border adds to the box, so subtract it to keep the total height at 3 units. */
     height: calc(3 * var(--unit-size) - 1px);
-    /* Align the contents with the article column. */
     padding: 0 max(calc((100vw - 4 * var(--column-size) - 3 * var(--unit-size)) / 2), var(--unit-size));
 }
 
@@ -300,8 +296,8 @@ main > header.hero {
     padding-top: calc(4 * var(--unit-size));
     padding-bottom: calc(4 * var(--unit-size));
 }
-h3 {
-    margin-bottom: calc(var(--unit-size) / 3); /* 8px */
+h2:not(:first-child) {
+    margin-top: var(--unit-size);
 }
 
 
