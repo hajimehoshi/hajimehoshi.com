@@ -4,6 +4,7 @@
 package main
 
 import (
+	"context"
 	"flag"
 	"fmt"
 	"os"
@@ -18,20 +19,21 @@ var (
 func main() {
 	flag.Parse()
 
-	if err := ssg.Generate(&ssg.GenerateOptions{
+	options := &ssg.GenerateOptions{
 		SiteName: "hajimehoshi.com",
 		SiteURL:  "https://hajimehoshi.com",
-	}); err != nil {
-		fmt.Fprintln(os.Stderr, err)
-		os.Exit(1)
 	}
-
 	if *httpAddr == "" {
+		if err := ssg.Generate(options); err != nil {
+			fmt.Fprintln(os.Stderr, err)
+			os.Exit(1)
+		}
 		return
 	}
 
-	if err := ssg.ServeSite(&ssg.ServeSiteOptions{
-		Addr: *httpAddr,
+	if err := ssg.ServeSite(context.Background(), &ssg.ServeSiteOptions{
+		Addr:            *httpAddr,
+		GenerateOptions: *options,
 	}); err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
