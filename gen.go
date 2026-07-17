@@ -1,8 +1,6 @@
 // SPDX-License-Identifier: Apache-2.0
 // SPDX-FileCopyrightText: 2023 Hajime Hoshi
 
-//go:build ignore
-
 package main
 
 import (
@@ -10,7 +8,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/hajimehoshi/hajimehoshi.com/ssg"
+	"github.com/hajimehoshi/ssg"
 )
 
 var (
