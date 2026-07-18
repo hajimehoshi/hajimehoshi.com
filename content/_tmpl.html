@@ -5,7 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     {{ with .Page.Meta.description }}<meta name="description" content="{{ . }}">{{ end }}
     {{ with .Page.URL }}<link rel="canonical" href="{{ . }}">{{ end }}
-    <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="/site.css">
+    {{ with .Page.Meta.stylesheet }}<link rel="stylesheet" href="{{ . }}">{{ end }}
     <link rel="icon" href="/favicon.webp" type="image/webp">
     <script src="/script.js" defer></script>
     <title>{{ with .Page.Meta.title }}{{ . }} – {{ end }}{{ .Site.Name }}</title>

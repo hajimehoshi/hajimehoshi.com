@@ -1,0 +1,24 @@
+main:has(> #hero) {
+    padding-top: 0;
+}
+
+#hero {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--unit-size);
+    padding-top: calc(4 * var(--unit-size));
+    padding-bottom: calc(4 * var(--unit-size));
+    text-align: center;
+    text-wrap: balance;
+}
+#hero p {
+    font-size: var(--unit-size);
+    font-weight: 600;
+    line-height: calc(2 * var(--unit-size));
+}
+#hero img {
+    display: block;
+    width: calc(4 * var(--unit-size));
+    height: calc(4 * var(--unit-size));
+}
