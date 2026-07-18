@@ -73,114 +73,11 @@
 }
 
 
-/* margin */
-
-* {
-    padding: 0;
-    margin: 0;
-}
-
-
-/* size */
+/* custom properties */
 
 :root {
     --unit-size: 24px;
-    --column-size: calc(9 * var(--unit-size));
-    --block-gap: var(--unit-size);          /* 24px: space between sections */
-    --row-gap: var(--unit-size);  /* 24px: space between dl rows */
-}
-
-
-/* font */
-
-:root {
     --font-sans: 'SuisseIntl', 'Helvetica Neue', 'Helvetica', 'Arial', 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', 'BIZ UDPGothic', 'Meiryo';
-}
-body {
-    font-family: var(--font-sans), sans-serif;
-    font-weight: 400;
-    letter-spacing: 0.02em;
-}
-h1 {
-    font-family: var(--font-sans), sans-serif-condensed, sans-serif;
-    font-weight: 600;
-    letter-spacing: 0;
-}
-.brand {
-    font-family: 'SuisseIntlCond', 'HelveticaNeue-CondensedBold', var(--font-sans), sans-serif-condensed, sans-serif;
-    font-weight: 700;
-    letter-spacing: 0;
-}
-h2 {
-    font-weight: 600;
-    letter-spacing: 0;
-}
-h3, h4, dt {
-    font-weight: 600;
-    letter-spacing: 0.02em;
-}
-code {
-    font-family: 'SuisseIntlMono', monospace;
-    font-weight: 400;
-    letter-spacing: -0.04em;
-}
-small {
-    font-weight: 400;
-}
-body {
-    text-autospace: normal;
-}
-main > header.hero p {
-    font-weight: 600;
-}
-
-/* font-size */
-
-body {
-    font-size: calc(var(--unit-size) * 2 / 3);
-    line-height: var(--unit-size);
-}
-h1 {
-    font-size: calc(var(--unit-size) * 5 / 3);
-    line-height: calc(3 * var(--unit-size));
-}
-.brand {
-    font-size: var(--unit-size);
-    line-height: var(--unit-size);
-}
-h2 {
-    font-size: var(--unit-size);
-    line-height: calc(2 * var(--unit-size));
-}
-main > header.hero p {
-    font-size: var(--unit-size);
-    line-height: calc(2 * var(--unit-size));
-}
-h3 {
-    font-size: calc(var(--unit-size) * 2 / 3);
-    line-height: var(--unit-size);
-}
-small {
-    font-size: calc(var(--unit-size) * 1 / 2);
-    line-height: var(--unit-size);
-}
-
-
-/* text-decoration */
-
-a {
-    text-decoration-line: underline;
-    text-decoration-thickness: 1px;
-    text-underline-offset: 0.25em;
-}
-a.brand {
-    text-decoration-line: none;
-}
-
-
-/* color */
-
-:root {
     --color-white: #ffffff;
     --color-black: color-mix(in oklab, #000000 80%, var(--color-white));
     --background-color: color-mix(in oklab, var(--color-black), var(--color-white) 95%);
@@ -196,78 +93,105 @@ a.brand {
     --thin-border-color: oklab(from var(--foreground-color) l a b / 25%);
     --sub-color: color-mix(in oklab, var(--color-black) 40%, var(--color-white));
 }
+
+
+/* document */
+
+* {
+    padding: 0;
+    margin: 0;
+}
 html {
     background-color: var(--background-color);
     color: var(--foreground-color);
 }
-body > header {
-    background-color: var(--background-color);
-    border-bottom: 1px solid var(--thin-border-color);
+body {
+    display: flex;
+    flex-direction: column;
+    font-family: var(--font-sans), sans-serif;
+    font-size: calc(var(--unit-size) * 2 / 3);
+    font-weight: 400;
+    letter-spacing: 0.02em;
+    line-height: var(--unit-size);
+    text-autospace: normal;
+}
+
+
+/* typography */
+
+h1 {
+    color: var(--header-color);
+    font-family: var(--font-sans), sans-serif-condensed, sans-serif;
+    font-size: calc(var(--unit-size) * 5 / 3);
+    font-weight: 600;
+    letter-spacing: 0;
+    line-height: calc(3 * var(--unit-size));
+}
+h2 {
+    color: var(--header-color);
+    font-size: var(--unit-size);
+    font-weight: 600;
+    letter-spacing: 0;
+    line-height: calc(2 * var(--unit-size));
+}
+h3, h4, dt {
+    color: var(--header-color);
+    font-weight: 600;
+    letter-spacing: 0.02em;
+}
+h3 {
+    font-size: calc(var(--unit-size) * 2 / 3);
+    line-height: var(--unit-size);
+}
+code {
+    font-family: 'SuisseIntlMono', monospace;
+    font-weight: 400;
+    letter-spacing: -0.04em;
+}
+small {
+    color: var(--sub-color);
+    font-size: calc(var(--unit-size) * 1 / 2);
+    font-weight: 400;
+    line-height: var(--unit-size);
 }
 a {
     color: var(--foreground-color);
     text-decoration-color: var(--thin-border-color);
-}
-small {
-    color: var(--sub-color);
-}
-li::marker {
-    color: var(--sub-color);
-}
-h1, h2, h3, h4, dt {
-    color: var(--header-color);
+    text-decoration-line: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.25em;
 }
 :is(h1, h2, h3, h4, dt) a {
     color: var(--header-color);
 }
-a.brand {
-    color: var(--header-color);
+li::marker {
+    color: var(--sub-color);
 }
 
 
-/* width */
+/* page layout */
 
-main > * {
-    width: calc(4 * var(--column-size) + 3 * var(--unit-size));
-    max-width: calc(100vw - 2 * var(--unit-size));
-}
-
-
-/* flex */
-
-body {
-    display: flex;
-    flex-direction: column;
-}
-body > header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-body > header > .brand {
-    display: flex;
-    align-items: center;
-    gap: calc(var(--unit-size) / 3);
-}
 main {
+    container-type: inline-size;
     display: flex;
     flex-direction: column;
     flex-grow: 1;
     align-items: center;
     row-gap: var(--unit-size);
+    padding-top: calc(3 * var(--unit-size));
+    padding-bottom: calc(2 * var(--unit-size));
+}
+main:has(header.hero) {
+    padding-top: 0;
+}
+main > * {
+    width: calc(39 * var(--unit-size));
+    max-width: calc(100vw - 2 * var(--unit-size));
 }
 article {
     display: flex;
     flex-direction: column;
     gap: var(--unit-size);
-}
-main > header.hero {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: var(--unit-size);
-    text-align: center;
-    text-wrap: balance;
 }
 
 
@@ -277,34 +201,64 @@ body > header {
     position: sticky;
     top: 0;
     z-index: 1;
-
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     height: calc(3 * var(--unit-size) - 1px);
-    padding: 0 max(calc((100vw - 4 * var(--column-size) - 3 * var(--unit-size)) / 2), var(--unit-size));
+    padding: 0 max(calc((100vw - 39 * var(--unit-size)) / 2), var(--unit-size));
+    background-color: var(--background-color);
+    border-bottom: 1px solid var(--thin-border-color);
+}
+.brand {
+    font-family: 'SuisseIntlCond', 'HelveticaNeue-CondensedBold', var(--font-sans), sans-serif-condensed, sans-serif;
+    font-size: var(--unit-size);
+    font-weight: 700;
+    letter-spacing: 0;
+    line-height: var(--unit-size);
+}
+a.brand {
+    color: var(--header-color);
+    text-decoration-line: none;
+}
+body > header > .brand {
+    display: flex;
+    align-items: center;
+    gap: calc(var(--unit-size) / 3);
 }
 
 
-/* block spacing */
+/* hero */
 
-main {
-    padding-top: calc(3 * var(--unit-size));
-    padding-bottom: calc(2 * var(--unit-size));
-}
-main:has(header.hero) {
-    padding-top: 0;
-}
 main > header.hero {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--unit-size);
     padding-top: calc(4 * var(--unit-size));
     padding-bottom: calc(4 * var(--unit-size));
+    text-align: center;
+    text-wrap: balance;
 }
+main > header.hero p {
+    font-size: var(--unit-size);
+    font-weight: 600;
+    line-height: calc(2 * var(--unit-size));
+}
+main > header.hero img {
+    display: block;
+    width: calc(4 * var(--unit-size));
+    height: calc(4 * var(--unit-size));
+}
+
+
+/* content */
+
 h2:not(:first-child) {
     margin-top: var(--unit-size);
 }
-
-
 section > *:empty {
     display: none;
 }
-
 dl {
     display: flex;
     flex-wrap: wrap;
@@ -313,13 +267,17 @@ dl {
 }
 dt {
     width: 100%;
-    text-align: left;
-    margin-top: var(--row-gap);
+    margin-top: var(--unit-size);
     margin-bottom: calc(var(--unit-size) / 3);
     padding-right: var(--unit-size);
+    text-align: left;
 }
 dt:first-of-type {
     margin-top: 0;
+}
+dt img {
+    margin-right: calc(var(--unit-size) / 3);
+    vertical-align: bottom;
 }
 dd {
     width: 100%;
@@ -331,25 +289,8 @@ ul li + li {
     margin-top: calc(var(--unit-size) / 3);
 }
 
-main {
-    container-type: inline-size;
-}
 
-
-/* img */
-
-dt img {
-    vertical-align: bottom;
-    margin-right: calc(var(--unit-size) / 3);
-}
-main > header.hero img {
-    display: block;
-    width: calc(4 * var(--unit-size));
-    height: calc(4 * var(--unit-size));
-}
-
-
-/* dark-mode */
+/* theme switch */
 
 #dark-mode {
     display: none;
@@ -376,10 +317,6 @@ main > header.hero img {
 #dark-mode ~ label svg path {
     fill: var(--foreground-color);
 }
-
-
-/* visibility */
-
 :root:has(#dark-mode:not(:checked)) .dark-mode {
     display: none;
 }
