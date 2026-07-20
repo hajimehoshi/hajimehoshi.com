@@ -202,7 +202,7 @@ body > header {
     align-items: center;
     justify-content: space-between;
     height: calc(3 * var(--unit-size) - 1px);
-    padding: 0 max(calc((100vw - 39 * var(--unit-size)) / 2), var(--unit-size));
+    padding: 0 max(calc((100vw - 59 * var(--unit-size)) / 2), var(--unit-size));
     background-color: var(--background-color);
     border-bottom: 1px solid var(--thin-border-color);
 }
