@@ -3,6 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    {{ with .Site.Meta.theme_color }}<meta name="theme-color" content="{{ . }}">{{ end }}
     {{ with .Page.Meta.description }}<meta name="description" content="{{ . }}">{{ end }}
     {{ with .Page.URL }}<link rel="canonical" href="{{ . }}">{{ end }}
     <link rel="stylesheet" href="/site.css">
