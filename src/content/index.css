@@ -17,7 +17,7 @@ main:has(> #hero) {
 #hero p {
     font-family: var(--font-condensed);
     font-size: calc(var(--unit-size) * 2);
-    font-weight: 700;
+    font-weight: 600;
     line-height: calc(3 * var(--unit-size));
 }
 #hero .hero-logo {
