@@ -228,8 +228,10 @@ body > header {
     font-family: var(--font-condensed);
     font-size: var(--unit-size);
     font-weight: 700;
-    letter-spacing: 0;
     line-height: var(--unit-size);
+}
+.brand span {
+    letter-spacing: 0;
 }
 a.brand {
     color: var(--foreground-color);
