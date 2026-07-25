@@ -119,6 +119,8 @@ html {
 body {
     display: flex;
     flex-direction: column;
+    min-height: 100vh;
+    min-height: 100dvh;
     font-family: var(--font-sans);
     font-size: calc(var(--unit-size) * 2 / 3);
     font-weight: 400;
@@ -267,6 +269,38 @@ body > header > nav a[aria-current="page"] {
         padding-left: calc(var(--unit-size) / 2);
     }
     body > header > .brand span {
+        display: none;
+    }
+}
+
+
+/* site footer */
+
+body > footer {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    min-height: calc(3 * var(--unit-size) - 1px);
+    padding: 0 max(calc((100vw - 59 * var(--unit-size)) / 2), var(--unit-size));
+    border-top: 1px solid color-mix(in oklch, var(--background-color), var(--foreground-color) 10%);
+}
+body > footer > .brand {
+    display: flex;
+    align-items: center;
+    justify-self: start;
+    gap: calc(var(--unit-size) / 3);
+    font-size: calc(var(--unit-size) * 2 / 3);
+}
+body > footer > .copyright {
+    justify-self: end;
+}
+
+@media (width < 480px) {
+    body > footer {
+        padding-right: calc(var(--unit-size) / 2);
+        padding-left: calc(var(--unit-size) / 2);
+    }
+    body > footer > .brand span {
         display: none;
     }
 }
