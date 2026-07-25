@@ -12,10 +12,12 @@ main:has(> #hero) {
     padding-bottom: calc(3 * var(--unit-size));
     text-align: start;
     text-wrap: balance;
-    color: var(--accent-color);
+    color: oklch(from var(--theme-color) calc((var(--target-background-lightness) + var(--target-foreground-lightness) * 2) / 3) 0.15 h);
 }
 #hero p {
+    font-family: var(--font-condensed);
     font-size: calc(var(--unit-size) * 2);
+    font-weight: 700;
     line-height: calc(3 * var(--unit-size));
 }
 #hero .hero-logo {
@@ -26,7 +28,7 @@ main:has(> #hero) {
     display: block;
     width: min(calc(16 * var(--unit-size)), 100%);
     height: auto;
-    opacity: 0.75;
+    opacity: 0.625;
 }
 
 @media (width < 984px) {

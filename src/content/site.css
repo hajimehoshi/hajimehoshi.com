@@ -77,18 +77,19 @@
 
 :root {
     --unit-size: 24px;
-    --font-sans: 'SuisseIntl', 'Helvetica Neue', 'Helvetica', 'Arial', 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', 'BIZ UDPGothic', 'Meiryo';
+    --font-sans: 'SuisseIntl', 'Helvetica Neue', 'Helvetica', 'Arial', 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', 'BIZ UDPGothic', 'Meiryo', sans-serif;
+    --font-condensed: 'SuisseIntlCond', 'HelveticaNeue-CondensedBold', var(--font-sans), sans-serif-condensed, sans-serif;
+    --font-mono: 'SuisseIntlMono', monospace;
     --white-lightness: 0.9573969320543095;
     --black-lightness: 0.2701124128533074;
     --target-background-lightness: var(--white-lightness);
     --target-foreground-lightness: var(--black-lightness);
     --thin-border-alpha: 50%;
-    --background-color: oklch(from var(--theme-color) var(--target-background-lightness) 0.005 0);
-    --foreground-color: oklch(from var(--theme-color) var(--target-foreground-lightness) 0.005 0);
-    --header-color: oklch(from var(--theme-color) calc((var(--target-background-lightness) + var(--target-foreground-lightness) * 3) / 4) 0.1 h);
-    --thin-border-color: oklch(from var(--theme-color) calc((var(--target-background-lightness) + var(--target-foreground-lightness)) / 2) 0.005 h / var(--thin-border-alpha));
+    --background-color: oklch(from var(--theme-color) var(--target-background-lightness) 0.005 calc(h + 30));
+    --foreground-color: oklch(from var(--theme-color) var(--target-foreground-lightness) 0.005 calc(h + 30));
+    --header-color: oklch(from var(--theme-color) calc((var(--target-background-lightness) + var(--target-foreground-lightness) * 3) / 4) 0.1 calc(h + 30));
+    --thin-border-color: oklch(from var(--theme-color) calc((var(--target-background-lightness) + var(--target-foreground-lightness)) / 2) 0.005 calc(h + 30) / var(--thin-border-alpha));
     --sub-color: oklch(from var(--foreground-color) l c h / 60%);
-    --accent-color: oklch(from var(--theme-color) calc((var(--target-background-lightness) + var(--target-foreground-lightness) * 3) / 4) 0.15 h);
 }
 :root:has(#dark-mode:checked) {
     --target-background-lightness: var(--black-lightness);
@@ -110,7 +111,7 @@ html {
 body {
     display: flex;
     flex-direction: column;
-    font-family: var(--font-sans), sans-serif;
+    font-family: var(--font-sans);
     font-size: calc(var(--unit-size) * 2 / 3);
     font-weight: 400;
     letter-spacing: 0.02em;
@@ -123,7 +124,7 @@ body {
 
 h1 {
     color: var(--header-color);
-    font-family: var(--font-sans), sans-serif-condensed, sans-serif;
+    font-family: var(--font-sans);
     font-size: calc(var(--unit-size) * 5 / 3);
     font-weight: 600;
     letter-spacing: 0;
@@ -146,7 +147,7 @@ h3 {
     line-height: var(--unit-size);
 }
 code {
-    font-family: 'SuisseIntlMono', monospace;
+    font-family: var(--font-mono);
     font-weight: 400;
     letter-spacing: -0.04em;
 }
@@ -209,7 +210,7 @@ body > header {
     border-bottom: 1px solid var(--thin-border-color);
 }
 .brand {
-    font-family: 'SuisseIntlCond', 'HelveticaNeue-CondensedBold', var(--font-sans), sans-serif-condensed, sans-serif;
+    font-family: var(--font-condensed);
     font-size: var(--unit-size);
     font-weight: 700;
     letter-spacing: 0;
