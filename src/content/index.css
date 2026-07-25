@@ -28,3 +28,24 @@ main:has(> #hero) {
     height: auto;
     opacity: 0.75;
 }
+
+@media (width < 984px) {
+    #hero p {
+        font-size: calc(var(--unit-size) * 5 / 3);
+        line-height: calc(var(--unit-size) * 5 / 2);
+    }
+    #hero img {
+        width: min(calc(40 * var(--unit-size) / 3), 100%);
+    }
+}
+
+@media (width < 744px) {
+    #hero {
+        grid-template-columns: minmax(0, 1fr);
+        padding-top: calc(2 * var(--unit-size));
+        padding-bottom: calc(2 * var(--unit-size));
+    }
+    #hero img {
+        width: min(calc(8 * var(--unit-size)), 100%);
+    }
+}
