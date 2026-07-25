@@ -235,6 +235,7 @@ a.brand {
 body > header > .brand {
     display: flex;
     align-items: center;
+    justify-self: start;
     gap: calc(var(--unit-size) / 3);
 }
 body > header > .header-actions {
