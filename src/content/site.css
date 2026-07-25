@@ -93,18 +93,15 @@
     --black-lightness: 0.2701124128533074;
     --target-background-lightness: var(--white-lightness);
     --target-foreground-lightness: var(--black-lightness);
-    --thin-border-alpha: 50%;
     --background-color: oklch(from var(--theme-color) var(--target-background-lightness) 0.005 calc(h + 30));
     --foreground-color: oklch(from var(--theme-color) var(--target-foreground-lightness) 0.005 calc(h + 30));
     --header-color: oklch(from var(--theme-color) calc((var(--target-background-lightness) + var(--target-foreground-lightness) * 3) / 4) 0.1 calc(h + 30));
-    --thin-border-color: oklch(from var(--theme-color) calc((var(--target-background-lightness) + var(--target-foreground-lightness)) / 2) 0.005 calc(h + 30) / var(--thin-border-alpha));
     --sub-color: oklch(from var(--foreground-color) l c h / 60%);
     --grid-cell-background-color: color-mix(in oklch, var(--background-color), var(--foreground-color) 4%);
 }
 :root:has(#dark-mode:checked) {
     --target-background-lightness: var(--black-lightness);
     --target-foreground-lightness: var(--white-lightness);
-    --thin-border-alpha: 25%;
 }
 
 
@@ -170,7 +167,7 @@ small {
 }
 a {
     color: var(--foreground-color);
-    text-decoration-color: var(--thin-border-color);
+    text-decoration-color: color-mix(in oklch, var(--background-color), var(--foreground-color) 50%);
     text-decoration-line: underline;
     text-decoration-thickness: 1px;
     text-underline-offset: 0.25em;
@@ -219,7 +216,7 @@ body > header {
     height: calc(3 * var(--unit-size) - 1px);
     padding: 0 max(calc((100vw - 59 * var(--unit-size)) / 2), var(--unit-size));
     background-color: var(--background-color);
-    border-bottom: 1px solid var(--thin-border-color);
+    border-bottom: 1px solid color-mix(in oklch, var(--background-color), var(--foreground-color) 10%);
 }
 .brand {
     font-family: var(--font-condensed);
