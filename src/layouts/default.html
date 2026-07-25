@@ -13,6 +13,24 @@
     {{ end }}
     {{ with .Page.Meta.description }}<meta name="description" content="{{ . }}">{{ end }}
     {{ with .Page.URL }}<link rel="canonical" href="{{ . }}">{{ end }}
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="{{ .Site.Name }}">
+    <meta property="og:title" content="{{ with .Page.Meta.title }}{{ . }} – {{ end }}{{ .Site.Name }}">
+    {{ with .Page.Meta.description }}<meta property="og:description" content="{{ . }}">{{ end }}
+    {{ with .Page.URL }}<meta property="og:url" content="{{ . }}">{{ end }}
+    {{ with .Site.Meta.share_image }}
+      <meta property="og:image" content="{{ . }}">
+      <meta property="og:image:type" content="image/png">
+      <meta property="og:image:width" content="1200">
+      <meta property="og:image:height" content="630">
+    {{ end }}
+    {{ with .Site.Meta.share_image_alt }}<meta property="og:image:alt" content="{{ . }}">{{ end }}
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ with .Page.Meta.title }}{{ . }} – {{ end }}{{ .Site.Name }}">
+    {{ with .Page.Meta.description }}<meta name="twitter:description" content="{{ . }}">{{ end }}
+    {{ with .Site.Meta.share_image }}<meta name="twitter:image" content="{{ . }}">{{ end }}
+    {{ with .Site.Meta.share_image_alt }}<meta name="twitter:image:alt" content="{{ . }}">{{ end }}
+    {{ with .Site.Meta.twitter_creator }}<meta name="twitter:creator" content="{{ . }}">{{ end }}
     <link rel="stylesheet" href="/site.css">
     {{ with .Page.Meta.stylesheet }}<link rel="stylesheet" href="{{ . }}">{{ end }}
     <link rel="icon" href="/favicon.webp" type="image/webp">
