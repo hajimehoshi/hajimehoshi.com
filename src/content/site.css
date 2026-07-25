@@ -78,18 +78,21 @@
 :root {
     --unit-size: 24px;
     --font-sans: 'SuisseIntl', 'Helvetica Neue', 'Helvetica', 'Arial', 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', 'BIZ UDPGothic', 'Meiryo';
-    --white-color: #f1f1f1;
-    --black-color: #262626;
+    --white-lightness: 0.9573969320543095;
+    --black-lightness: 0.2701124128533074;
+    --target-background-lightness: var(--white-lightness);
+    --target-foreground-lightness: var(--black-lightness);
     --thin-border-alpha: 50%;
-    --background-color: var(--white-color);
-    --foreground-color: var(--black-color);
-    --header-color: var(--foreground-color);
-    --thin-border-color: oklab(from var(--foreground-color) l a b / var(--thin-border-alpha));
-    --sub-color: color-mix(in oklab, var(--foreground-color) 60%, var(--background-color));
+    --background-color: oklch(from var(--theme-color) var(--target-background-lightness) 0.005 0);
+    --foreground-color: oklch(from var(--theme-color) var(--target-foreground-lightness) 0.005 0);
+    --header-color: oklch(from var(--theme-color) calc((var(--target-background-lightness) + var(--target-foreground-lightness) * 3) / 4) 0.1 h);
+    --thin-border-color: oklch(from var(--theme-color) calc((var(--target-background-lightness) + var(--target-foreground-lightness)) / 2) 0.005 h / var(--thin-border-alpha));
+    --sub-color: oklch(from var(--foreground-color) l c h / 60%);
+    --accent-color: oklch(from var(--theme-color) calc((var(--target-background-lightness) + var(--target-foreground-lightness) * 3) / 4) 0.15 h);
 }
 :root:has(#dark-mode:checked) {
-    --background-color: var(--black-color);
-    --foreground-color: var(--white-color);
+    --target-background-lightness: var(--black-lightness);
+    --target-foreground-lightness: var(--white-lightness);
     --thin-border-alpha: 25%;
 }
 
@@ -134,7 +137,7 @@ h2 {
     line-height: calc(2 * var(--unit-size));
 }
 h3, h4, dt {
-    color: var(--header-color);
+    color: var(--foreground-color);
     font-weight: 600;
     letter-spacing: 0.02em;
 }
@@ -160,7 +163,7 @@ a {
     text-decoration-thickness: 1px;
     text-underline-offset: 0.25em;
 }
-:is(h1, h2, h3, h4, dt) a {
+:is(h1, h2) a {
     color: var(--header-color);
 }
 li::marker {
@@ -213,7 +216,7 @@ body > header {
     line-height: var(--unit-size);
 }
 a.brand {
-    color: var(--header-color);
+    color: var(--foreground-color);
     text-decoration-line: none;
 }
 body > header > .brand {

@@ -11,11 +11,11 @@ main:has(> #hero) {
     padding-bottom: calc(4 * var(--unit-size));
     text-align: center;
     text-wrap: balance;
+    color: var(--accent-color);
 }
 #hero p {
-    font-size: var(--unit-size);
-    font-weight: 600;
-    line-height: calc(2 * var(--unit-size));
+    font-size: calc(var(--unit-size) * 2);
+    line-height: calc(3 * var(--unit-size));
 }
 #hero img {
     display: block;
