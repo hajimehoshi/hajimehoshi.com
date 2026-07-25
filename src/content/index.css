@@ -1,6 +1,9 @@
 main:has(> #hero) {
     padding-top: 0;
 }
+main > article {
+    width: calc(59 * var(--unit-size));
+}
 
 #hero {
     display: grid;
