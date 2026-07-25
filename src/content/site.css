@@ -123,9 +123,11 @@ body {
     font-family: var(--font-sans);
     font-size: calc(var(--unit-size) * 2 / 3);
     font-weight: 400;
-    letter-spacing: 0.02em;
     line-height: var(--unit-size);
     text-autospace: normal;
+}
+* {
+    letter-spacing: 0.02em;
 }
 
 
@@ -149,7 +151,6 @@ h2 {
 h3, h4, dt {
     color: var(--foreground-color);
     font-weight: 600;
-    letter-spacing: 0.02em;
 }
 h3 {
     font-size: calc(var(--unit-size) * 2 / 3);
