@@ -95,7 +95,8 @@
     --target-foreground-lightness: var(--black-lightness);
     --background-color: oklch(from var(--theme-color) var(--target-background-lightness) 0.005 calc(h + 30));
     --foreground-color: oklch(from var(--theme-color) var(--target-foreground-lightness) 0.005 calc(h + 30));
-    --header-color: oklch(from var(--theme-color) calc((var(--target-background-lightness) + var(--target-foreground-lightness) * 3) / 4) 0.1 calc(h + 30));
+    --header-color: oklch(from var(--theme-color) calc((var(--target-background-lightness) + var(--target-foreground-lightness) * 2) / 3) 0.15 h);
+    --subheader-color: oklch(from var(--theme-color) calc((var(--target-background-lightness) + var(--target-foreground-lightness) * 3) / 4) 0.1 calc(h + 30));
     --sub-color: oklch(from var(--foreground-color) l c h / 60%);
     --grid-cell-background-color: color-mix(in oklch, var(--background-color), var(--foreground-color) 4%);
 }
@@ -140,7 +141,7 @@ h1 {
     line-height: calc(3 * var(--unit-size));
 }
 h2 {
-    color: var(--header-color);
+    color: var(--subheader-color);
     font-size: var(--unit-size);
     font-weight: 600;
     letter-spacing: 0;
@@ -172,8 +173,11 @@ a {
     text-decoration-thickness: 1px;
     text-underline-offset: 0.25em;
 }
-:is(h1, h2) a {
+:is(h1) a {
     color: var(--header-color);
+}
+:is(h2) a {
+    color: var(--subheader-color);
 }
 li::marker {
     color: var(--sub-color);

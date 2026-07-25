@@ -15,7 +15,7 @@ main > article {
     padding-bottom: calc(3 * var(--unit-size));
     text-align: start;
     text-wrap: balance;
-    color: oklch(from var(--theme-color) calc((var(--target-background-lightness) + var(--target-foreground-lightness) * 2) / 3) 0.15 h);
+    color: var(--header-color);
 }
 #hero p {
     font-family: var(--font-condensed);
