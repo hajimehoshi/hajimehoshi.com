@@ -27,6 +27,7 @@
         <span>Hajime Hoshi</span>
       </a>
       <nav aria-label="Primary">
+        <a href="/profile"{{ if eq .Page.Path "/profile" }} aria-current="page"{{ end }}>Profile</a>
         <a href="/writing"{{ if eq .Page.Path "/writing" }} aria-current="page"{{ end }}>Writing &amp; Talks</a>
       </nav>
       <div class="header-actions">
