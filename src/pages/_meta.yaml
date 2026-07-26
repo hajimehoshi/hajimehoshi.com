@@ -1,14 +1,14 @@
 language: en
 theme_color: '#e47400'
 share_image:
-  path: /share.png
+  path: /images/share.png
   alt: Hajime Hoshi logo and name
 twitter_creator: '@hajimehoshi'
-favicon: /favicon.webp
+favicon: /images/favicon.webp
 brand:
   name: Hajime Hoshi
-  logo_light: /logo_light.svg
-  logo_dark: /logo_dark.svg
+  logo_light: /images/logo_light.svg
+  logo_dark: /images/logo_dark.svg
   logo_alt: Hajime Hoshi logo
 header_navigation:
   - label: Profile
