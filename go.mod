@@ -2,7 +2,7 @@ module github.com/hajimehoshi/hajimehoshi.com
 
 go 1.25.0
 
-require github.com/hajimehoshi/ssg v0.0.0-20260726064125-90fc18dee712
+require github.com/hajimehoshi/ssg v0.0.0-20260726071657-7ef1877b6517
 
 require (
 	github.com/ebitengine/purego v0.10.0 // indirect
