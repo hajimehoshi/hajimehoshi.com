@@ -85,6 +85,7 @@
 /* custom properties */
 
 :root {
+    color-scheme: light dark;
     --unit-size: 24px;
     --font-sans: 'SuisseIntl', 'Helvetica Neue', 'Helvetica', 'Arial', 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', 'BIZ UDPGothic', 'Meiryo', sans-serif;
     --font-condensed: 'SuisseIntlCond', 'HelveticaNeue-CondensedBold', var(--font-sans), sans-serif-condensed, sans-serif;
@@ -99,10 +100,30 @@
     --subheader-color: oklch(from var(--theme-color) calc((var(--target-background-lightness) + var(--target-foreground-lightness) * 3) / 4) 0.1 calc(h + 30));
     --sub-color: oklch(from var(--foreground-color) l c h / 60%);
     --grid-cell-background-color: color-mix(in oklch, var(--background-color), var(--foreground-color) 4%);
+    --light-mode-display: block;
+    --dark-mode-display: none;
 }
-:root:has(#dark-mode:checked) {
+@media (prefers-color-scheme: dark) {
+    :root {
+        --target-background-lightness: var(--black-lightness);
+        --target-foreground-lightness: var(--white-lightness);
+        --light-mode-display: none;
+        --dark-mode-display: block;
+    }
+}
+:root[data-color-mode="light"] {
+    color-scheme: light;
+    --target-background-lightness: var(--white-lightness);
+    --target-foreground-lightness: var(--black-lightness);
+    --light-mode-display: block;
+    --dark-mode-display: none;
+}
+:root[data-color-mode="dark"] {
+    color-scheme: dark;
     --target-background-lightness: var(--black-lightness);
     --target-foreground-lightness: var(--white-lightness);
+    --light-mode-display: none;
+    --dark-mode-display: block;
 }
 
 
@@ -389,36 +410,38 @@ ul li + li {
     clip-path: inset(50%);
     white-space: nowrap;
 }
-#dark-mode ~ label {
+#dark-mode + .color-scheme-switch {
     display: flex;
     align-items: center;
+    margin: calc(-1 * var(--unit-size) / 4);
+    padding: calc(var(--unit-size) / 4);
     cursor: pointer;
     user-select: none;
 }
-#dark-mode:focus-visible ~ label {
+#dark-mode:focus-visible + .color-scheme-switch {
     outline: 2px solid var(--foreground-color);
-    outline-offset: calc(var(--unit-size) / 6);
+    outline-offset: 2px;
     border-radius: calc(var(--unit-size) / 6);
 }
-#dark-mode ~ #dark-mode-light {
+#dark-mode + .color-scheme-switch .color-scheme-switch-light {
     display: none;
 }
-#dark-mode:checked ~ #dark-mode-light {
-    display: flex;
+#dark-mode:checked + .color-scheme-switch .color-scheme-switch-light {
+    display: block;
 }
-#dark-mode:checked ~ #dark-mode-dark {
+#dark-mode:checked + .color-scheme-switch .color-scheme-switch-dark {
     display: none;
 }
-#dark-mode ~ label svg {
+.color-scheme-switch svg {
     width: var(--unit-size);
     height: var(--unit-size);
 }
-#dark-mode ~ label svg path {
+.color-scheme-switch svg path {
     fill: var(--foreground-color);
 }
-:root:has(#dark-mode:not(:checked)) .dark-mode {
-    display: none;
+.light-mode {
+    display: var(--light-mode-display) !important;
 }
-:root:has(#dark-mode:checked) .light-mode {
-    display: none;
+.dark-mode {
+    display: var(--dark-mode-display) !important;
 }
