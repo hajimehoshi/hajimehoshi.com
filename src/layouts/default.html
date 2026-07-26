@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html{{ with .Site.Meta.language }} lang="{{ . }}"{{ end }}>
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -19,35 +19,67 @@
     {{ with .Page.Meta.description }}<meta property="og:description" content="{{ . }}">{{ end }}
     {{ with .Page.URL }}<meta property="og:url" content="{{ . }}">{{ end }}
     {{ with .Site.Meta.share_image }}
-      <meta property="og:image" content="{{ . }}">
-      <meta property="og:image:type" content="image/png">
-      <meta property="og:image:width" content="1200">
-      <meta property="og:image:height" content="630">
+      {{ $shareImage := . }}
+      {{ with $image := $.Site.Image .path }}
+        <meta property="og:image" content="{{ $.Site.URL }}{{ $shareImage.path }}">
+        <meta property="og:image:type" content="{{ .MediaType }}">
+        <meta property="og:image:width" content="{{ .Width }}">
+        <meta property="og:image:height" content="{{ .Height }}">
+        {{ with $shareImage.alt }}<meta property="og:image:alt" content="{{ . }}">{{ end }}
+      {{ end }}
     {{ end }}
-    {{ with .Site.Meta.share_image_alt }}<meta property="og:image:alt" content="{{ . }}">{{ end }}
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="{{ with .Page.Meta.title }}{{ . }} – {{ end }}{{ .Site.Name }}">
     {{ with .Page.Meta.description }}<meta name="twitter:description" content="{{ . }}">{{ end }}
-    {{ with .Site.Meta.share_image }}<meta name="twitter:image" content="{{ . }}">{{ end }}
-    {{ with .Site.Meta.share_image_alt }}<meta name="twitter:image:alt" content="{{ . }}">{{ end }}
+    {{ with .Site.Meta.share_image }}
+      <meta name="twitter:image" content="{{ $.Site.URL }}{{ .path }}">
+      {{ with .alt }}<meta name="twitter:image:alt" content="{{ . }}">{{ end }}
+    {{ end }}
     {{ with .Site.Meta.twitter_creator }}<meta name="twitter:creator" content="{{ . }}">{{ end }}
     <link rel="stylesheet" href="/site.css">
     {{ with .Page.Meta.stylesheet }}<link rel="stylesheet" href="{{ . }}">{{ end }}
-    <link rel="icon" href="/favicon.webp" type="image/webp">
-    <script src="/script.js" defer></script>
+    {{ with .Site.Meta.favicon }}
+      {{ $favicon := . }}
+      {{ with $image := $.Site.Image . }}<link rel="icon" href="{{ $favicon }}" type="{{ .MediaType }}">{{ end }}
+    {{ end }}
+    <script>
+      addEventListener("DOMContentLoaded", (e) => {
+        const darkModeCheckbox = document.getElementById("dark-mode");
+
+        darkModeCheckbox.addEventListener('change', (e) => {
+          localStorage.setItem('darkMode', JSON.stringify(e.target.checked));
+        });
+
+        let darkMode = false;
+        if (localStorage.getItem('darkMode') !== null) {
+          try {
+            darkMode = !!JSON.parse(localStorage.getItem('darkMode'));
+          } catch (e) {
+            console.error(e);
+          }
+        } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+          darkMode = true;
+        }
+        darkModeCheckbox.checked = darkMode;
+      });
+    </script>
     <title>{{ with .Page.Meta.title }}{{ . }} – {{ end }}{{ .Site.Name }}</title>
   </head>
   <body>
     <header>
-      <a href="/" class="brand">
-        <img src="/logo_light.svg" width="36" height="36" alt="Hajime Hoshi Logo" class="light-mode">
-        <img src="/logo_dark.svg" width="36" height="36" alt="Hajime Hoshi Logo" class="dark-mode">
-        <span>Hajime Hoshi</span>
-      </a>
-      <nav aria-label="Primary">
-        <a href="/profile"{{ if eq .Page.Path "/profile" }} aria-current="page"{{ end }}>Profile</a>
-        <a href="/writing"{{ if eq .Page.Path "/writing" }} aria-current="page"{{ end }}>Writing &amp; Talks</a>
-      </nav>
+      {{ with .Site.Meta.brand }}
+        <a href="/" class="brand">
+          <img src="{{ .logo_light }}" width="36" height="36" alt="{{ .logo_alt }}" class="light-mode">
+          <img src="{{ .logo_dark }}" width="36" height="36" alt="{{ .logo_alt }}" class="dark-mode">
+          <span>{{ .name }}</span>
+        </a>
+      {{ end }}
+      {{ $pagePath := .Page.Path }}
+      {{ with .Site.Meta.header_navigation }}
+        <nav aria-label="Primary">
+          {{ range . }}<a href="{{ .path }}"{{ if eq $pagePath .path }} aria-current="page"{{ end }}>{{ .label }}</a>{{ end }}
+        </nav>
+      {{ end }}
       <div class="header-actions">
         <input type="checkbox" id="dark-mode" aria-label="Dark mode">
         <label for="dark-mode" id="dark-mode-light">
@@ -62,12 +94,14 @@
     </header>
     <main>{{ .Page.Content }}</main>
     <footer>
-      <a href="/" class="brand">
-        <img src="/logo_light.svg" width="24" height="24" alt="" class="light-mode">
-        <img src="/logo_dark.svg" width="24" height="24" alt="" class="dark-mode">
-        <span>Hajime Hoshi</span>
-      </a>
-      <p class="copyright">&copy; Hajime Hoshi</p>
+      {{ with .Site.Meta.brand }}
+        <a href="/" class="brand">
+          <img src="{{ .logo_light }}" width="24" height="24" alt="" class="light-mode">
+          <img src="{{ .logo_dark }}" width="24" height="24" alt="" class="dark-mode">
+          <span>{{ .name }}</span>
+        </a>
+      {{ end }}
+      {{ with .Site.Meta.copyright }}<p class="copyright">&copy; {{ . }}</p>{{ end }}
     </footer>
   </body>
 </html>

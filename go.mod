@@ -2,12 +2,13 @@ module github.com/hajimehoshi/hajimehoshi.com
 
 go 1.25.0
 
-require github.com/hajimehoshi/ssg v0.0.0-20260725095701-1fcccc2c4c71
+require github.com/hajimehoshi/ssg v0.0.0-20260726064125-90fc18dee712
 
 require (
 	github.com/ebitengine/purego v0.10.0 // indirect
 	github.com/evanw/esbuild v0.28.1 // indirect
 	github.com/fswatcher/fswatcher v0.1.0 // indirect
+	golang.org/x/image v0.44.0 // indirect
 	golang.org/x/net v0.57.0 // indirect
 	golang.org/x/sync v0.22.0 // indirect
 	golang.org/x/sys v0.47.0 // indirect

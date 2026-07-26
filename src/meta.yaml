@@ -1,4 +1,18 @@
+language: en
 theme_color: '#e47400'
-share_image: https://hajimehoshi.com/share.png
-share_image_alt: Hajime Hoshi logo and name
+share_image:
+  path: /share.png
+  alt: Hajime Hoshi logo and name
 twitter_creator: '@hajimehoshi'
+favicon: /favicon.webp
+brand:
+  name: Hajime Hoshi
+  logo_light: /logo_light.svg
+  logo_dark: /logo_dark.svg
+  logo_alt: Hajime Hoshi logo
+header_navigation:
+  - label: Profile
+    path: /profile
+  - label: Writing & Talks
+    path: /writing
+copyright: Hajime Hoshi
