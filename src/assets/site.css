@@ -220,7 +220,7 @@ main {
     align-items: center;
     row-gap: var(--unit-size);
     padding-top: calc(3 * var(--unit-size));
-    padding-bottom: calc(2 * var(--unit-size));
+    padding-bottom: calc(3 * var(--unit-size));
 }
 main > * {
     width: calc(39 * var(--unit-size));
