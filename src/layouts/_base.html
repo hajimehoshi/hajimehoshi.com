@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html{{ with .Site.Meta.language }} lang="{{ . }}"{{ end }}>
+<html{{ with .Page.Meta.language }} lang="{{ . }}"{{ end }}>
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="color-scheme" content="light dark">
-    {{ with .Site.Meta.theme_color }}
+    {{ with .Page.Meta.theme_color }}
       <meta name="theme-color" content="{{ . }}">
       <style>
         :root {
@@ -19,7 +19,7 @@
     <meta property="og:title" content="{{ with .Page.Meta.title }}{{ . }} – {{ end }}{{ .Site.Name }}">
     {{ with .Page.Meta.description }}<meta property="og:description" content="{{ . }}">{{ end }}
     {{ with .Page.URL }}<meta property="og:url" content="{{ . }}">{{ end }}
-    {{ with .Site.Meta.share_image }}
+    {{ with .Page.Meta.share_image }}
       {{ $shareImage := . }}
       {{ with $image := $.Site.Image .path }}
         <meta property="og:image" content="{{ $.Site.URL }}{{ $shareImage.path }}">
@@ -32,11 +32,11 @@
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="{{ with .Page.Meta.title }}{{ . }} – {{ end }}{{ .Site.Name }}">
     {{ with .Page.Meta.description }}<meta name="twitter:description" content="{{ . }}">{{ end }}
-    {{ with .Site.Meta.share_image }}
+    {{ with .Page.Meta.share_image }}
       <meta name="twitter:image" content="{{ $.Site.URL }}{{ .path }}">
       {{ with .alt }}<meta name="twitter:image:alt" content="{{ . }}">{{ end }}
     {{ end }}
-    {{ with .Site.Meta.twitter_creator }}<meta name="twitter:creator" content="{{ . }}">{{ end }}
+    {{ with .Page.Meta.twitter_creator }}<meta name="twitter:creator" content="{{ . }}">{{ end }}
     <script>
       (() => {
         try {
@@ -53,7 +53,7 @@
     </script>
     <link rel="stylesheet" href="/site.css">
     {{ with .Page.Meta.stylesheet }}<link rel="stylesheet" href="{{ . }}">{{ end }}
-    {{ with .Site.Meta.favicon }}
+    {{ with .Page.Meta.favicon }}
       {{ $favicon := . }}
       {{ with $image := $.Site.Image . }}<link rel="icon" href="{{ $favicon }}" type="{{ .MediaType }}">{{ end }}
     {{ end }}
@@ -61,7 +61,7 @@
   </head>
   <body>
     <header>
-      {{ with .Site.Meta.brand }}
+      {{ with .Page.Meta.brand }}
         <a href="/" class="brand">
           <img src="{{ .logo_light }}" width="36" height="36" alt="{{ .logo_alt }}" class="light-mode">
           <img src="{{ .logo_dark }}" width="36" height="36" alt="{{ .logo_alt }}" class="dark-mode">
@@ -70,7 +70,7 @@
       {{ end }}
       <div class="header-actions">
         {{ $pagePath := .Page.Path }}
-        {{ with .Site.Meta.header_navigation }}
+        {{ with .Page.Meta.header_navigation }}
           <nav aria-label="Primary">
             {{ range . }}<a href="{{ .path }}"{{ if eq $pagePath .path }} aria-current="page"{{ end }}>{{ .label }}</a>{{ end }}
           </nav>
@@ -86,14 +86,14 @@
     </header>
     <main>{{template "main" .}}</main>
     <footer>
-      {{ with .Site.Meta.brand }}
+      {{ with .Page.Meta.brand }}
         <a href="/" class="brand">
           <img src="{{ .logo_light }}" width="24" height="24" alt="" class="light-mode">
           <img src="{{ .logo_dark }}" width="24" height="24" alt="" class="dark-mode">
           <span>{{ .name }}</span>
         </a>
       {{ end }}
-      {{ with .Site.Meta.copyright }}<p class="copyright">&copy; {{ . }}</p>{{ end }}
+      {{ with .Page.Meta.copyright }}<p class="copyright">&copy; {{ . }}</p>{{ end }}
     </footer>
     <script>
       (() => {
