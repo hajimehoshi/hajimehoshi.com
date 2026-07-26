@@ -21,7 +21,7 @@
     {{ with .Page.URL }}<meta property="og:url" content="{{ . }}">{{ end }}
     {{ with .Page.Meta.share_image }}
       {{ $shareImage := . }}
-      {{ with $image := $.Site.Image .path }}
+      {{ with $image := imageMetadata .path }}
         <meta property="og:image" content="{{ $.Site.URL }}{{ $shareImage.path }}">
         <meta property="og:image:type" content="{{ .MediaType }}">
         <meta property="og:image:width" content="{{ .Width }}">
@@ -55,7 +55,7 @@
     {{ with .Page.Meta.stylesheet }}<link rel="stylesheet" href="{{ . }}">{{ end }}
     {{ with .Page.Meta.favicon }}
       {{ $favicon := . }}
-      {{ with $image := $.Site.Image . }}<link rel="icon" href="{{ $favicon }}" type="{{ .MediaType }}">{{ end }}
+      {{ with $image := imageMetadata . }}<link rel="icon" href="{{ $favicon }}" type="{{ .MediaType }}">{{ end }}
     {{ end }}
     <title>{{ with .Page.Meta.title }}{{ . }} – {{ end }}{{ .Site.Name }}</title>
   </head>
