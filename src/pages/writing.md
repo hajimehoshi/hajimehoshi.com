@@ -1,5 +1,4 @@
 ---
-title: Writing & Talks
 description: Writing, interviews, and talks by Hajime Hoshi
 ---
 

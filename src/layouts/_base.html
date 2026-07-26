@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html{{ with .Page.Meta.language }} lang="{{ . }}"{{ end }}>
   <head>
+    {{ $title := .Site.Name }}
+    {{ with .Page.ContentTitle }}{{ $title = printf "%s – %s" . $.Site.Name }}{{ end }}
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="color-scheme" content="light dark">
@@ -16,7 +18,7 @@
     {{ with .Page.URL }}<link rel="canonical" href="{{ . }}">{{ end }}
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="{{ .Site.Name }}">
-    <meta property="og:title" content="{{ with .Page.Meta.title }}{{ . }} – {{ end }}{{ .Site.Name }}">
+    <meta property="og:title" content="{{ $title }}">
     {{ with .Page.Meta.description }}<meta property="og:description" content="{{ . }}">{{ end }}
     {{ with .Page.URL }}<meta property="og:url" content="{{ . }}">{{ end }}
     {{ with .Page.Meta.share_image }}
@@ -30,7 +32,7 @@
       {{ end }}
     {{ end }}
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="{{ with .Page.Meta.title }}{{ . }} – {{ end }}{{ .Site.Name }}">
+    <meta name="twitter:title" content="{{ $title }}">
     {{ with .Page.Meta.description }}<meta name="twitter:description" content="{{ . }}">{{ end }}
     {{ with .Page.Meta.share_image }}
       <meta name="twitter:image" content="{{ $.Site.URL }}{{ .path }}">
@@ -57,7 +59,7 @@
       {{ $favicon := . }}
       {{ with $image := imageMetadata . }}<link rel="icon" href="{{ $favicon }}" type="{{ .MediaType }}">{{ end }}
     {{ end }}
-    <title>{{ with .Page.Meta.title }}{{ . }} – {{ end }}{{ .Site.Name }}</title>
+    <title>{{ $title }}</title>
   </head>
   <body>
     <header>

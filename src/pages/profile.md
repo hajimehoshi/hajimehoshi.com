@@ -1,5 +1,4 @@
 ---
-title: Profile
 description: Profile, skills, and awards of Hajime Hoshi
 ---
 
