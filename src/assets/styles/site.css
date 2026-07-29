@@ -302,20 +302,68 @@ body > footer {
     padding: 0 max(calc((100vw - 59 * var(--unit-size)) / 2), var(--unit-size));
     border-top: 1px solid color-mix(in oklch, var(--background-color), var(--foreground-color) 10%);
 }
-body > footer > .brand {
+body > footer > .copyright {
+    justify-self: start;
+}
+.contact-links {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    justify-self: end;
+    gap: calc(var(--unit-size) / 3);
+}
+.contact-links a {
     display: flex;
     align-items: center;
-    justify-self: start;
-    gap: calc(var(--unit-size) / 3);
-    font-size: calc(var(--unit-size) * 2 / 3);
+    justify-content: center;
+    width: calc(3 * var(--unit-size) / 2);
+    height: calc(3 * var(--unit-size) / 2);
+    border-radius: calc(var(--unit-size) / 3);
+    text-decoration-line: none;
 }
-body > footer > .copyright {
-    justify-self: end;
+.contact-links a:hover {
+    background-color: var(--grid-cell-background-color);
+}
+.contact-links a:focus-visible {
+    outline: 2px solid var(--foreground-color);
+    outline-offset: 2px;
+}
+.contact-icon {
+    display: block;
+    width: var(--unit-size);
+    height: var(--unit-size);
+    background-color: var(--foreground-color);
+    mask: var(--contact-icon) center / contain no-repeat;
+}
+.contact-icon-github {
+    --contact-icon: url('/images/contact/github.svg');
+}
+.contact-icon-x {
+    --contact-icon: url('/images/contact/x.png');
+}
+.contact-icon-bluesky {
+    --contact-icon: url('/images/contact/bluesky.svg');
+}
+.contact-icon-linkedin {
+    --contact-icon: url('/images/contact/linkedin.png');
+}
+.contact-icon-patreon {
+    --contact-icon: url('/images/contact/patreon.svg');
+}
+.contact-icon-mail {
+    --contact-icon: url('/images/contact/mail.svg');
 }
 
 @media (width < 696px) {
-    body > footer > .brand span {
-        display: none;
+    body > footer {
+        grid-template-columns: minmax(0, 1fr) auto;
+        row-gap: calc(var(--unit-size) / 2);
+        padding-top: calc(var(--unit-size) / 2);
+        padding-bottom: calc(var(--unit-size) / 2);
+    }
+    body > footer > .contact-links {
+        grid-column: 1 / -1;
+        grid-row: 2;
     }
 }
 

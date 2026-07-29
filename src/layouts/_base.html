@@ -88,14 +88,27 @@
     </header>
     <main>{{template "main" .}}</main>
     <footer>
-      {{ with .Page.Meta.brand }}
-        <a href="/" class="brand">
-          <img src="{{ .logo_light }}" width="24" height="24" alt="" class="light-mode">
-          <img src="{{ .logo_dark }}" width="24" height="24" alt="" class="dark-mode">
-          <span>{{ .name }}</span>
-        </a>
-      {{ end }}
       {{ with .Page.Meta.copyright }}<p class="copyright">&copy; {{ . }}</p>{{ end }}
+      <nav class="contact-links" aria-label="Contact">
+        <a href="https://github.com/hajimehoshi" aria-label="GitHub" title="GitHub">
+          <span class="contact-icon contact-icon-github" aria-hidden="true"></span>
+        </a>
+        <a href="https://x.com/hajimehoshi" aria-label="X (Twitter)" title="X (Twitter)">
+          <span class="contact-icon contact-icon-x" aria-hidden="true"></span>
+        </a>
+        <a href="https://bsky.app/profile/hajimehoshi.bsky.social" aria-label="Bluesky" title="Bluesky">
+          <span class="contact-icon contact-icon-bluesky" aria-hidden="true"></span>
+        </a>
+        <a href="https://www.linkedin.com/in/hajimehoshi/" aria-label="LinkedIn" title="LinkedIn">
+          <span class="contact-icon contact-icon-linkedin" aria-hidden="true"></span>
+        </a>
+        <a href="https://www.patreon.com/hajimehoshi_" aria-label="Patreon" title="Patreon">
+          <span class="contact-icon contact-icon-patreon" aria-hidden="true"></span>
+        </a>
+        <a href="mailto:hajimehoshi@gmail.com" aria-label="Mail" title="Mail">
+          <span class="contact-icon contact-icon-mail" aria-hidden="true"></span>
+        </a>
+      </nav>
     </footer>
     <script>
       (() => {
