@@ -34,6 +34,50 @@ main > article {
     opacity: 0.625;
 }
 
+.account-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: calc(var(--unit-size) / 3);
+}
+.account-links a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: calc(3 * var(--unit-size) / 2);
+    height: calc(3 * var(--unit-size) / 2);
+    border-radius: calc(var(--unit-size) / 3);
+    text-decoration-line: none;
+}
+.account-links a:hover {
+    background-color: var(--grid-cell-background-color);
+}
+.account-links a:focus-visible {
+    outline: 2px solid var(--foreground-color);
+    outline-offset: 2px;
+}
+.account-icon {
+    display: block;
+    width: var(--unit-size);
+    height: var(--unit-size);
+    background-color: var(--foreground-color);
+    mask: var(--account-icon) center / contain no-repeat;
+}
+.account-icon-github {
+    --account-icon: url('/images/pages/index/github.svg');
+}
+.account-icon-x {
+    --account-icon: url('/images/pages/index/x.png');
+}
+.account-icon-bluesky {
+    --account-icon: url('/images/pages/index/bluesky.svg');
+}
+.account-icon-linkedin {
+    --account-icon: url('/images/pages/index/linkedin.png');
+}
+.account-icon-patreon {
+    --account-icon: url('/images/pages/index/patreon.svg');
+}
+
 @media (width < 984px) {
     #hero p {
         font-size: calc(var(--unit-size) * 5 / 3);
