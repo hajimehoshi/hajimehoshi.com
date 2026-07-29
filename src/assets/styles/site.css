@@ -333,25 +333,9 @@ body > footer > .copyright {
     width: var(--unit-size);
     height: var(--unit-size);
     background-color: var(--foreground-color);
-    mask: var(--contact-icon) center / contain no-repeat;
-}
-.contact-icon-github {
-    --contact-icon: url('/images/contact/github.svg');
-}
-.contact-icon-x {
-    --contact-icon: url('/images/contact/x.png');
-}
-.contact-icon-bluesky {
-    --contact-icon: url('/images/contact/bluesky.svg');
-}
-.contact-icon-linkedin {
-    --contact-icon: url('/images/contact/linkedin.png');
-}
-.contact-icon-patreon {
-    --contact-icon: url('/images/contact/patreon.svg');
-}
-.contact-icon-mail {
-    --contact-icon: url('/images/contact/mail.svg');
+    mask-position: center;
+    mask-size: contain;
+    mask-repeat: no-repeat;
 }
 
 @media (width < 696px) {
