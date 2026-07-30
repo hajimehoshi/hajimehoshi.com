@@ -5,14 +5,3 @@ share_image:
   alt: Hajime Hoshi logo and name
 twitter_creator: '@hajimehoshi'
 favicon: /images/favicon.webp
-brand:
-  name: Hajime Hoshi
-  logo_light: /images/logo_light.svg
-  logo_dark: /images/logo_dark.svg
-  logo_alt: Hajime Hoshi logo
-header_navigation:
-  - label: Profile
-    path: /profile
-  - label: Writing & Talks
-    path: /writing
-copyright: Hajime Hoshi
