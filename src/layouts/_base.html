@@ -62,8 +62,14 @@
     <title>{{ $title }}</title>
   </head>
   <body>
-    {{template "_header.html" .}}
-    <main>{{template "main" .}}</main>
-    {{template "_footer.html" .}}
+    <header>
+      {{template "_header.html" .}}
+    </header>
+    <main>
+      {{template "main" .}}
+    </main>
+    <footer>
+      {{template "_footer.html" .}}
+    </footer>
   </body>
 </html>
