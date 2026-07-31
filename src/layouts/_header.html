@@ -19,3 +19,33 @@
     </label>
   </div>
 </header>
+<script>
+  (() => {
+    const root = document.documentElement;
+    const darkModeCheckbox = document.getElementById("dark-mode");
+    const darkModeQuery = matchMedia("(prefers-color-scheme: dark)");
+
+    const syncDarkModeCheckbox = () => {
+      darkModeCheckbox.checked = root.dataset.colorMode === "dark" ||
+        (!root.dataset.colorMode && darkModeQuery.matches);
+    };
+
+    darkModeCheckbox.addEventListener("change", (e) => {
+      const darkMode = e.currentTarget.checked;
+      root.dataset.colorMode = darkMode ? "dark" : "light";
+      try {
+        localStorage.setItem("darkMode", String(darkMode));
+      } catch (e) {
+        console.error(e);
+      }
+    });
+
+    darkModeQuery.addEventListener("change", () => {
+      if (!root.dataset.colorMode) {
+        syncDarkModeCheckbox();
+      }
+    });
+
+    syncDarkModeCheckbox();
+  })();
+</script>
