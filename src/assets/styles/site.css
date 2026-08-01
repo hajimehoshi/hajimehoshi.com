@@ -111,14 +111,14 @@
         --dark-mode-display: block;
     }
 }
-:root[data-color-mode="light"] {
+:root[data-hhdc-color-mode="light"] {
     color-scheme: light;
     --target-background-lightness: var(--white-lightness);
     --target-foreground-lightness: var(--black-lightness);
     --light-mode-display: block;
     --dark-mode-display: none;
 }
-:root[data-color-mode="dark"] {
+:root[data-hhdc-color-mode="dark"] {
     color-scheme: dark;
     --target-background-lightness: var(--black-lightness);
     --target-foreground-lightness: var(--white-lightness);
@@ -430,46 +430,10 @@ ul li + li {
 .grid > section > p {
     grid-row: 3;
 }
-
-
-/* theme switch */
-
-#dark-mode {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-    clip-path: inset(50%);
-    white-space: nowrap;
-}
-#dark-mode + .color-scheme-switch {
-    display: flex;
-    align-items: center;
-    margin: calc(-1 * var(--unit-size) / 4);
-    padding: calc(var(--unit-size) / 4);
-    cursor: pointer;
-    user-select: none;
-}
-#dark-mode:focus-visible + .color-scheme-switch {
-    outline: 2px solid var(--foreground-color);
-    outline-offset: 2px;
-    border-radius: calc(var(--unit-size) / 6);
-}
-#dark-mode + .color-scheme-switch .color-scheme-switch-light {
-    display: none;
-}
-#dark-mode:checked + .color-scheme-switch .color-scheme-switch-light {
-    display: block;
-}
-#dark-mode:checked + .color-scheme-switch .color-scheme-switch-dark {
-    display: none;
-}
-.color-scheme-switch svg {
+hhdc-color-mode-toggle {
     width: var(--unit-size);
     height: var(--unit-size);
-}
-.color-scheme-switch svg path {
-    fill: var(--foreground-color);
+    color: var(--foreground-color);
 }
 .light-mode {
     display: var(--light-mode-display) !important;

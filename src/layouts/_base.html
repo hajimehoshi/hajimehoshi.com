@@ -39,20 +39,7 @@
       {{ with .alt }}<meta name="twitter:image:alt" content="{{ . }}">{{ end }}
     {{ end }}
     {{ with .Page.Meta.twitter_creator }}<meta name="twitter:creator" content="{{ . }}">{{ end }}
-    <script>
-      (() => {
-        try {
-          const darkMode = localStorage.getItem("darkMode");
-          if (darkMode === "true") {
-            document.documentElement.dataset.colorMode = "dark";
-          } else if (darkMode === "false") {
-            document.documentElement.dataset.colorMode = "light";
-          }
-        } catch (e) {
-          console.error(e);
-        }
-      })();
-    </script>
+    <script src="/scripts/hhdc-color-mode-toggle.js"></script>
     <link rel="stylesheet" href="/styles/site.css">
     {{ with .Page.Meta.stylesheet }}<link rel="stylesheet" href="{{ . }}">{{ end }}
     {{ with .Page.Meta.favicon }}
