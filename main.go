@@ -10,6 +10,7 @@ import (
 	"os"
 
 	"github.com/hajimehoshi/ssg"
+	"github.com/hajimehoshi/ssg/theme/hhdc"
 )
 
 var (
@@ -22,6 +23,7 @@ func main() {
 	options := &ssg.GenerateOptions{
 		SiteName: "hajimehoshi.com",
 		SiteURL:  "https://hajimehoshi.com",
+		Theme:    hhdc.FS,
 	}
 	if *httpAddr == "" {
 		if err := ssg.Generate(options); err != nil {
