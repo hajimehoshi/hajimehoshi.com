@@ -19,6 +19,7 @@ description: Writing, interviews, and talks by Hajime Hoshi
 
 ## Talks
 
+- [Goにおけるコンソール開発最前線](https://docs.google.com/presentation/d/1M_cipkwaKoF-gpd5eMpOQRLwUd777RJfMfaYcm3VxVg/edit?usp=sharing) <small>Go Conference 2026 (2026-09-11)</small>
 - [Ebitengine製GUIフレームワークGuigui](https://docs.google.com/presentation/d/1eRvihqi_hEqy36h2A4shhuxWaIfv7dnWveCqflQepSI/edit?usp=sharing) <small>Ebitengine ぷち Conf #4 (2026-04-17)</small>
 - [Ebitengine Past, Present, and Future (2013-2026)](https://docs.google.com/presentation/d/1pOjGCFGQmUcDrgaOHQa9rSpqZl1_lMALHa0s-Urrhnw/edit?usp=sharing) <small>Golang Meetup March Edition @ Le Wagon (2026-03-18)</small>
 - [GUIフレームワークGuigui - Goでゲームエディタを作った話](https://docs.google.com/presentation/d/1Qd9vy3c8BUNfpEnQ9vET_DnoXdzVuBAnQIDRe02Na18/edit?usp=sharing) <small>Go Conference Mini in Sendai 2026 (2026-02-21)</small>
